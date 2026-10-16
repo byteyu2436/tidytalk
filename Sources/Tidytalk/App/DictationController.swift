@@ -126,11 +126,11 @@ final class DictationController {
         if config.livePreview { startLivePreview() }
     }
 
-    /// 指示器上的模式标签：只转文字时不显示；开启 AI 整理显示"整理"；翻译时显示"译成英文"这类文案；
+    /// 指示器上的模式标签：只转文字（关闭整理或没有配置 AI）时不显示；开启 AI 整理显示"整理"；翻译时显示"译成英文"这类文案；
     /// 语音改写显示"改写"。
     private func indicatorTag(for source: HotkeyMonitor.Purpose, config: AppConfig) -> String? {
         if source == .rewrite { return String(localized: "改写") }
-        guard config.cleanupEnabled else { return nil }
+        guard config.cleanupEnabled, config.ai.isConfigured else { return nil }
         return config.outputLanguage.indicatorTag ?? String(localized: "整理")
     }
 
@@ -220,7 +220,7 @@ final class DictationController {
             if model.configStore.loadError != nil {
                 notice = String(localized: "配置文件格式错误，已粘贴原文")
             } else if !config.ai.isConfigured {
-                notice = String(localized: "未配置 AI，已粘贴原文")
+                // 没有配置 AI 时就是只转文字，直接粘贴识别结果，不打扰用户
             } else {
                 do {
                     let cleaned = try await ChatCompletionClient(config: config.ai)

@@ -79,9 +79,6 @@
 /* DictationController.swift:221 */
 "配置文件格式错误，已粘贴原文" = "Invalid config file, pasted original";
 
-/* DictationController.swift:223 */
-"未配置 AI，已粘贴原文" = "AI not set up, pasted original";
-
 /* DictationController.swift:242 */
 "未开启整理文字，已粘贴原文" = "Tidy up text is off, pasted original";
 
