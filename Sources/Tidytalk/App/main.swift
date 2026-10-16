@@ -1,5 +1,6 @@
 import AppKit
 
+#if DEBUG || TIDYTALK_DEV_TOOLS
 if DebugCommands.runIfRequested() { exit(0) }
 // 开发用：`open -n Tidytalk.app --args --focus-check <文件>`，把当前焦点是否可输入写入文件
 if let i = CommandLine.arguments.firstIndex(of: "--focus-check"), i + 1 < CommandLine.arguments.count {
@@ -23,7 +24,9 @@ if let i = CommandLine.arguments.firstIndex(of: "--check-permissions") {
     exit(0)
 }
 if MainActor.assumeIsolated({ SnapshotCommand.runIfRequested() || DownloadCommand.runIfRequested() || RecordTestCommand.runIfRequested() || IndicatorCaptureCommand.runIfRequested() || SettingsCaptureCommand.runIfRequested() || ClipboardTestCommand.runIfRequested() || MenuDumpCommand.runIfRequested() || OnboardingCaptureCommand.runIfRequested() }) { exit(0) }
-// 其他以 -- 开头、不认识的开发参数：直接退出，不启动应用，以免在终端下多开一份
+#endif
+
+// 不认识的 -- 参数（包括正式版里没有的开发命令）：直接退出，不启动应用，以免在终端下多开一份
 if CommandLine.arguments.dropFirst().contains(where: { $0.hasPrefix("--") }) {
     FileHandle.standardError.write(Data("未知参数：\(CommandLine.arguments.dropFirst().joined(separator: " "))\n".utf8))
     exit(2)

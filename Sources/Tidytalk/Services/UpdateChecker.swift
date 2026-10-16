@@ -1,11 +1,11 @@
 import AppKit
 import TidytalkCore
 
-/// 检查更新：从构建时写入 Info.plist 的地址（`TidytalkUpdateURL`）读取一个 JSON：
+/// 检查更新：从构建时写入 Info.plist 的地址（`TidytalkUpdateURL`）读取最新版本，支持两种格式：
 ///
-/// ```json
-/// { "version": "0.2.0", "url": "https://example.com/Tidytalk-0.2.0.dmg", "notes": "更新内容" }
-/// ```
+/// - GitHub Releases 接口，例如 `https://api.github.com/repos/<owner>/<repo>/releases/latest`，
+///   版本号取 `tag_name`（去掉开头的 v），下载地址取发布页 `html_url`；
+/// - 自建的 JSON：`{ "version": "0.2.0", "url": "https://example.com/Tidytalk-0.2.0.dmg", "notes": "更新内容" }`。
 ///
 /// 发现新版本时提示用户，并打开下载地址。没有配置地址时整个功能隐藏。
 @MainActor
@@ -14,6 +14,13 @@ enum UpdateChecker {
         let version: String
         let url: URL
         let notes: String?
+    }
+
+    /// GitHub Releases 接口返回的字段。
+    private struct GitHubRelease: Decodable {
+        let tag_name: String
+        let html_url: URL
+        let body: String?
     }
 
     static var feedURL: URL? {
@@ -46,7 +53,7 @@ enum UpdateChecker {
             let release = try await fetchLatest(from: feedURL)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: lastCheckKey)
 
-            if AppVersion.isNewer(release.version, than: currentVersion) {
+            if let release, AppVersion.isNewer(release.version, than: currentVersion) {
                 present(release)
             } else if userInitiated {
                 alert(String(localized: "已是最新版本"), String(localized: "当前版本 \(currentVersion)。"))
@@ -56,11 +63,23 @@ enum UpdateChecker {
         }
     }
 
-    nonisolated static func fetchLatest(from url: URL) async throws -> Release {
+    /// 返回 nil 表示还没有发布任何版本（GitHub 仓库没有 Release 时接口返回 404）。
+    nonisolated static func fetchLatest(from url: URL) async throws -> Release? {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         request.timeoutInterval = 15
-        let (data, _) = try await URLSession.shared.data(for: request)
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        if let http = response as? HTTPURLResponse {
+            if http.statusCode == 404 { return nil }
+            guard (200..<300).contains(http.statusCode) else { throw URLError(.badServerResponse) }
+        }
+        if let github = try? JSONDecoder().decode(GitHubRelease.self, from: data) {
+            let tag = github.tag_name
+            let version = tag.hasPrefix("v") || tag.hasPrefix("V") ? String(tag.dropFirst()) : tag
+            let notes = github.body?.trimmingCharacters(in: .whitespacesAndNewlines)
+            return Release(version: version, url: github.html_url, notes: notes?.isEmpty == false ? notes : nil)
+        }
         return try JSONDecoder().decode(Release.self, from: data)
     }
 

@@ -1,3 +1,6 @@
+// 开发工具只在调试构建，或用 DEV_TOOLS=1 scripts/build-app.sh 打包时编译；
+// 发给用户的正式版里没有这些命令。
+#if DEBUG || TIDYTALK_DEV_TOOLS
 import AVFoundation
 import Foundation
 import TidytalkCore
@@ -45,7 +48,10 @@ enum DebugCommands {
         if let feed = value(of: "--update-feed").flatMap(URL.init(string:)) {
             run {
                 do {
-                    let release = try await UpdateChecker.fetchLatest(from: feed)
+                    guard let release = try await UpdateChecker.fetchLatest(from: feed) else {
+                        print("还没有发布任何版本")
+                        return
+                    }
                     let current = value(of: "--current") ?? "0.1.0"
                     print("最新 \(release.version)，当前 \(current)，需要更新：\(AppVersion.isNewer(release.version, than: current))，下载：\(release.url)")
                 } catch {
@@ -604,3 +610,4 @@ enum OnboardingCaptureCommand {
         return true
     }
 }
+#endif
