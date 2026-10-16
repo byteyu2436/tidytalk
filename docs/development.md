@@ -86,6 +86,17 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 { "version": "0.2.0", "url": "https://example.com/Tidytalk-0.2.0.dmg", "notes": "更新内容" }
 ```
 
+## 官网
+
+`site/` 是产品官网的静态页面（中文 `index.html`、英文 `en/index.html`），推送到 main 后由 `.github/workflows/pages.yml` 自动发布到 https://byteyu2436.github.io/tidytalk/ 。仓库 Settings › Pages 的 Source 要设为 "GitHub Actions"。分享封面图由 `scripts/make-site-images.swift` 生成。
+
+本地预览：
+
+```bash
+mkdir -p /tmp/www && ln -sfn "$PWD/site" /tmp/www/tidytalk
+python3 -m http.server 8765 --directory /tmp/www   # 打开 http://localhost:8765/tidytalk/
+```
+
 ## 开发命令
 
 调试构建（`swift build`）或用 `DEV_TOOLS=1` 打包的应用里有一组不启动界面的命令，正式版里没有：
