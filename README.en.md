@@ -2,7 +2,7 @@
 
 **Hold to talk. Let go, and you get clean text.** Paragraph-style voice input for macOS.
 
-[简体中文](README.md) | English | [Website](https://tidytalk.zayen.dev/en/)
+[简体中文](README.md) | English | [Website](https://tidytalk.zayen.dev/)
 
 <p align="center">
   <img src="docs/images/onboarding-en.png" width="640" alt="Tidytalk setup guide">
