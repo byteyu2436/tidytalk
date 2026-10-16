@@ -655,3 +655,51 @@
 "本机运行" = "Local";
 
 "DeepSeek 等" = "Online";
+
+/* 实时字幕 */
+"无法收听电脑声音" = "Can't listen to the computer's audio";
+"语音检测模型加载失败" = "Couldn't load the voice detection model";
+"已暂停" = "Paused";
+"正在收听…" = "Listening…";
+"正在收听" = "Listening";
+"继续" = "Resume";
+"开始收听" = "Start Listening";
+"停止收听" = "Stop Listening";
+"字幕" = "Captions";
+"快捷键 ⌃⌥C" = "Shortcut ⌃⌥C";
+"收听来源" = "Listen To";
+"全部声音" = "All Audio";
+"只收听某个应用时，其他声音不会出现在字幕里。列表里是正在播放声音的应用。" = "Pick an app to caption only its audio. The list shows apps that are playing sound.";
+"文字大小" = "Text Size";
+"没有声音 10 秒后隐藏" = "Hide after 10 seconds of silence";
+"声音只在这台 Mac 上识别，不会上传。第一次收听时，macOS 会询问是否允许录制系统音频。" = "Audio is recognized on this Mac and never uploaded. The first time you listen, macOS asks to allow system audio recording.";
+"停止实时字幕" = "Stop Live Captions";
+"实时字幕" = "Live Captions";
+"没有应用在播放声音" = "No apps are playing sound";
+"收听来源：%@" = "Listen To: %@";
+"小" = "Small";
+"中" = "Medium";
+"大" = "Large";
+
+/* 字幕翻译 */
+"字幕翻译失败：%@" = "Caption translation failed: %@";
+"关闭翻译" = "Turn Off Translation";
+"翻译字幕" = "Translate Captions";
+"翻译成" = "Translate To";
+"翻译" = "Translation";
+"需要先在\"配置 AI\"里选好服务。" = "Choose a service in Set Up AI first.";
+"每句说完后由本机的 AI 翻译，不联网。" = "Each sentence is translated by the AI on this Mac, with no internet needed.";
+"每句说完后由你配置的 AI 服务翻译，字幕文字会发送给该服务。选 Ollama 或 LM Studio 可以不联网。" = "Each sentence is translated by your AI service, so caption text is sent to it. Choose Ollama or LM Studio to stay offline.";
+"翻译字幕：%@" = "Translate Captions: %@";
+
+/* 粘贴刚才那段 */
+"先按 ⌃⌥C 打开实时字幕" = "Press ⌃⌥C to turn on Live Captions first";
+"还没有可以粘贴的内容" = "Nothing to paste yet";
+"点按粘贴这句及之后的内容" = "Click to paste from this sentence onward";
+"粘贴刚才那段" = "Paste What Was Just Said";
+"收听时按 ⌃⌥V，把最近一段话（从上一次停顿开始，最多 30 秒）整理后粘贴到光标处。也可以点字幕条上的某一句，从那句粘贴到最新。" = "While listening, press ⌃⌥V to tidy and paste the latest passage (since the last pause, up to 30 seconds) at the cursor. You can also click a sentence in the captions to paste from there onward.";
+
+/* 字幕样式 */
+"样式" = "Style";
+"深色" = "Dark";
+"玻璃" = "Glass";

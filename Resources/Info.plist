@@ -43,6 +43,8 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Tidytalk uses the microphone to record what you say. Audio is recognized on this Mac and never leaves it.</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>Tidytalk listens to your computer's audio to show live captions. Audio is recognized on this Mac and never leaves it.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 </dict>

@@ -36,6 +36,11 @@ final class AppModel {
     /// 最近的电平，最新的在末尾。
     private(set) var levels: [Float] = Array(repeating: 0, count: AppModel.levelHistory)
 
+    /// 实时字幕：是否正在收听电脑的声音、是否暂停、显示的文字。
+    var isListening = false
+    var listeningPaused = false
+    var captions = CaptionTranscript()
+
     var microphoneGranted = Permissions.microphone == .granted
     var accessibilityGranted = Permissions.accessibility
 

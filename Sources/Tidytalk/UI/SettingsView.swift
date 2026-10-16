@@ -7,7 +7,9 @@ enum SettingsWindow {
     static let width: CGFloat = 560
 
     @MainActor
-    static func make(model: AppModel) -> NSWindow {
+    static func make(model: AppModel, onToggleListening: @escaping () -> Void = {},
+                     onListenSourceChanged: @escaping () -> Void = {},
+                     onSetCaptionTranslation: @escaping (Bool) -> Void = { _ in }) -> NSWindow {
         let tabs = SettingsTabViewController()
         tabs.tabStyle = .toolbar
         // 每页高度按内容设定，切换时窗口跟着伸缩，和系统设置的偏好窗口一样
@@ -15,6 +17,9 @@ enum SettingsWindow {
         tabs.addTabViewItem(item(String(localized: "录音"), symbol: "mic", height: 500, RecordingSettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "配置 AI"), symbol: "sparkles", height: 510, AISettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "词库"), symbol: "character.book.closed", height: 640, VocabularySettings(model: model)))
+        tabs.addTabViewItem(item(String(localized: "字幕"), symbol: "captions.bubble", height: 734,
+                                 ListenSettings(model: model, onToggle: onToggleListening, onSourceChanged: onListenSourceChanged,
+                                                onSetTranslation: onSetCaptionTranslation)))
         tabs.addTabViewItem(item(String(localized: "权限"), symbol: "hand.raised", height: 360, PermissionSettings(model: model)))
 
         let window = FocusFriendlyWindow(contentViewController: tabs)
@@ -348,5 +353,135 @@ struct PermissionSettings: View {
                 try? await Task.sleep(for: .seconds(1))
             }
         }
+    }
+}
+
+/// 实时字幕：收听电脑播放的声音（视频、会议），在屏幕上显示字幕。
+struct ListenSettings: View {
+    let model: AppModel
+    var onToggle: () -> Void = {}
+    var onSourceChanged: () -> Void = {}
+    var onSetTranslation: (Bool) -> Void = { _ in }
+    @ViewState private var apps: [AudioSourceApp] = []
+
+    private var config: AppConfig { model.configStore.config }
+
+    var body: some View {
+        Form {
+            Section {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(model.isListening ? String(localized: "正在收听") : String(localized: "实时字幕"))
+                        Text("快捷键 ⌃⌥C").font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(model.isListening ? String(localized: "停止收听") : String(localized: "开始收听")) { onToggle() }
+                }
+                Picker("收听来源", selection: Binding(
+                    get: { config.listenSource },
+                    set: { value in
+                        model.configStore.update { $0.listenSource = value }
+                        onSourceChanged()
+                    }
+                )) {
+                    Text("全部声音").tag("")
+                    if !sourceChoices.isEmpty { Divider() }
+                    ForEach(sourceChoices, id: \.bundleID) { app in
+                        Text(app.name).tag(app.bundleID)
+                    }
+                }
+            } footer: {
+                Text("只收听某个应用时，其他声音不会出现在字幕里。列表里是正在播放声音的应用。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                LabeledContent("粘贴刚才那段", value: "⌃⌥V")
+            } header: {
+                Text("粘贴")
+            } footer: {
+                Text("收听时按 ⌃⌥V，把最近一段话（从上一次停顿开始，最多 30 秒）整理后粘贴到光标处。也可以点字幕条上的某一句，从那句粘贴到最新。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("字幕") {
+                Picker("样式", selection: Binding(
+                    get: { config.captionStyle },
+                    set: { value in model.configStore.update { $0.captionStyle = value } }
+                )) {
+                    ForEach(CaptionStyle.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                Picker("文字大小", selection: Binding(
+                    get: { config.captionSize },
+                    set: { value in model.configStore.update { $0.captionSize = value } }
+                )) {
+                    ForEach(CaptionSize.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                Toggle("没有声音 10 秒后隐藏", isOn: Binding(
+                    get: { config.captionAutoHide },
+                    set: { value in model.configStore.update { $0.captionAutoHide = value } }
+                ))
+            }
+
+            Section {
+                Toggle("翻译字幕", isOn: Binding(
+                    get: { config.captionTranslate },
+                    set: { value in onSetTranslation(value) }
+                ))
+                Picker("翻译成", selection: Binding(
+                    get: { config.captionLanguage },
+                    set: { value in model.configStore.update { $0.captionLanguage = value } }
+                )) {
+                    ForEach(OutputLanguage.allCases.filter(\.isTranslation), id: \.self) { Text($0.title).tag($0) }
+                }
+                .disabled(!config.captionTranslate)
+            } header: {
+                Text("翻译")
+            } footer: {
+                Group {
+                    if !config.ai.isConfigured {
+                        Text("需要先在\"配置 AI\"里选好服务。")
+                    } else if config.ai.isLocal {
+                        Text("每句说完后由本机的 AI 翻译，不联网。")
+                    } else {
+                        Text("每句说完后由你配置的 AI 服务翻译，字幕文字会发送给该服务。选 Ollama 或 LM Studio 可以不联网。")
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
+            Section {
+                HStack {
+                    Text("声音只在这台 Mac 上识别，不会上传。第一次收听时，macOS 会询问是否允许录制系统音频。")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button("打开系统设置") { Permissions.openSystemAudioSettings() }
+                }
+            } header: {
+                Text("隐私")
+            }
+        }
+        .formStyle(.grouped)
+        .task {
+            // 正在播放声音的应用随时会变，定期刷新
+            while !Task.isCancelled {
+                let playing = AudioProcesses.playingApps()
+                if playing != apps { apps = playing }
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
+    }
+
+    /// 正在发声的应用，加上已经选中但现在没有声音的那个。
+    private var sourceChoices: [AudioSourceApp] {
+        let current = config.listenSource
+        guard !current.isEmpty, !apps.contains(where: { $0.bundleID == current }) else { return apps }
+        return [AudioSourceApp(bundleID: current, name: AudioProcesses.name(of: current))] + apps
     }
 }

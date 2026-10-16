@@ -21,6 +21,7 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 - **Cleans up, keeps your words.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
 - **Local AI or cloud, your choice.** Pick Ollama, LM Studio, or Cloud right in Settings; local models need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
 - **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
+- **Live captions.** Press ⌃⌥C to caption whatever your Mac is playing, such as videos, lectures, or meetings, recognized on your Mac too. Translate each sentence, or press ⌃⌥V to tidy and paste what was just said at the cursor.
 - **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
 - **And more:** personal vocabulary, replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
 
@@ -47,11 +48,13 @@ You can also [build from source](docs/development.md).
 
 Press Esc to cancel. Double-tap the shortcut for hands-free recording, and press it again to finish. To rewrite text, select it, hold **Right Option**, and say what to change (for example, "make it more formal"). All shortcuts can be changed in Settings.
 
+Press **⌃⌥C** (Control + Option + C) to turn on live captions for your Mac's audio. While listening, press **⌃⌥V** to paste what was just said, or click a sentence in the captions to paste from there onward.
+
 The interface is available in English and Simplified Chinese and follows your system language.
 
 ## Privacy
 
-Recording and speech recognition always happen on your Mac, and your voice is never uploaded. Whether the recognized text leaves your Mac depends on how you set up tidying:
+Recording and speech recognition always happen on your Mac, and your voice is never uploaded. The same goes for the computer audio that live captions listen to. Whether the recognized text leaves your Mac depends on how you set up tidying:
 
 | Setup | Your voice | Your text |
 | --- | --- | --- |
@@ -61,7 +64,7 @@ Recording and speech recognition always happen on your Mac, and your voice is ne
 
 - No account and no tracking in the app. Apart from the AI service you set up, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
 - Settings, including your API key, are stored in `~/.tidytalk.json`, readable only by you.
-- Recent results are kept in memory only and cleared when you quit.
+- Recent results and live captions are kept in memory only and cleared when you turn captions off or quit. With caption translation on, caption text is sent to your AI service (or stays on your Mac with a local model).
 - The code is fully open source, so you can verify all of this yourself.
 
 ## Documentation

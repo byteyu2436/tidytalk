@@ -69,7 +69,8 @@ final class DictationController {
         }
     }
 
-    private func readyRecognizer() async -> SpeechRecognizer? {
+    /// 实时字幕也用这个识别器，两边共用一份模型。
+    func readyRecognizer() async -> SpeechRecognizer? {
         if let recognizer { return recognizer }
         if recognizerTask == nil { loadRecognizer() }
         return await recognizerTask?.value
@@ -245,6 +246,33 @@ final class DictationController {
                              notice: notice)
     }
 
+    // MARK: - 实时字幕
+
+    /// 把实时字幕里听到的一段话按说话输入的规则（词库、整理模式、输出语言）整理后，粘贴到当前的输入框。
+    func pasteCaptions(_ transcript: String) {
+        guard !isProcessing, !recorder.isRecording else { return }
+        model.configStore.reload()
+        let config = model.configStore.config
+        isProcessing = true
+        messageTask?.cancel()
+        model.sparkles = false
+        model.indicatorTag = indicatorTag(for: .dictation, config: config)
+        model.phase = .processing
+        indicator.show()
+        Task {
+            // 等用户松开 ⌃⌥，否则模拟的 ⌘V 会带上这两个键
+            for _ in 0..<20 where !NSEvent.modifierFlags.intersection([.control, .option]).isEmpty {
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            let result = await cleanup(transcript, config: config, style: config.style,
+                                       language: config.outputLanguage, enabled: config.cleanupEnabled)
+            if await paste(result.text, transcript: transcript) {
+                if let notice = result.notice { showMessage(notice) } else { hide() }
+            }
+            isProcessing = false
+        }
+    }
+
     // MARK: - 重新整理
 
     /// 用另一种整理模式或输出语言，重新整理最近记录里的一条，粘贴到当前的输入框。
@@ -322,7 +350,7 @@ final class DictationController {
 
     // MARK: - 指示器
 
-    private func showMessage(_ text: String) {
+    func showMessage(_ text: String) {
         messageTask?.cancel()
         stopLivePreview()
         model.sparkles = false

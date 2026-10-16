@@ -18,6 +18,14 @@ These libraries are not stored in this repository. `scripts/fetch-deps.sh` downl
 - File: `libonnxruntime.dylib`, shipped inside the sherpa-onnx prebuilt package
 - License: MIT License, Copyright (c) Microsoft Corporation, https://github.com/microsoft/onnxruntime/blob/main/LICENSE
 
+### Silero VAD
+
+- Project: https://github.com/snakers4/silero-vad
+- File: `silero_vad.onnx`, from the sherpa-onnx model releases (https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models), stored in `Resources/` and copied into `Tidytalk.app/Contents/Resources/`
+- License: MIT License, Copyright (c) 2020-present Silero Team, https://github.com/snakers4/silero-vad/blob/master/LICENSE
+
+Used by live captions to find where speech starts and stops in the computer's audio.
+
 ## Downloaded on first launch
 
 ### SenseVoice-Small speech recognition model

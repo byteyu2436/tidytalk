@@ -78,7 +78,13 @@ public struct AIConfig: Equatable, Sendable {
 ///   "snippets": { "我的邮箱": "name@example.com" },
 ///   "custom_rules": ["金额一律用阿拉伯数字"],
 ///   "auto_update_check": true,
-///   "live_preview": true
+///   "live_preview": true,
+///   "listen_source": "",
+///   "caption_size": "medium",
+///   "caption_auto_hide": true,
+///   "caption_translate": false,
+///   "caption_language": "zh-Hans",
+///   "caption_style": "dark"
 /// }
 /// ```
 public struct AppConfig: Equatable, Sendable {
@@ -116,6 +122,18 @@ public struct AppConfig: Equatable, Sendable {
     public var autoUpdateCheck: Bool
     /// 说话时在指示器下方显示实时识别的文字（只是预览，最终结果仍在松开后生成）。
     public var livePreview: Bool
+    /// 实时字幕收听的应用（bundle id），空字符串表示收听全部声音。
+    public var listenSource: String
+    /// 实时字幕的文字大小。
+    public var captionSize: CaptionSize
+    /// 一段时间没有声音后自动隐藏字幕。
+    public var captionAutoHide: Bool
+    /// 字幕下方显示译文（使用"配置 AI"里的服务）。
+    public var captionTranslate: Bool
+    /// 字幕翻译成的语言，不会是 `.original`。
+    public var captionLanguage: OutputLanguage
+    /// 字幕条的样式。
+    public var captionStyle: CaptionStyle
 
     public init(cleanupEnabled: Bool = true, ai: AIConfig = .default, typography: Bool = true,
                 vocabulary: [String] = [], replacements: [String: String] = [:],
@@ -123,7 +141,10 @@ public struct AppConfig: Equatable, Sendable {
                 hotkey: HotkeyKey = .optionCommand, microphone: String = "", history: Bool = true,
                 handsFree: Bool = true, rewriteHotkey: HotkeyKey? = .rightOption, sounds: Bool = true,
                 cleanupLevel: CleanupLevel = .standard, snippets: [String: String] = [:],
-                customRules: [String] = [], autoUpdateCheck: Bool = true, livePreview: Bool = true) {
+                customRules: [String] = [], autoUpdateCheck: Bool = true, livePreview: Bool = true,
+                listenSource: String = "", captionSize: CaptionSize = .medium, captionAutoHide: Bool = true,
+                captionTranslate: Bool = false, captionLanguage: OutputLanguage = .captionDefault(),
+                captionStyle: CaptionStyle = .dark) {
         self.cleanupEnabled = cleanupEnabled
         self.ai = ai
         self.typography = typography
@@ -143,6 +164,12 @@ public struct AppConfig: Equatable, Sendable {
         self.customRules = customRules
         self.autoUpdateCheck = autoUpdateCheck
         self.livePreview = livePreview
+        self.listenSource = listenSource
+        self.captionSize = captionSize
+        self.captionAutoHide = captionAutoHide
+        self.captionTranslate = captionTranslate
+        self.captionLanguage = captionLanguage.isTranslation ? captionLanguage : .captionDefault()
+        self.captionStyle = captionStyle
     }
 
     /// 实际生效的语音改写触发键：和说话的触发键相同时视为关闭。
@@ -180,6 +207,12 @@ public struct AppConfig: Equatable, Sendable {
         static let customRules = "custom_rules"
         static let autoUpdateCheck = "auto_update_check"
         static let livePreview = "live_preview"
+        static let listenSource = "listen_source"
+        static let captionSize = "caption_size"
+        static let captionAutoHide = "caption_auto_hide"
+        static let captionTranslate = "caption_translate"
+        static let captionLanguage = "caption_language"
+        static let captionStyle = "caption_style"
         static let off = "off"
         /// 旧版本的按应用风格，已废弃，写回时删除
         static let legacyAppStyles = "app_styles"
@@ -229,7 +262,13 @@ public struct AppConfig: Equatable, Sendable {
             snippets: (root[Key.snippets] as? [String: Any])?.compactMapValues { $0 as? String } ?? [:],
             customRules: (root[Key.customRules] as? [Any])?.compactMap { $0 as? String } ?? [],
             autoUpdateCheck: (root[Key.autoUpdateCheck] as? Bool) ?? true,
-            livePreview: (root[Key.livePreview] as? Bool) ?? true
+            livePreview: (root[Key.livePreview] as? Bool) ?? true,
+            listenSource: (root[Key.listenSource] as? String) ?? "",
+            captionSize: (root[Key.captionSize] as? String).flatMap(CaptionSize.init(rawValue:)) ?? .medium,
+            captionAutoHide: (root[Key.captionAutoHide] as? Bool) ?? true,
+            captionTranslate: (root[Key.captionTranslate] as? Bool) ?? false,
+            captionLanguage: (root[Key.captionLanguage] as? String).flatMap(OutputLanguage.init(rawValue:)) ?? .captionDefault(),
+            captionStyle: (root[Key.captionStyle] as? String).flatMap(CaptionStyle.init(rawValue:)) ?? .dark
         )
     }
 
@@ -261,6 +300,12 @@ public struct AppConfig: Equatable, Sendable {
         root[Key.customRules] = customRules
         root[Key.autoUpdateCheck] = autoUpdateCheck
         root[Key.livePreview] = livePreview
+        root[Key.listenSource] = listenSource
+        root[Key.captionSize] = captionSize.rawValue
+        root[Key.captionAutoHide] = captionAutoHide
+        root[Key.captionTranslate] = captionTranslate
+        root[Key.captionLanguage] = captionLanguage.rawValue
+        root[Key.captionStyle] = captionStyle.rawValue
         root[Key.legacyAppStyles] = nil
 
         return try JSONSerialization.data(withJSONObject: root,

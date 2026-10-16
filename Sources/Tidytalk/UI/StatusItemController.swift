@@ -13,6 +13,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// 用另一种整理模式或输出语言重新整理一条最近记录。
     var onReprocess: ((HistoryEntry, CleanupStyle, OutputLanguage) -> Void)?
     var onOpenOnboarding: (() -> Void)?
+    var onToggleListening: (() -> Void)?
+    var onListenSourceChanged: (() -> Void)?
+    var onSetCaptionTranslation: ((Bool) -> Void)?
+    var onPasteRecentCaptions: (() -> Void)?
 
     init(model: AppModel) {
         self.model = model
@@ -40,9 +44,35 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Tidytalk")
         image?.isTemplate = true
-        button.image = image
+        // 收听电脑声音时在图标右上角加一个橙色圆点
+        button.image = model.isListening && model.phase != .recording ? image.map(Self.withListeningDot) : image
         button.contentTintColor = tint
         button.toolTip = model.phase == .recording ? String(localized: "Tidytalk：正在录音") : String(localized: "Tidytalk：\(model.readinessDescription)")
+    }
+
+    /// 在模板图标上叠一个橙点。图片在绘制时才渲染，图标颜色跟随菜单栏的深浅色。
+    private static func withListeningDot(_ symbol: NSImage) -> NSImage {
+        let size = NSSize(width: max(18, symbol.size.width + 4), height: max(16, symbol.size.height))
+        let image = NSImage(size: size, flipped: false) { rect in
+            let symbolRect = NSRect(x: (rect.width - symbol.size.width) / 2 - 1,
+                                    y: (rect.height - symbol.size.height) / 2,
+                                    width: symbol.size.width, height: symbol.size.height)
+            let tinted = NSImage(size: symbol.size, flipped: false) { r in
+                symbol.draw(in: r)
+                NSColor.labelColor.set()
+                r.fill(using: .sourceAtop)
+                return true
+            }
+            tinted.draw(in: symbolRect)
+            let dot: CGFloat = 6
+            let dotRect = NSRect(x: rect.maxX - dot, y: rect.maxY - dot, width: dot, height: dot)
+            NSColor.systemOrange.setFill()
+            NSBezierPath(ovalIn: dotRect).fill()
+            return true
+        }
+        image.isTemplate = false
+        image.accessibilityDescription = "Tidytalk"
+        return image
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
@@ -75,6 +105,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         let languageItem = NSMenuItem(title: String(localized: "输出语言：\(current.title)"), action: nil, keyEquivalent: "")
         languageItem.submenu = languageMenu
         menu.addItem(languageItem)
+
+        menu.addItem(.separator())
+        let listen = item(model.isListening ? String(localized: "停止实时字幕") : String(localized: "实时字幕"),
+                          #selector(toggleListening), key: "c")
+        listen.keyEquivalentModifierMask = [.control, .option]
+        menu.addItem(listen)
+        let pasteRecent = item(String(localized: "粘贴刚才那段"), #selector(pasteRecentCaptions), key: "v")
+        pasteRecent.keyEquivalentModifierMask = [.control, .option]
+        // 菜单会自动启用有响应方法的项，没在收听时去掉方法才会变灰
+        if !model.isListening { pasteRecent.action = nil }
+        menu.addItem(pasteRecent)
+        let config = model.configStore.config
+        let translate = item(String(localized: "翻译字幕：\(config.captionLanguage.title)"), #selector(toggleCaptionTranslation))
+        translate.state = config.captionTranslate ? .on : .off
+        menu.addItem(translate)
+        menu.addItem(sourceItem())
 
         if model.configStore.config.history {
             menu.addItem(.separator())
@@ -142,6 +188,59 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private static let historyMenuLimit = 10
+
+    /// "收听来源"子菜单：全部声音，或者现在正在发声的某个应用。
+    private func sourceItem() -> NSMenuItem {
+        let current = model.configStore.config.listenSource
+        let submenu = NSMenu()
+        let all = item(String(localized: "全部声音"), #selector(selectListenSource(_:)))
+        all.representedObject = ""
+        all.state = current.isEmpty ? .on : .off
+        submenu.addItem(all)
+        submenu.addItem(.separator())
+        var apps = AudioProcesses.playingApps()
+        if !current.isEmpty, !apps.contains(where: { $0.bundleID == current }) {
+            apps.insert(AudioSourceApp(bundleID: current, name: AudioProcesses.name(of: current)), at: 0)
+        }
+        for app in apps {
+            let entry = item(app.name, #selector(selectListenSource(_:)))
+            entry.representedObject = app.bundleID
+            entry.state = app.bundleID == current ? .on : .off
+            if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: app.bundleID) {
+                let icon = NSWorkspace.shared.icon(forFile: url.path)
+                icon.size = NSSize(width: 16, height: 16)
+                entry.image = icon
+            }
+            submenu.addItem(entry)
+        }
+        if apps.isEmpty {
+            let empty = NSMenuItem(title: String(localized: "没有应用在播放声音"), action: nil, keyEquivalent: "")
+            empty.isEnabled = false
+            submenu.addItem(empty)
+        }
+        let title = current.isEmpty ? String(localized: "全部声音") : AudioProcesses.name(of: current)
+        let sourceItem = NSMenuItem(title: String(localized: "收听来源：\(title)"), action: nil, keyEquivalent: "")
+        sourceItem.submenu = submenu
+        return sourceItem
+    }
+
+    @objc private func selectListenSource(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String, id != model.configStore.config.listenSource else { return }
+        model.configStore.update { $0.listenSource = id }
+        onListenSourceChanged?()
+    }
+
+    @objc private func toggleListening() { onToggleListening?() }
+    /// 菜单关闭后焦点回到原来的输入框，再粘贴进去。
+    @objc private func pasteRecentCaptions() {
+        Task {
+            try? await Task.sleep(for: .milliseconds(150))
+            onPasteRecentCaptions?()
+        }
+    }
+    @objc private func toggleCaptionTranslation() {
+        onSetCaptionTranslation?(!model.configStore.config.captionTranslate)
+    }
 
     /// 选中的最近记录和要用的整理方式。
     private final class ReprocessChoice: NSObject {

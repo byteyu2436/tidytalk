@@ -48,6 +48,8 @@ if [[ -f Resources/AppIcon.icns ]]; then
 fi
 # AI 服务选项的图标（Ollama、LM Studio 的标志来自它们的官网）
 cp -R Resources/ProviderIcons "$APP/Contents/Resources/"
+# 实时字幕用来切分句子的语音检测模型（Silero VAD）
+cp Resources/silero_vad.onnx "$APP/Contents/Resources/"
 # 许可证与第三方声明（随附的 sherpa-onnx、ONNX Runtime）
 cp LICENSE THIRD_PARTY_NOTICES.md "$APP/Contents/Resources/"
 

@@ -33,6 +33,11 @@ enum Permissions {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")
     }
 
+    /// 系统设置 › 隐私与安全性 › 录屏与系统录音 里的"仅系统录音"。
+    static func openSystemAudioSettings() {
+        open("x-apple.systempreferences:com.apple.preference.security?Privacy_AudioCapture")
+    }
+
     private static func open(_ url: String) {
         if let url = URL(string: url) { NSWorkspace.shared.open(url) }
     }

@@ -29,7 +29,13 @@
   "snippets": { "我的邮箱": "name@example.com" },
   "custom_rules": ["金额一律用阿拉伯数字"],
   "live_preview": true,
-  "auto_update_check": true
+  "auto_update_check": true,
+  "listen_source": "",
+  "caption_size": "medium",
+  "caption_auto_hide": true,
+  "caption_translate": false,
+  "caption_language": "zh-Hans",
+  "caption_style": "dark"
 }
 ```
 
@@ -57,3 +63,9 @@
 | `custom_rules` | 自定义整理规则，每条一句 |
 | `live_preview` | 说话时在指示器下方显示实时文字（只是预览） |
 | `auto_update_check` | 启动时自动检查更新，每天最多一次 |
+| `listen_source` | 实时字幕收听的应用（bundle id，例如 `com.google.Chrome`），空字符串表示全部声音 |
+| `caption_size` | 字幕文字大小：`small`、`medium` 或 `large` |
+| `caption_auto_hide` | 没有声音 10 秒后隐藏字幕条 |
+| `caption_translate` | 在字幕原文下面显示译文（使用 `ai` 里的服务） |
+| `caption_language` | 字幕翻译成的语言，取值同 `output_language`，但不能是 `original`；默认跟随系统语言 |
+| `caption_style` | 字幕条样式：`dark`（深色）或 `glass`（玻璃） |

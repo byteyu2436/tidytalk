@@ -70,16 +70,7 @@ final class SpeechRecognizer: @unchecked Sendable {
         return String(cString: text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    /// 拼接分段结果：两侧都是拉丁字母或数字时补一个空格，中文直接相连。
     static func join(_ parts: [String]) -> String {
-        parts.filter { !$0.isEmpty }.reduce(into: "") { result, part in
-            if let last = result.unicodeScalars.last, let first = part.unicodeScalars.first,
-               last.isASCII, first.isASCII,
-               CharacterSet.alphanumerics.contains(first),
-               CharacterSet.alphanumerics.contains(last) || CharacterSet.punctuationCharacters.contains(last) {
-                result += " "
-            }
-            result += part
-        }
+        Transcript.join(parts)
     }
 }

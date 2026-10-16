@@ -1,4 +1,5 @@
 import AppKit
+import Carbon.HIToolbox
 import Observation
 import SwiftUI
 
@@ -8,6 +9,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var indicator: IndicatorPanel!
     private var controller: DictationController!
     private var statusItem: StatusItemController!
+    private var listener: ListenController!
+    private var captions: CaptionPanel!
+    private var listenHotKey: GlobalHotKey?
+    private var pasteHotKey: GlobalHotKey?
     private var onboardingWindow: NSWindow?
     private var settingsWindow: NSWindow?
 
@@ -15,7 +20,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         NSApp.mainMenu = makeMainMenu()
         indicator = IndicatorPanel(model: model)
         controller = DictationController(model: model, indicator: indicator)
+        setUpListening()
         statusItem = StatusItemController(model: model)
+        statusItem.onToggleListening = { [weak self] in self?.listener.toggle() }
+        statusItem.onListenSourceChanged = { [weak self] in self?.listener.restartIfRunning() }
+        statusItem.onSetCaptionTranslation = { [weak self] in self?.listener.setTranslation($0) }
+        statusItem.onPasteRecentCaptions = { [weak self] in self?.listener.pasteRecent() }
         statusItem.onOpenSettings = { [weak self] in self?.showSettings() }
         statusItem.onOpenOnboarding = { [weak self] in self?.showOnboarding() }
         statusItem.onReprocess = { [weak self] entry, style, language in
@@ -51,6 +61,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 $0 != nil && $0 !== closing && $0!.isVisible
             }
             if !stillOpen { NSApp.setActivationPolicy(.accessory) }
+        }
+    }
+
+    /// 实时字幕：⌃⌥C 开始或停止收听，字幕条上的 ✕ 也是停止收听；⌃⌥V 或点字幕条上的句子，把听到的话粘贴出来。
+    private func setUpListening() {
+        listener = ListenController(model: model) { [weak self] in await self?.controller.readyRecognizer() }
+        captions = CaptionPanel(model: model)
+        captions.onPause = { [weak self] in self?.listener.setPaused($0) }
+        captions.onTranslate = { [weak self] in self?.listener.setTranslation($0) }
+        captions.onPasteFrom = { [weak self] in self?.listener.paste(from: $0) }
+        captions.onClose = { [weak self] in self?.listener.stop() }
+        listener.onStart = { [weak self] in self?.captions.show() }
+        listener.onStop = { [weak self] in self?.captions.close() }
+        // 正在说话输入时不打断，提示只在空闲时显示
+        listener.onError = { [weak self] message in
+            guard let self, self.model.phase == .idle else { return }
+            self.controller.showMessage(message)
+        }
+        listener.onPaste = { [weak self] text in self?.controller.pasteCaptions(text) }
+        listenHotKey = GlobalHotKey(keyCode: kVK_ANSI_C, modifiers: controlKey | optionKey) { [weak self] in
+            self?.listener.toggle()
+        }
+        // ⌃⌥V：粘贴刚才那段
+        pasteHotKey = GlobalHotKey(keyCode: kVK_ANSI_V, modifiers: controlKey | optionKey) { [weak self] in
+            self?.listener.pasteRecent()
         }
     }
 
@@ -112,7 +147,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private func showSettings() {
         if settingsWindow == nil {
-            let window = SettingsWindow.make(model: model)
+            let window = SettingsWindow.make(model: model,
+                                             onToggleListening: { [weak self] in self?.listener.toggle() },
+                                             onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
+                                             onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) })
             window.isReleasedWhenClosed = false
             window.delegate = self
             window.center()

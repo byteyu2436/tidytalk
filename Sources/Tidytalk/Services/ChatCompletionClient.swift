@@ -48,6 +48,14 @@ struct ChatCompletionClient: Sendable {
         return try await complete(messages.map { .init(role: $0.role.rawValue, content: $0.content) })
     }
 
+    /// 翻译一句字幕，返回模型原始输出，调用方用 `CaptionTranslation.validate` 校验。
+    func translateCaption(_ sentence: String, context: [String], language: OutputLanguage,
+                          vocabulary: [String] = []) async throws -> String {
+        let messages = CaptionTranslation.messages(for: sentence, context: context, language: language,
+                                                   vocabulary: vocabulary)
+        return try await complete(messages.map { .init(role: $0.role.rawValue, content: $0.content) })
+    }
+
     /// 发一条最短的请求，同时验证地址、Key 和模型名。
     func testConnection() async throws {
         _ = try await complete([.init(role: "user", content: "回复 OK")])

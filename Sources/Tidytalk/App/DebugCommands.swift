@@ -610,4 +610,228 @@ enum OnboardingCaptureCommand {
         return true
     }
 }
+
+/// 开发用：收听电脑声音若干秒，把电平和实时字幕的变化写入文件，检查收听链路。
+/// 来源读取配置文件的 listen_source，可以配合 `--config <临时配置>` 指定。
+///
+///     open -n Tidytalk.app --args --listen-test <输出文件> <秒数> [--config <配置文件>]
+@MainActor
+enum ListenTestCommand {
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--listen-test"), index + 2 < args.count,
+              let seconds = Double(args[index + 2])
+        else { return false }
+        let output = args[index + 1]
+        var log: [String] = []
+        let started = Date()
+        func note(_ line: String) {
+            log.append(String(format: "%6.2f ", Date().timeIntervalSince(started)) + line)
+            try? (log.joined(separator: "\n") + "\n").write(toFile: output, atomically: true, encoding: .utf8)
+        }
+
+        let model = AppModel()
+        note("source=\(model.configStore.config.listenSource.isEmpty ? "all" : model.configStore.config.listenSource) "
+             + "playing=\(AudioProcesses.playingApps().map(\.bundleID))")
+
+        // 第一阶段：只收音 2 秒，看有没有声音（没有允许"录制系统音频"时全是 0）
+        let peak = PeakMeter()
+        let raw = SystemAudioCapture { samples in peak.add(samples) }
+        if !args.contains("--skip-raw") { do {
+            try raw.start(appBundleID: model.configStore.config.listenSource)
+            RunLoop.main.run(until: Date().addingTimeInterval(2))
+            raw.stop()
+            note("raw samples=\(peak.count) peak=\(peak.peak)")
+        } catch {
+            note("raw error \(error)")
+        } }
+
+        // 第二阶段：完整链路
+        nonisolated(unsafe) var loaded: SpeechRecognizer?
+        let controller = ListenController(model: model) {
+            if loaded == nil { loaded = try? SpeechRecognizer(modelDirectory: model.models.directory) }
+            return loaded
+        }
+        controller.onError = { note("error \($0)") }
+        controller.onDebug = { note($0) }
+        controller.onPaste = { note("paste: \($0)") }
+        controller.start()
+        note("listening=\(model.isListening)")
+        var last = ""
+        let end = Date().addingTimeInterval(seconds)
+        while Date() < end {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+            let text = model.captions.sentences.map { $0.text + ($0.translation.map { " [\($0)]" } ?? "") }.joined(separator: " | ") + " ~ " + model.captions.partial
+            if text != last {
+                note(text)
+                last = text
+            }
+        }
+        // 结束前取一次"刚才那段"，只写进日志，不真的粘贴
+        if args.contains("--paste") { controller.pasteRecent() }
+        controller.stop()
+        note("done")
+        return true
+    }
+
+    private final class PeakMeter: @unchecked Sendable {
+        private let lock = NSLock()
+        private(set) var count = 0
+        private(set) var peak: Float = 0
+
+        func add(_ samples: [Float]) {
+            lock.lock()
+            count += samples.count
+            peak = max(peak, samples.map(abs).max() ?? 0)
+            lock.unlock()
+        }
+    }
+}
+
+/// 开发用：把字幕条放在模拟的视频画面和白色文档前截图（只截本进程窗口，无需屏幕录制权限）。
+/// 会修改配置里的字幕大小，务必配合 `--config <临时配置>` 使用。
+///
+///     open -n Tidytalk.app --args --caption-capture <输出目录> --config <临时配置>
+@MainActor
+enum CaptionCaptureCommand {
+    private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
+
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--caption-capture"), index + 1 < args.count,
+              args.contains("--config"),
+              let symbol = dlsym(dlopen(nil, RTLD_NOW), "CGWindowListCreateImage")
+        else { return false }
+        let capture = unsafeBitCast(symbol, to: CreateImage.self)
+        let dir = URL(fileURLWithPath: args[index + 1])
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        _ = NSApplication.shared
+        NSApp.setActivationPolicy(.accessory)
+        UserDefaults.standard.removeObject(forKey: "captionPanelOrigin")
+
+        let screen = NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) } ?? NSScreen.main!
+        let backdropFrame = NSRect(x: screen.visibleFrame.midX - 450, y: screen.visibleFrame.minY + 60,
+                                   width: 900, height: 260)
+        let backdrop = NSWindow(contentRect: backdropFrame, styleMask: [.borderless], backing: .buffered, defer: false)
+        backdrop.contentView = VideoView()
+        backdrop.level = .floating
+        backdrop.orderFrontRegardless()
+
+        let model = AppModel()
+        model.configStore.update { $0.captionSize = .medium }
+        let panel = CaptionPanel(model: model)
+        model.isListening = true
+        panel.show()
+
+        func shot(_ name: String) {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.6))
+            let rect = CGRect(x: backdropFrame.minX, y: NSScreen.screens[0].frame.maxY - backdropFrame.maxY,
+                              width: backdropFrame.width, height: backdropFrame.height)
+            if let image = capture(rect, 1, 0, 0)?.takeRetainedValue() {
+                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                    .write(to: dir.appending(path: "\(name).png"))
+            }
+        }
+
+        shot("listening")
+        model.captions.commit("Good morning everyone. Today we will review the quarterly results.")
+        model.captions.partial = "Then we will talk about the plan"
+        shot("english")
+        model.captions.clear()
+        for sentence in ["大家好，今天我们来讨论一下下个季度的计划。", "首先请产品经理介绍一下新功能，然后设计和开发分别说一下排期。",
+                         "这次的重点是实时字幕，可以收听视频和会议里的声音。"] {
+            model.captions.commit(sentence)
+        }
+        model.captions.partial = "大家有什么问题"
+        shot("chinese")
+        panel.showsControls = true
+        shot("controls")
+        model.listeningPaused = true
+        shot("paused")
+        model.listeningPaused = false
+        panel.showsControls = false
+        for size in [CaptionSize.small, .large] {
+            model.configStore.update { $0.captionSize = size }
+            shot("size-\(size.rawValue)")
+        }
+        model.configStore.update { $0.captionSize = .medium }
+        backdrop.contentView = DocumentView()
+        shot("white")
+
+        // 打开翻译：每句原文下面一行译文
+        backdrop.contentView = VideoView()
+        model.configStore.update { $0.captionTranslate = true }
+        model.captions.clear()
+        let pairs = [("Good morning everyone. Today we will review the quarterly results.", "大家早上好，今天我们来回顾一下季度业绩。"),
+                     ("Then we will talk about the plan for next year.", "然后我们聊聊明年的计划。")]
+        for (original, translation) in pairs {
+            if let id = model.captions.commit(original) { model.captions.setTranslation(translation, for: id) }
+        }
+        shot("bilingual")
+        if let id = model.captions.commit("Does anyone have questions before we start?") { model.captions.markTranslating(id) }
+        shot("bilingual-translating")
+        model.captions.partial = "Okay, let's move on to"
+        panel.showsControls = true
+        shot("bilingual-partial")
+        panel.showsControls = false
+
+        // 鼠标停在第二句上的高亮，以及点击换算到的句子
+        let ids = model.captions.sentences.map(\.id)
+        panel.debugHover(.sentence(ids[ids.count - 1]))
+        shot("hover")
+        panel.debugHover(nil)
+        var clicks: [String] = []
+        panel.onPasteFrom = { id in clicks.append(id.map { model.captions.passage(from: $0) } ?? "partial:" + model.captions.passage(from: nil)) }
+        panel.debugClick(.sentence(ids[1]))
+        panel.debugClick(.partial)
+        try? clicks.joined(separator: "\n").write(to: dir.appending(path: "clicks.txt"), atomically: true, encoding: .utf8)
+        model.configStore.update { $0.captionTranslate = false }
+
+        // 玻璃样式：彩色画面、白色文档，以及系统深色模式下各截一张
+        model.captions.clear()
+        for sentence in ["大家好，今天我们来讨论一下下个季度的计划。", "首先请产品经理介绍一下新功能。"] { model.captions.commit(sentence) }
+        model.captions.partial = "大家有什么问题"
+        model.configStore.update { $0.captionStyle = .glass }
+        backdrop.contentView = VideoView()
+        shot("glass-video-early")
+        RunLoop.main.run(until: Date().addingTimeInterval(1.5))
+        shot("glass-video")
+        backdrop.contentView = DocumentView()
+        shot("glass-white")
+        NSApp.appearance = NSAppearance(named: .darkAqua)
+        backdrop.contentView = VideoView()
+        shot("glass-video-dark")
+        model.configStore.update { $0.captionTranslate = true }
+        model.captions.clear()
+        for (original, translation) in pairs {
+            if let id = model.captions.commit(original) { model.captions.setTranslation(translation, for: id) }
+        }
+        panel.showsControls = true
+        shot("glass-bilingual-dark")
+        NSApp.appearance = nil
+        shot("glass-bilingual")
+        panel.showsControls = false
+        model.configStore.update { $0.captionStyle = .dark; $0.captionTranslate = false }
+        return true
+    }
+
+    /// 模拟视频画面：明暗不一的色块。
+    private final class VideoView: NSView {
+        override func draw(_ dirtyRect: NSRect) {
+            let gradient = NSGradient(colors: [.systemTeal, .systemIndigo, .black, .systemOrange, .white])!
+            gradient.draw(in: bounds, angle: 15)
+        }
+    }
+
+    private final class DocumentView: NSView {
+        override func draw(_ dirtyRect: NSRect) {
+            NSColor.white.setFill()
+            bounds.fill()
+            let text = NSAttributedString(string: "这是一段普通文档里的文字，用来模拟白色背景的应用窗口。Tidytalk", attributes: [
+                .font: NSFont.systemFont(ofSize: 16), .foregroundColor: NSColor.darkGray,
+            ])
+            for y in stride(from: 6, to: bounds.height, by: 28) { text.draw(at: NSPoint(x: 120, y: y)) }
+        }
+    }
+}
 #endif
