@@ -9,7 +9,14 @@ import TidytalkCore
 @Observable
 final class ConfigStore {
     nonisolated static var fileURL: URL {
-        FileManager.default.homeDirectoryForCurrentUser.appending(path: ".tidytalk.json")
+        #if DEBUG || TIDYTALK_DEV_TOOLS
+        // 开发用：`--config <文件>` 改用另一份配置，截图时不碰真实设置
+        let args = CommandLine.arguments
+        if let index = args.firstIndex(of: "--config"), index + 1 < args.count {
+            return URL(fileURLWithPath: args[index + 1])
+        }
+        #endif
+        return FileManager.default.homeDirectoryForCurrentUser.appending(path: ".tidytalk.json")
     }
 
     private(set) var config = AppConfig()

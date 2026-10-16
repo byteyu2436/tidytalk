@@ -55,7 +55,7 @@ struct OnboardingView: View {
             footer
                 .padding(16)
         }
-        .frame(width: 640, height: 560)
+        .frame(width: 640, height: 620)
         // 顶部已经手动留出标题栏的高度，不再让系统按安全区域整体下移（否则底部按钮会被挤出窗口）
         .ignoresSafeArea()
         .onAppear { step = initialStep ?? firstIncompleteStep }

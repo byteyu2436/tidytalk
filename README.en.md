@@ -19,7 +19,7 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 
 - **Your data stays on your Mac.** Speech is recognized locally with [SenseVoice](https://github.com/FunAudioLLM/SenseVoice), and recordings are never uploaded. With a local model in Ollama or LM Studio, AI tidying stays on your Mac too. It supports Chinese (with mixed-in English), English, Japanese, Korean, and Cantonese, and detects the language automatically.
 - **Cleans up, keeps your words.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
-- **Local AI or cloud, your choice.** Built-in presets for Ollama and LM Studio need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
+- **Local AI or cloud, your choice.** Pick Ollama, LM Studio, or Cloud right in Settings; local models need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
 - **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
 - **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
 - **And more:** personal vocabulary, replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.

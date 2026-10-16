@@ -53,4 +53,21 @@ import Testing
         let deepseek = AIPreset.all.first { $0.id == "deepseek" }!.applied(to: ollama)
         #expect(deepseek.baseURL == AIConfig.default.baseURL && deepseek.apiKey == "sk-keep")
     }
+
+    @Test func providerDetectionFollowsTheEndpoint() {
+        var ai = AIConfig.default
+        #expect(AIProvider.detect(ai) == .cloud)
+        ai = AIProvider.ollama.preset.applied(to: ai)
+        #expect(AIProvider.detect(ai) == .ollama)
+        ai = AIProvider.lmStudio.preset.applied(to: ai)
+        #expect(AIProvider.detect(ai) == .lmStudio)
+        ai.baseURL = "http://127.0.0.1:8080/v1"
+        #expect(AIProvider.detect(ai) == nil)
+        ai.baseURL = "https://api.openai.com/v1"
+        #expect(AIProvider.detect(ai) == .cloud)
+        // 切回云端时恢复 DeepSeek 的默认地址和模型，API Key 保持不变
+        ai.apiKey = "sk-test"
+        let cloud = AIProvider.cloud.preset.applied(to: AIProvider.ollama.preset.applied(to: ai))
+        #expect(cloud.baseURL == AIConfig.default.baseURL && cloud.apiKey == "sk-test")
+    }
 }

@@ -29,6 +29,11 @@ struct AIConfigEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            ProviderPicker(selection: AIProvider.detect(draft)) { provider in
+                // 再点一次当前这一类不重置，避免把自己改过的云端地址换回 DeepSeek
+                guard provider != AIProvider.detect(draft) else { return }
+                apply(provider.preset)
+            }
             Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
                 GridRow {
                     Text("接口地址").gridColumnAlignment(.trailing)
@@ -61,12 +66,6 @@ struct AIConfigEditor: View {
                     .disabled(!isDirty)
                 Button("测试连接", action: test)
                     .disabled(testState == .testing || !draft.isConfigured)
-                Menu("预设") {
-                    ForEach(AIPreset.all) { preset in
-                        Button(preset.name) { apply(preset) }
-                    }
-                }
-                .fixedSize()
                 Spacer()
                 Button("打开配置文件") { store.openInEditor() }
                     .buttonStyle(.link)
@@ -153,6 +152,84 @@ struct AIConfigEditor: View {
             }
         }
         return error.localizedDescription
+    }
+}
+
+/// AI 服务的三种选择：Ollama、LM Studio（都在本机运行）和云端接口，带各自的图标。
+struct ProviderPicker: View {
+    let selection: AIProvider?
+    let choose: (AIProvider) -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(AIProvider.allCases, id: \.self) { provider in
+                Button { choose(provider) } label: {
+                    HStack(spacing: 8) {
+                        Image(nsImage: Self.icon(provider))
+                            .resizable()
+                            .interpolation(.high)
+                            .frame(width: 26, height: 26)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(Self.title(provider)).font(.callout.weight(.semibold))
+                            Text(Self.detail(provider)).font(.caption).foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(RoundedRectangle(cornerRadius: 9))
+                }
+                .buttonStyle(ProviderButtonStyle(isSelected: provider == selection))
+                .accessibilityAddTraits(provider == selection ? .isSelected : [])
+            }
+        }
+    }
+
+    static func title(_ provider: AIProvider) -> String {
+        switch provider {
+        case .ollama: "Ollama"
+        case .lmStudio: "LM Studio"
+        case .cloud: String(localized: "云端")
+        }
+    }
+
+    static func detail(_ provider: AIProvider) -> String {
+        switch provider {
+        case .ollama, .lmStudio: String(localized: "本机运行")
+        case .cloud: String(localized: "DeepSeek 等")
+        }
+    }
+
+    /// 图标随应用打包在 Resources/ProviderIcons 里；直接用 swift run 运行时没有，就用系统图标代替。
+    static func icon(_ provider: AIProvider) -> NSImage {
+        let name = switch provider {
+        case .ollama: "ollama"
+        case .lmStudio: "lmstudio"
+        case .cloud: "cloud"
+        }
+        if let url = Bundle.main.url(forResource: name, withExtension: "png", subdirectory: "ProviderIcons"),
+           let image = NSImage(contentsOf: url) {
+            return image
+        }
+        return NSImage(systemSymbolName: provider == .cloud ? "cloud" : "desktopcomputer", accessibilityDescription: nil)!
+    }
+}
+
+private struct ProviderButtonStyle: ButtonStyle {
+    let isSelected: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 9)
+                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color.primary.opacity(configuration.isPressed ? 0.08 : 0.04))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 9)
+                    .strokeBorder(isSelected ? Color.accentColor : Color.primary.opacity(0.12), lineWidth: isSelected ? 1.5 : 1)
+            )
     }
 }
 

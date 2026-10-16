@@ -46,6 +46,8 @@ if [[ -f Resources/AppIcon.icns ]]; then
   cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
   /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$APP/Contents/Info.plist"
 fi
+# AI 服务选项的图标（Ollama、LM Studio 的标志来自它们的官网）
+cp -R Resources/ProviderIcons "$APP/Contents/Resources/"
 # 许可证与第三方声明（随附的 sherpa-onnx、ONNX Runtime）
 cp LICENSE THIRD_PARTY_NOTICES.md "$APP/Contents/Resources/"
 

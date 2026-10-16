@@ -1514,8 +1514,7 @@ a.card .more {
 /* 隐私区块的小标签 */
 .privacy-points .tag {
   display: inline-block;
-  vertical-align: 2px;
-  margin-left: 6px;
+  margin: 0 0 10px;
   padding: 1px 8px;
   border-radius: 999px;
   background: color-mix(in srgb, #1f9d55 12%, transparent);
@@ -1528,4 +1527,59 @@ a.card .more {
   .privacy-points .tag {
     color: #4ade80;
   }
+}
+
+/* AI 服务的三个标签：Ollama / LM Studio / 云端 */
+.provider-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.provider-tabs [role="tab"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.provider-tabs [role="tab"] img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.provider-tabs [role="tab"][aria-selected="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  .provider-tabs [role="tab"][aria-selected="true"] {
+    background: #2c2c30;
+  }
+}
+
+.provider-switch {
+  text-align: center;
+}
+
+.feature-split .provider-switch picture {
+  aspect-ratio: 1000 / 971;
 }

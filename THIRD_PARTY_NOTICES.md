@@ -27,3 +27,7 @@ These libraries are not stored in this repository. `scripts/fetch-deps.sh` downl
 - License: FunASR Model Open Source License Agreement v1.1, https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE
 
 The model is not part of this repository or the app bundle. Tidytalk downloads it from Hugging Face (or the hf-mirror.com mirror) to `~/Library/Application Support/Tidytalk/Models/` the first time you run it. Your use of the model is governed by the model license above.
+
+## Trademarks
+
+Ollama and LM Studio are trademarks of their respective owners. Their logos appear in Tidytalk's settings and on its website only to identify the local AI tools Tidytalk can connect to; Tidytalk is not affiliated with or endorsed by either project. The logo images come from https://ollama.com and https://lmstudio.ai and are stored, resized onto icon tiles by `scripts/make-provider-icons.swift`, in `Resources/ProviderIcons/` and `site/assets/providers/`.

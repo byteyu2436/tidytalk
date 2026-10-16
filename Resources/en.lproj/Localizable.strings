@@ -394,9 +394,6 @@
 /* SharedViews.swift:62 */
 "测试连接" = "Test Connection";
 
-/* SharedViews.swift:64 */
-"预设" = "Presets";
-
 /* SharedViews.swift:71 */
 "打开配置文件" = "Open Config File";
 
@@ -568,12 +565,6 @@
 /* VocabularySettings.swift:162 */
 "还原" = "Revert";
 
-/* AIPreset.swift:16 */
-"Ollama（本机）" = "Ollama (local)";
-
-/* AIPreset.swift:18 */
-"LM Studio（本机）" = "LM Studio (local)";
-
 /* AppConfig.swift:156 */
 "配置文件不是有效的 JSON 对象" = "The config file isn't a valid JSON object";
 
@@ -657,3 +648,10 @@
 
 /* OutputLanguage.swift:41 */
 "译成西班牙文" = "To Spanish";
+
+/* SharedViews.swift */
+"云端" = "Cloud";
+
+"本机运行" = "Local";
+
+"DeepSeek 等" = "Online";

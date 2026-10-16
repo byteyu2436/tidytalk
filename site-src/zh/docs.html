@@ -137,7 +137,7 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
       <p>Tidytalk 用 OpenAI 兼容协议连接 AI 服务，所以也能接本机运行的模型，文字不会离开电脑：</p>
       <ol>
         <li>安装 <a href="https://ollama.com">Ollama</a> 并下载一个模型，例如 <code>ollama pull qwen2.5:7b</code>；或者在 LM Studio 里下载并加载模型，打开本地服务。</li>
-        <li>在"设置 › 配置 AI"里点"预设"，选"Ollama（本机）"或"LM Studio（本机）"，确认模型名后保存。本机模型不需要 API Key，超时默认放宽到 60 秒。</li>
+        <li>在"设置 › 配置 AI"顶部选 <strong>Ollama</strong> 或 <strong>LM Studio</strong>，确认模型名后保存。要换回 DeepSeek、OpenAI 等云端接口，选<strong>云端</strong>。本机模型不需要 API Key，超时默认放宽到 60 秒。</li>
         <li>点"测试连接"确认可用。</li>
       </ol>
       <p>效果取决于模型大小。小模型对"只整理、不回答"和自定义规则的遵守不如云端模型稳定，建议用 7B 左右或更大的模型。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
