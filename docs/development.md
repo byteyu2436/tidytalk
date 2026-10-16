@@ -96,6 +96,9 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 - 域名在 Cloudflare 上解析：`tidytalk` 的 CNAME 记录指向 `byteyu2436.github.io`，代理状态为"仅 DNS"。打开 Cloudflare 代理会让 GitHub 无法签发 HTTPS 证书。
 - 页面里的规范链接、中英文互链、分享图和 `sitemap.xml` 都写的是这个域名，换域名时要一起改。
 
+- 每次发布后，流程会用 IndexNow 通知必应等搜索引擎重新抓取 `sitemap.xml` 里的网址，密钥文件是 `site/<密钥>.txt`。
+- 截图和分享图要先压缩：`swift scripts/optimize-site-images.swift screenshot <截图.png> site/assets/<名字> 1000` 会生成浅色、深色两张 JPEG，页面里用 `<picture>` 按系统主题切换。
+
 本地预览：
 
 ```bash

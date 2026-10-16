@@ -33,3 +33,13 @@ jobs:
           path: site
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # 用 IndexNow 通知必应等搜索引擎重新抓取（密钥文件是 site/70cbd603934f81e027ff4763a9e9dec5.txt）
+      - name: Notify search engines (IndexNow)
+        run: |
+          sleep 30
+          urls=$(grep -o '<loc>[^<]*</loc>' site/sitemap.xml | sed -e 's/<loc>//' -e 's/<\/loc>//' | python3 -c 'import json,sys;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+          body=$(printf '{"host":"tidytalk.zayen.dev","key":"70cbd603934f81e027ff4763a9e9dec5","keyLocation":"https://tidytalk.zayen.dev/70cbd603934f81e027ff4763a9e9dec5.txt","urlList":%s}' "$urls")
+          echo "$body"
+          curl -sS -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST https://api.indexnow.org/indexnow \
+            -H "Content-Type: application/json; charset=utf-8" -d "$body"
