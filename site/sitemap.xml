@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://tidytalk.zayen.dev/changelog/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/changelog/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/compare/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/compare/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/compare/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/compare/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/docs/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/docs/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/docs/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/docs/"/>
+  </url>
+  <url>
     <loc>https://tidytalk.zayen.dev/</loc>
     <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/"/>
@@ -8,10 +29,73 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
   </url>
   <url>
+    <loc>https://tidytalk.zayen.dev/use-cases/developers/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/developers/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/developers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/developers/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/use-cases/offline/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/offline/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/use-cases/translation/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/translation/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/changelog/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/changelog/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/compare/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/compare/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/compare/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/compare/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/docs/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/docs/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/docs/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/docs/"/>
+  </url>
+  <url>
     <loc>https://tidytalk.zayen.dev/zh/</loc>
     <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/use-cases/developers/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/developers/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/developers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/developers/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/use-cases/offline/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/offline/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/use-cases/translation/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/translation/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
   </url>
 </urlset>

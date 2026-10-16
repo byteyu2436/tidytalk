@@ -1,0 +1,310 @@
+<!doctype html>
+<!-- 由 scripts/build_site.py 从 site-src/en/docs.html 生成，请修改源文件 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tidytalk User Guide – Voice Dictation on Mac, Step by Step</title>
+  <meta name="description" content="How to install and use Tidytalk on your Mac: hold-to-talk dictation, voice rewrite, cleanup modes, translation, local AI models, and troubleshooting.">
+  <link rel="canonical" href="https://tidytalk.zayen.dev/docs/">
+  <link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/docs/">
+  <link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/docs/">
+  <link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/docs/">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tidytalk">
+  <meta property="og:title" content="Tidytalk User Guide – Voice Dictation on Mac, Step by Step">
+  <meta property="og:description" content="How to install and use Tidytalk on your Mac: hold-to-talk dictation, voice rewrite, cleanup modes, translation, local AI models, and troubleshooting.">
+  <meta property="og:url" content="https://tidytalk.zayen.dev/docs/">
+  <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-en.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Tidytalk icon with the tagline: Hold to talk. Let go, and you get clean text.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tidytalk User Guide – Voice Dictation on Mac, Step by Step">
+  <meta name="twitter:description" content="How to install and use Tidytalk on your Mac: hold-to-talk dictation, voice rewrite, cleanup modes, translation, local AI models, and troubleshooting.">
+  <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-en.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+  <link rel="apple-touch-icon" href="/assets/icon-180.png">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Tidytalk User Guide",
+  "description": "How to install and use Tidytalk on your Mac: hold-to-talk dictation, voice rewrite, cleanup modes, translation, local AI models, and troubleshooting.",
+  "inLanguage": "en",
+  "url": "https://tidytalk.zayen.dev/docs/",
+  "mainEntityOfPage": "https://tidytalk.zayen.dev/docs/",
+  "image": "https://tidytalk.zayen.dev/assets/og-en.jpg",
+  "datePublished": "2026-10-16",
+  "dateModified": "2026-10-16",
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Tidytalk",
+    "operatingSystem": "macOS",
+    "url": "https://tidytalk.zayen.dev/"
+  }
+}
+</script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://tidytalk.zayen.dev/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "User guide",
+      "item": "https://tidytalk.zayen.dev/docs/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Main">
+      <a class="brand" href="/" aria-label="Tidytalk home">
+        <img src="/assets/icon-180.png" alt="" width="28" height="28">
+        Tidytalk
+      </a>
+      <ul class="nav-links">
+        <li class="nav-section"><a href="/docs/" aria-current="page">Docs</a></li><li class="nav-section"><a href="/compare/">Compare</a></li><li class="nav-section"><a href="/changelog/">Changelog</a></li>
+        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li><a href="/zh/docs/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li>
+      </ul>
+    </nav>
+  </header>
+  <nav class="breadcrumbs container" aria-label="Breadcrumb"><a href="/">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">User guide</span></nav>
+<main id="main" class="page container">
+    <header class="page-head">
+      <h1>Tidytalk user guide</h1>
+      <p class="lead">Everything Tidytalk can do, from your first dictation to local AI models and troubleshooting.</p>
+      <p class="updated">Updated 2026-10-16</p>
+    </header>
+
+    <div class="prose">
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title">On this page</h2>
+        <ol>
+          <li><a href="#install">Install and set up</a></li>
+          <li><a href="#hold-to-talk">Hold to talk</a></li>
+          <li><a href="#hands-free">Hands-free recording</a></li>
+          <li><a href="#rewrite">Rewrite selected text</a></li>
+          <li><a href="#tidying">How tidying works</a></li>
+          <li><a href="#strength-and-mode">Cleanup strength and mode</a></li>
+          <li><a href="#output-language">Output language</a></li>
+          <li><a href="#local-models">Local AI models</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+          <li><a href="#spacing">Chinese–English spacing</a></li>
+          <li><a href="#recent">Recent results</a></li>
+          <li><a href="#languages">Supported languages</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#uninstall">Uninstall</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="install">Install and set up</h2>
+      <p>Tidytalk needs macOS 26 or later on a Mac with Apple silicon.</p>
+      <ol>
+        <li>Download the latest <code>Tidytalk-x.y.z.dmg</code> from <a href="https://github.com/byteyu2436/tidytalk/releases/latest">GitHub Releases</a>, open it, and drag Tidytalk into the Applications folder.</li>
+        <li>The app isn't notarized by Apple yet, so macOS blocks it the first time. Open System Settings › Privacy &amp; Security and click "Open Anyway" at the bottom, or run this in Terminal:
+          <pre><code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code></pre>
+        </li>
+        <li>Follow the setup guide that opens:
+          <ul>
+            <li><strong>Allow Microphone</strong> so Tidytalk can record.</li>
+            <li><strong>Allow Accessibility</strong> so it can detect the shortcut and paste text at your cursor.</li>
+            <li><strong>Set Up AI</strong>: enter an OpenAI-compatible endpoint, API key, and model. DeepSeek is the default. You can skip this and get the raw transcript instead.</li>
+            <li><strong>Download Speech Model</strong>: about 240&nbsp;MB, once. After that, recognition works offline.</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Tidytalk lives in the menu bar and doesn't appear in the Dock. Open its menu bar icon for settings, recent results, and the output language.</p>
+
+      <h2 id="hold-to-talk">Hold to talk</h2>
+      <ol>
+        <li>Put your cursor in any text field.</li>
+        <li>Hold <kbd>Option</kbd> + <kbd>Command</kbd> and speak. A glass indicator appears at the bottom of the screen and moves with your voice.</li>
+        <li>Let go. After a moment, the tidied text appears at your cursor.</li>
+      </ol>
+      <ul>
+        <li>Recording starts after you hold the keys for about 0.4 seconds, so ordinary shortcuts such as Option + Command + a letter don't trigger it.</li>
+        <li>Press another key, click the mouse, or press <kbd>Esc</kbd> while holding to cancel.</li>
+        <li>One recording can be up to about 2 minutes. Recordings shorter than half a second are ignored.</li>
+        <li>Change the shortcut in Settings › Recording. You can choose Control, Option, Command, Fn (🌐), Right Option, or Right Command. If you choose Fn, set "Press 🌐 key to" to "Do Nothing" in System Settings › Keyboard, or macOS opens emoji or Dictation at the same time.</li>
+        <li>Live text appears under the indicator while you speak. It's only a preview: the final result is recognized and tidied after you let go.</li>
+        <li>If there's nowhere to type, for example the focus is on the desktop or a web page, the result is copied to the clipboard instead of pasted.</li>
+        <li>Your clipboard is restored after pasting, including images, files, and rich text.</li>
+      </ul>
+
+      <h2 id="hands-free">Hands-free recording</h2>
+      <p>Double-tap the shortcut to start recording without holding the keys, which is handy for longer thoughts. Press the shortcut once more to finish, or <kbd>Esc</kbd> to cancel. Typing and clicking don't interrupt a hands-free recording. You can turn this off in Settings › Recording.</p>
+
+      <h2 id="rewrite">Rewrite selected text</h2>
+      <p>Select some text, hold <kbd>Right Option</kbd>, and say how to change it, such as "make it more formal", "shorten this to one sentence", or "translate to English". When you let go, the selection is replaced with the rewrite.</p>
+      <ul>
+        <li>This needs an AI service. The selected text and your instruction are sent to it.</li>
+        <li>If nothing is selected, Tidytalk asks you to select text first. If the rewrite fails, your text isn't changed.</li>
+        <li>Change or turn off the rewrite shortcut in Settings › Recording.</li>
+      </ul>
+
+      <h2 id="tidying">How tidying works</h2>
+      <p>Tidying only removes and corrects. It doesn't change what you said:</p>
+      <ul>
+        <li>Filler words such as "um", "uh", and "like" (and 嗯、那个、就是说 in Chinese) are removed.</li>
+        <li>Repeated words and slips are removed. When you correct yourself, only the corrected version is kept.</li>
+        <li>Punctuation is added, and long speech is split into sentences.</li>
+        <li>It never summarizes or adds content. English words and technical terms inside Chinese speech are kept as they are.</li>
+        <li>Text that sounds like a command, such as "write me an email", is tidied into text, not carried out.</li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>You say</th><th>You get</th></tr></thead>
+          <tbody>
+            <tr><td>Um so I wanted to ask, like, what's the uh rate limit for this API</td><td>I wanted to ask what the rate limit for this API is.</td></tr>
+            <tr><td>Let's move the launch to Wednesday, no wait, Thursday</td><td>Let's move the launch to Thursday.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Turn off "Tidy up text" in Settings › Set Up AI to paste the raw transcript. Tidytalk then works fully offline. If the AI service is slow, unreachable, or returns something unexpected, Tidytalk pastes the raw transcript and tells you.</p>
+
+      <h2 id="strength-and-mode">Cleanup strength and mode</h2>
+      <p>Both are in Settings › Set Up AI › Tidying.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Strength</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Light</td><td>Only adds punctuation and removes fillers like "um" and "uh". Everything else stays as you said it.</td></tr>
+            <tr><td>Standard (default)</td><td>Removes fillers and slips, and adds punctuation.</td></tr>
+            <tr><td>Thorough</td><td>Also tightens wordy or repetitive phrasing, without changing the meaning.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mode</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Standard (default)</td><td>Removes fillers, fixes slips, and adds punctuation, keeping your meaning.</td></tr>
+            <tr><td>Chat (casual)</td><td>Keeps a casual tone and sentence-final particles. Good for messages.</td></tr>
+            <tr><td>Email (formal)</td><td>Uses formal, complete sentences. Good for email and documents.</td></tr>
+            <tr><td>Code (keep terms)</td><td>Keeps terms, commands, file names, and symbols exactly as they are and leaves punctuation alone. Good for technical writing.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="output-language">Output language</h2>
+      <p>By default the output is in the language you spoke. Choose another output language and the text is translated as it's tidied, so you can speak Chinese and paste an English email. Tidytalk can translate into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, and Spanish.</p>
+      <ul>
+        <li>Change it in Settings › Set Up AI › Tidying, or quickly from the "Output Language" submenu in the menu bar.</li>
+        <li>Translation and tidying happen in one request, so it's about as fast as tidying alone. Your vocabulary and mode still apply.</li>
+        <li>Translation needs "Tidy up text" turned on. If the request fails, the original text is pasted.</li>
+      </ul>
+      <p>See <a href="/use-cases/translation/">Dictate and translate</a> for examples.</p>
+
+      <h2 id="local-models">Local AI models</h2>
+      <p>Tidytalk talks to AI services with the OpenAI-compatible protocol, so it also works with models running on your Mac. Then your text never leaves the computer.</p>
+      <ol>
+        <li>Install <a href="https://ollama.com">Ollama</a> and download a model, for example <code>ollama pull qwen2.5:7b</code>. Or download and load a model in LM Studio and start its local server.</li>
+        <li>In Settings › Set Up AI, click "Presets", choose "Ollama (local)" or "LM Studio (local)", confirm the model name, and save. Local models don't need an API key, and the timeout is raised to 60 seconds.</li>
+        <li>Click "Test Connection".</li>
+      </ol>
+      <p>Results depend on the model size. Small models follow "tidy, don't answer" and custom rules less reliably than cloud models, so a model around 7B or larger is recommended. See <a href="/use-cases/offline/">Private and offline dictation</a> for details.</p>
+
+      <h2 id="vocabulary">Vocabulary</h2>
+      <p>All of these are in Settings › Vocabulary.</p>
+      <h3>Common words</h3>
+      <p>List names, products, and terms you use, one per line. These are the words speech recognition gets wrong most often. They're added to the AI prompt so similar-sounding mistakes are corrected to your spelling. Requires "Tidy up text".</p>
+      <h3>Replacements</h3>
+      <p>Always replace one spelling with another, for example "cloud" with "Claude". English matching ignores case and only matches whole words. Replacements run on your Mac, even with tidying off. From "Recent" in the menu bar, choose a result and "Add to Vocabulary…" to add a misheard word directly.</p>
+      <h3>Snippets</h3>
+      <p>Say only a phrase such as "my email" to insert a full email address or a canned reply. The snippet is used only when the whole recording is that phrase, never when it appears inside a sentence.</p>
+      <h3>Custom rules</h3>
+      <p>Write your own rules, one per line, such as "Write amounts as digits" or "Write the product name as Tidytalk". Tidying and voice rewrite follow them. Rules only affect how things are written; they never make the AI add content. Up to 20 rules.</p>
+
+      <h2 id="spacing">Chinese–English spacing</h2>
+      <p>Tidytalk adds spaces between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs aren't affected. This runs on your Mac and can be turned off in Settings › General.</p>
+
+      <h2 id="recent">Recent results</h2>
+      <p>Your last 20 results are kept in memory. From "Recent" in the menu bar you can paste or copy one again, copy the raw transcript, re-tidy it with another mode or language and paste it into the current text field, or add a misheard word to your vocabulary. Nothing is written to disk, and the list is cleared when you quit.</p>
+
+      <h2 id="languages">Supported languages</h2>
+      <p>You don't choose a language before speaking. Tidytalk detects it automatically and supports:</p>
+      <ul>
+        <li>Mandarin Chinese, including English words and technical terms mixed in</li>
+        <li>English</li>
+        <li>Japanese</li>
+        <li>Korean</li>
+        <li>Cantonese (written in Simplified Chinese, keeping Cantonese wording)</li>
+      </ul>
+      <p>Other spoken languages aren't supported yet. To write in French, German, or Spanish, speak Chinese or English and set the output language. The interface is available in English and Simplified Chinese and follows your system language.</p>
+
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What happens</th><th>Why, and what to do</th></tr></thead>
+          <tbody>
+            <tr><td>"Cleanup failed, pasted original"</td><td>The AI service was unreachable, timed out, or returned something unusual. Check your network and click "Test Connection" in Settings › Set Up AI.</td></tr>
+            <tr><td>"Didn't hear anything"</td><td>Nothing was recognized. Check the microphone in Settings › Recording.</td></tr>
+            <tr><td>The shortcut does nothing</td><td>Accessibility access is missing. Allow it in Settings › Permissions.</td></tr>
+            <tr><td>macOS says it can't verify the developer</td><td>The app isn't notarized yet. Click "Open Anyway" in System Settings › Privacy &amp; Security.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Accessibility still shows as not allowed</h3>
+      <p>If Tidytalk is turned on in System Settings but still shows as not allowed, the list probably has an entry from an older version. In System Settings › Privacy &amp; Security › Accessibility, select Tidytalk, click "−" to remove it, then click "Allow" in Tidytalk to add it again. Or run:</p>
+      <pre><code>tccutil reset Accessibility app.tidytalk.Tidytalk</code></pre>
+      <p>All settings are stored in <code>~/.tidytalk.json</code>, which you can edit directly. See the <a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">configuration reference</a>.</p>
+
+      <h2 id="uninstall">Uninstall</h2>
+      <p>Dragging Tidytalk to the Trash removes only the app. The speech model, settings, and permission records stay on your Mac. To remove everything, quit Tidytalk (turn off "Open at login" first if you enabled it), move the app to the Trash, and run:</p>
+      <pre><code>rm -rf ~/Library/Application\ Support/Tidytalk
+rm -f ~/.tidytalk.json
+rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
+defaults delete app.tidytalk.Tidytalk
+tccutil reset All app.tidytalk.Tidytalk</code></pre>
+      <p>These remove the speech model (about 230&nbsp;MB), your settings including your API key, network caches, preferences, and microphone and accessibility permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Ready to try it?</h2>
+      <p>Tidytalk is free and open source.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/compare/">Compare with other apps</a>
+      </div>
+    </aside>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
+        <p>Tidytalk is open source under the MIT License. Speech recognition uses <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> and <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>.</p>
+      </div>
+      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/compare/">Compare</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Use cases</h2><ul><li><a href="/use-cases/developers/">For developers</a></li><li><a href="/use-cases/translation/">Dictate and translate</a></li><li><a href="/use-cases/offline/">Private and offline</a></li></ul></div>
+      <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
+        <li><a href="/zh/docs/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li></ul></div>
+    </div>
+  </footer>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "88c5b4942b344ed7a3a8023fb3a384a4"}'></script>
+</body>
+</html>

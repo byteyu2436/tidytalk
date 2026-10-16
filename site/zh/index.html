@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- 由 scripts/build_site.py 从 site-src/zh/index.html 生成，请修改源文件 -->
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -12,11 +13,10 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tidytalk">
   <meta property="og:title" content="Tidytalk：Mac 语音输入，按住说话自动整理成文字">
-  <meta property="og:description" content="按住说话，松开就是整理好的文字。语音在本机识别，AI 去掉口头禅、修正口误和标点。免费开源。">
+  <meta property="og:description" content="Tidytalk 是免费开源的 macOS 段落式语音输入工具。按住快捷键说话，语音在本机识别，AI 自动去掉口头禅、修正口误和标点，松开后文字直接出现在光标处。支持中文、英文、日文、韩文和粤语。">
   <meta property="og:url" content="https://tidytalk.zayen.dev/zh/">
   <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
   <meta property="og:image:width" content="1200">
@@ -26,15 +26,30 @@
   <meta property="og:locale:alternate" content="en_US">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Tidytalk：Mac 语音输入，按住说话自动整理成文字">
-  <meta name="twitter:description" content="按住说话，松开就是整理好的文字。语音在本机识别，AI 去掉口头禅、修正口误和标点。免费开源。">
+  <meta name="twitter:description" content="Tidytalk 是免费开源的 macOS 段落式语音输入工具。按住快捷键说话，语音在本机识别，AI 自动去掉口头禅、修正口误和标点，松开后文字直接出现在光标处。支持中文、英文、日文、韩文和粤语。">
   <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
-
   <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icon-32.png">
-  <link rel="apple-touch-icon" href="../assets/icon-180.png">
-  <link rel="stylesheet" href="../assets/style.css">
-
-  <script type="application/ld+json">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+  <link rel="apple-touch-icon" href="/assets/icon-180.png">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="主导航">
+      <a class="brand" href="/zh/" aria-label="Tidytalk 首页">
+        <img src="/assets/icon-180.png" alt="" width="28" height="28">
+        Tidytalk
+      </a>
+      <ul class="nav-links">
+        <li class="nav-section"><a href="/zh/docs/">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
+        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li><a href="/" hreflang="en" lang="en">English</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+<script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -98,29 +113,9 @@
     ]
   }
   </script>
-</head>
-<body>
-  <a class="skip-link" href="#main">跳到正文</a>
-
-  <header class="site-header">
-    <nav class="container nav" aria-label="主导航">
-      <a class="brand" href="./" aria-label="Tidytalk 首页">
-        <img src="../assets/icon-180.png" alt="" width="28" height="28">
-        Tidytalk
-      </a>
-      <ul class="nav-links">
-        <li class="nav-section"><a href="#features">功能</a></li>
-        <li class="nav-section"><a href="#privacy">隐私</a></li>
-        <li class="nav-section"><a href="#faq">常见问题</a></li>
-        <li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li>
-        <li><a href="../" hreflang="en" lang="en">English</a></li>
-      </ul>
-    </nav>
-  </header>
-
   <main id="main">
     <section class="hero container" aria-labelledby="hero-title">
-      <img class="hero-icon" src="../assets/icon-512.png" alt="Tidytalk 应用图标" width="96" height="96">
+      <img class="hero-icon" src="/assets/icon-512.png" alt="Tidytalk 应用图标" width="96" height="96">
       <p class="eyebrow">macOS 段落式语音输入 · 免费开源</p>
       <h1 id="hero-title">按住说话，松开就是整理好的文字</h1>
       <p class="lead">Tidytalk 在你的 Mac 上识别语音，用 AI 去掉"嗯、那个、就是说"这类口头禅，修正口误和标点，再把文字粘贴到光标处。微信、邮件、备忘录、代码编辑器，能打字的地方都能用。</p>
@@ -226,7 +221,34 @@
       </div>
     </section>
 
-    <section class="section" id="screenshots" aria-labelledby="screenshots-title">
+    <section class="section" id="use-cases" aria-labelledby="use-cases-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="use-cases-title">适合你的工作方式</h2>
+          <p>写提示词、回邮件、记想法，用你习惯的语言说。</p>
+        </div>
+        <div class="cards">
+          <a class="card" href="/zh/use-cases/developers/">
+            <h3>程序员</h3>
+            <p>用语音写给 AI 编程工具的提示词、提交信息和代码注释，技术名词原样保留。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+          <a class="card" href="/zh/use-cases/translation/">
+            <h3>说中文出英文</h3>
+            <p>用中文说，直接粘贴整理好的英文邮件和消息，也支持日文、韩文和粤语。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+          <a class="card" href="/zh/use-cases/offline/">
+            <h3>完全离线</h3>
+            <p>接上 Ollama、LM Studio 本机模型，声音和文字都不离开你的 Mac。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+        </div>
+        <p class="section-foot">还在比较？看看 Tidytalk 和 <a href="/zh/compare/">Wispr Flow、Superwhisper、macOS 听写</a>有什么不同。</p>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="screenshots" aria-labelledby="screenshots-title">
       <div class="container">
         <div class="section-head">
           <h2 id="screenshots-title">一分钟设置好</h2>
@@ -234,18 +256,18 @@
         </div>
         <div class="shots">
           <figure>
-            <picture><source srcset="../assets/onboarding-dark.jpg" media="(prefers-color-scheme: dark)"><img src="../assets/onboarding-light.jpg" alt="Tidytalk 首次启动引导，正在配置 AI 接口" width="1000" height="883" loading="lazy" decoding="async"></picture>
+            <picture><source srcset="/assets/onboarding-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/onboarding-light.jpg" alt="Tidytalk 首次启动引导，正在配置 AI 接口" width="1000" height="883" loading="lazy" decoding="async"></picture>
             <figcaption>首次启动引导</figcaption>
           </figure>
           <figure>
-            <picture><source srcset="../assets/settings-vocabulary-dark.jpg" media="(prefers-color-scheme: dark)"><img src="../assets/settings-vocabulary-light.jpg" alt="Tidytalk 设置中的词库页面：常用词、固定替换、快捷短语和自定义规则" width="1000" height="1277" loading="lazy" decoding="async"></picture>
+            <picture><source srcset="/assets/settings-vocabulary-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/settings-vocabulary-light.jpg" alt="Tidytalk 设置中的词库页面：常用词、固定替换、快捷短语和自定义规则" width="1000" height="1277" loading="lazy" decoding="async"></picture>
             <figcaption>词库：常用词、固定替换、快捷短语、自定义规则</figcaption>
           </figure>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" id="privacy" aria-labelledby="privacy-title">
+    <section class="section" id="privacy" aria-labelledby="privacy-title">
       <div class="container split">
         <div>
           <h2 id="privacy-title">隐私</h2>
@@ -272,7 +294,7 @@
       </div>
     </section>
 
-    <section class="section" id="faq" aria-labelledby="faq-title">
+    <section class="section section-alt" id="faq" aria-labelledby="faq-title">
       <div class="container">
         <div class="section-head">
           <h2 id="faq-title">常见问题</h2>
@@ -310,29 +332,28 @@
       </div>
     </section>
 
-    <section class="section section-alt cta" aria-labelledby="cta-title">
+    <section class="section cta" aria-labelledby="cta-title">
       <div class="container">
         <h2 id="cta-title">把想法说出来，剩下的交给 Tidytalk</h2>
         <div class="actions">
           <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
-          <a class="button button-secondary" href="https://github.com/byteyu2436/tidytalk/blob/main/docs/usage.md">阅读使用指南</a>
+          <a class="button button-secondary" href="/zh/docs/">阅读使用指南</a>
         </div>
       </div>
     </section>
   </main>
-
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>Tidytalk 以 <a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a>开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
-      <ul class="footer-links">
-        <li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li>
-        <li><a href="https://github.com/byteyu2436/tidytalk/releases">版本发布</a></li>
-        <li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li>
-        <li><a href="../" hreflang="en" lang="en">English</a></li>
-      </ul>
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/zh/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
+        <p>Tidytalk 以 MIT 许可证开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
+      </div>
+      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/compare/">对比</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
+      <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li></ul></div>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+        <li><a href="/" hreflang="en" lang="en">English</a></li></ul></div>
     </div>
   </footer>
-  <!-- Cloudflare Web Analytics：不使用 Cookie 的访问统计 -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "88c5b4942b344ed7a3a8023fb3a384a4"}'></script>
 </body>
 </html>

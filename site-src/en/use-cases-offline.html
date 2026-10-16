@@ -1,0 +1,72 @@
+<!--
+path: /use-cases/offline/
+alternate: /zh/use-cases/offline/
+type: article
+breadcrumb: Private and offline
+title: Offline Voice Dictation on Mac with a Local LLM | Tidytalk
+headline: Private, offline voice dictation on Mac
+description: Dictate on your Mac without sending your voice or text anywhere. Tidytalk recognizes speech on device and can tidy text with a local model in Ollama or LM Studio.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Dictation that never leaves your Mac</h1>
+      <p class="lead">Tidytalk always recognizes your voice on your Mac. Pair it with a local model and your text stays there too.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="what-leaves">What leaves your Mac</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Setup</th><th>Your voice</th><th>Your text</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud AI service (for example DeepSeek or OpenAI)</td><td>Stays on your Mac</td><td>Sent to the AI service you chose</td></tr>
+            <tr><td>Local model in Ollama or LM Studio</td><td>Stays on your Mac</td><td>Stays on your Mac</td></tr>
+            <tr><td>"Tidy up text" turned off</td><td>Stays on your Mac</td><td>Stays on your Mac (raw transcript)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240&nbsp;MB. Recent results are kept in memory only and cleared when you quit. Settings, including any API key, are stored in <code>~/.tidytalk.json</code>, readable only by you.</p>
+      <p>The only other network request is the update check, which reads the latest version from GitHub once a day. You can turn it off in Settings › General.</p>
+
+      <h2 id="ollama">Set up Ollama</h2>
+      <ol>
+        <li>Install <a href="https://ollama.com">Ollama</a>.</li>
+        <li>Download a model in Terminal, for example:
+          <pre><code>ollama pull qwen2.5:7b</code></pre>
+        </li>
+        <li>In Tidytalk, open Settings › Set Up AI, click "Presets", and choose "Ollama (local)". Check that the model name matches the one you pulled, then click "Save".</li>
+        <li>Click "Test Connection". When it says "Connected", you're done.</li>
+      </ol>
+
+      <h2 id="lm-studio">Set up LM Studio</h2>
+      <ol>
+        <li>Install <a href="https://lmstudio.ai">LM Studio</a>, download a model, and load it.</li>
+        <li>Start LM Studio's local server.</li>
+        <li>In Tidytalk, choose "LM Studio (local)" under Presets, enter the name of the loaded model, save, and click "Test Connection".</li>
+      </ol>
+      <p>Local models don't need an API key, and Tidytalk gives them a 60-second timeout instead of 12 seconds.</p>
+
+      <h2 id="choosing-a-model">Choosing a model</h2>
+      <ul>
+        <li>Tidying is a light task, but the model has to follow instructions: tidy what you said instead of answering it. Small models are less reliable at this and at following custom rules.</li>
+        <li>A model around 7B parameters or larger is a good starting point. <code>qwen2.5:7b</code> is about a 5&nbsp;GB download and handles both Chinese and English well.</li>
+        <li>If the local model is slow or returns something unexpected, Tidytalk pastes the raw transcript, so you never lose what you said.</li>
+      </ul>
+
+      <h2 id="no-ai">No AI at all</h2>
+      <p>Turn off "Tidy up text" in Settings › Set Up AI and Tidytalk becomes a fast, fully offline speech-to-text tool. Replacements, snippets, and Chinese–English spacing still work, because they run on your Mac without AI.</p>
+
+      <h2 id="open-source">Verify it yourself</h2>
+      <p>Tidytalk is open source under the MIT License. You can read exactly what it sends and when on <a href="https://github.com/byteyu2436/tidytalk">GitHub</a>, or build it from source.</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Keep your words private</h2>
+      <p>Free and open source for macOS 26 on Apple silicon.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/compare/">How it compares</a>
+      </div>
+    </aside>
+  </main>

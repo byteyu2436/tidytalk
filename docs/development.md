@@ -88,7 +88,7 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 
 ## 官网
 
-`site/` 是产品官网的静态页面：英文是首页 `index.html`，中文在 `zh/index.html`，`en/` 只是把旧地址跳回首页，推送到 main 后由 `.github/workflows/pages.yml` 自动发布到 https://tidytalk.zayen.dev/ 。分享封面图由 `scripts/make-site-images.swift` 生成。
+官网的页面正文写在 `site-src/en/`（英文，首页在根路径）和 `site-src/zh/`（中文，在 `/zh/` 下），每个文件开头的注释写明地址、标题和描述。运行 `python3 scripts/build_site.py` 会给每页套上统一的导航、页脚和 SEO 标签，生成到 `site/`，并重新生成 `sitemap.xml`；更新日志页的内容取自 GitHub Releases。不要直接改 `site/` 下生成的页面。推送到 main 或发布新版本后，`.github/workflows/pages.yml` 会重新生成并发布到 https://tidytalk.zayen.dev/ 。`site/assets/`、`site/404.html` 和 `site/en/`（旧地址跳转）是手写的。分享封面图由 `scripts/make-site-images.swift` 生成。
 
 发布相关的设置：
 
@@ -103,6 +103,7 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 本地预览：
 
 ```bash
+python3 scripts/build_site.py
 python3 -m http.server 8765 --directory site   # 打开 http://localhost:8765/
 ```
 

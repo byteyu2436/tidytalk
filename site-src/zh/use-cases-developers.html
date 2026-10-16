@@ -1,0 +1,75 @@
+<!--
+path: /zh/use-cases/developers/
+alternate: /use-cases/developers/
+type: article
+breadcrumb: 程序员
+title: 程序员的 Mac 语音输入：用说话写提示词、提交信息和代码注释
+headline: 程序员的 Mac 语音输入
+description: 在 Mac 上用语音给 Cursor、Claude、ChatGPT 写长提示词，写提交信息、PR 描述和代码注释。Tidytalk 保留技术术语，自动去掉"嗯、那个"。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>跟 AI 编程工具说话，而不是打字</h1>
+      <p class="lead">好的提示词往往很长。把一个 bug、一次重构或一个设计决定讲出来，比打出来快得多，前提是结果读起来像你认真写的。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="why">为什么用说的</h2>
+      <p>大多数人说话比打字快得多，常常快两到三倍。用 AI 编程助手时，回答质量取决于你给了多少背景，而打字时最先被省掉的正是背景。用 Tidytalk，按住快捷键，像跟同事解释一样把问题讲清楚，松开后就得到一段通顺、带标点的文字，直接粘贴进 Cursor、Claude、ChatGPT、终端或 PR 描述里。</p>
+
+      <h2 id="example">实际效果</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你说的</th><th>Tidytalk 粘贴的</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>嗯，那个登录的测试不太稳定，大概十次会失败一次，我觉得是那个，呃，mock server 在请求之前还没准备好，你加个等待，不对，加个带超时的重试吧</td>
+              <td>登录的测试不太稳定，大概十次会失败一次。我觉得是 mock server 在请求之前还没准备好，加个带超时的重试吧。</td>
+            </tr>
+            <tr>
+              <td>我们应该，嗯，把用户列表缓存一下，因为它在仪表盘上被加载了，就是说，三次</td>
+              <td>我们应该把用户列表缓存一下，因为它在仪表盘上被加载了三次。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>中途改口（"加个等待，不对，加个带超时的重试"）只保留最后的说法，口头禅都去掉了，不会总结，也不会补充内容。</p>
+
+      <h2 id="code-mode">技术术语原样保留</h2>
+      <p>在"设置 › 配置 AI › 整理方式"里把模式切到<strong>代码（保留术语）</strong>：术语、命令、文件名和符号会严格保留，标点也不做转换。即使不切模式，中文里夹着的英文术语也会原样保留，"把这个 API 的 rate limit 调高"不会被改写。</p>
+
+      <h2 id="vocabulary">让它认识你项目里的名字</h2>
+      <p>语音识别最容易认错没听过的名字：库名、内部服务名、同事的名字。"设置 › 词库"里有两项可以解决：</p>
+      <ul>
+        <li><strong>常用词</strong>：列出 <code>SenseVoice</code>、<code>Kubernetes</code> 或你的服务名，AI 会把读音相近的错误识别改成你写的拼法。</li>
+        <li><strong>固定替换</strong>：把经常听错的词总是替换成正确写法，例如"克劳德"替换成"Claude"。在本机处理，关闭整理时也生效。</li>
+      </ul>
+      <p>还可以加<strong>自定义规则</strong>，例如"文件名和命令用反引号括起来"，整理时会遵守。</p>
+
+      <h2 id="rewrite">用语音改写草稿</h2>
+      <p>选中一段随手记的文字，按住<kbd>右侧 Option</kbd>说"改成一条提交信息"或"整理成 PR 描述的要点列表"，选中的文字会被替换成结果；改写失败时原文不会改动。</p>
+
+      <h2 id="english">说中文，写英文</h2>
+      <p>团队或代码库只用英文？把输出语言设为英文，用中文把问题讲清楚，Tidytalk 会在整理时一并翻译。详见<a href="/zh/use-cases/translation/">说中文，直接出英文</a>。</p>
+
+      <h2 id="privacy">代码相关的内容不外传</h2>
+      <p>声音始终在你的 Mac 上识别。如果提示词里涉及公司代码，把 Tidytalk 接到 Ollama 或 LM Studio 本机模型，文字也不会离开电脑。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
+
+      <h2 id="tips">小技巧</h2>
+      <ul>
+        <li>要讲一大段时，双击快捷键进入免按住录音。</li>
+        <li>菜单栏图标的"最近记录"可以把上一条结果再粘贴一次，比如发到另一个对话里。</li>
+        <li>任何有输入框的地方都能用，包括 VS Code、Cursor、Xcode、终端、Slack 和网页应用。</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>开始用语音写提示词</h2>
+      <p>免费开源，支持 Apple 芯片、macOS 26 及以上。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/">阅读使用指南</a>
+      </div>
+    </aside>
+  </main>

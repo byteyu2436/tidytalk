@@ -1,0 +1,300 @@
+<!--
+path: /zh/
+alternate: /
+type: home
+title: Tidytalk：Mac 语音输入，按住说话自动整理成文字
+description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按住快捷键说话，语音在本机识别，AI 自动去掉口头禅、修正口误和标点，松开后文字直接出现在光标处。支持中文、英文、日文、韩文和粤语。
+-->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tidytalk",
+    "alternateName": "Tidytalk 语音输入",
+    "description": "macOS 段落式语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点，松开后把文字粘贴到光标处。",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "macOS 26 或更高版本（Apple 芯片）",
+    "url": "https://tidytalk.zayen.dev/zh/",
+    "downloadUrl": "https://github.com/byteyu2436/tidytalk/releases/latest",
+    "image": "https://tidytalk.zayen.dev/assets/icon-512.png",
+    "screenshot": "https://tidytalk.zayen.dev/assets/onboarding-light.jpg",
+    "inLanguage": ["zh-CN", "en"],
+    "isAccessibleForFree": true,
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/byteyu2436/tidytalk",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+    "author": { "@type": "Person", "name": "zayen", "url": "https://github.com/byteyu2436" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Tidytalk 收费吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "Tidytalk 免费开源，使用 MIT 许可证。如果整理文字时用 DeepSeek、OpenAI 等云端 AI，需要你自己的 API Key，费用由服务商收取；改用 Ollama、LM Studio 等本机模型，或者关闭整理，就完全不花钱。" }
+      },
+      {
+        "@type": "Question",
+        "name": "需要联网吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "第一次启动要联网下载约 240 MB 的语音识别模型，之后语音识别完全离线。用云端 AI 整理文字时需要联网；用本机模型或关闭整理时，整个应用都可以离线使用。" }
+      },
+      {
+        "@type": "Question",
+        "name": "支持哪些语言？",
+        "acceptedAnswer": { "@type": "Answer", "text": "说话时自动判断语言，支持中文普通话（可以夹杂英文单词）、英文、日文、韩文和粤语。整理后还可以翻译成英文、简体中文、繁体中文、日文、韩文、法文、德文或西班牙文。界面支持简体中文和英文。" }
+      },
+      {
+        "@type": "Question",
+        "name": "我的声音和文字会被上传吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "声音不会。录音和语音识别都在你的 Mac 上完成。开启整理文字时，识别出的文字会发送给你自己配置的 AI 服务；用本机模型或关闭整理，文字也不会离开电脑。" }
+      },
+      {
+        "@type": "Question",
+        "name": "和 macOS 自带的听写有什么不同？",
+        "acceptedAnswer": { "@type": "Answer", "text": "系统听写会边说边把话逐字打出来。Tidytalk 是段落式的：等你说完一整段，去掉嗯、那个这类口头禅和口误，补好标点，再一次性输出，适合写消息、邮件和文档。" }
+      },
+      {
+        "@type": "Question",
+        "name": "支持 Windows 或 Intel 芯片的 Mac 吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "目前只支持 macOS 26 或更高版本、Apple 芯片（M 系列）的 Mac。" }
+      },
+      {
+        "@type": "Question",
+        "name": "第一次打开时提示无法验证开发者怎么办？",
+        "acceptedAnswer": { "@type": "Answer", "text": "安装包目前没有经过苹果公证。打开系统设置的隐私与安全性，在页面底部点仍要打开；或者在终端执行 xattr -dr com.apple.quarantine /Applications/Tidytalk.app，之后就能直接打开。" }
+      }
+    ]
+  }
+  </script>
+  <main id="main">
+    <section class="hero container" aria-labelledby="hero-title">
+      <img class="hero-icon" src="/assets/icon-512.png" alt="Tidytalk 应用图标" width="96" height="96">
+      <p class="eyebrow">macOS 段落式语音输入 · 免费开源</p>
+      <h1 id="hero-title">按住说话，松开就是整理好的文字</h1>
+      <p class="lead">Tidytalk 在你的 Mac 上识别语音，用 AI 去掉"嗯、那个、就是说"这类口头禅，修正口误和标点，再把文字粘贴到光标处。微信、邮件、备忘录、代码编辑器，能打字的地方都能用。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          下载 Mac 版
+        </a>
+        <a class="button button-secondary" href="https://github.com/byteyu2436/tidytalk">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          在 GitHub 上查看
+        </a>
+      </div>
+      <p class="meta">需要 macOS 26 或更高版本 · Apple 芯片</p>
+
+      <div class="demo" aria-label="使用示例">
+        <div class="demo-window">
+          <div class="demo-titlebar" aria-hidden="true"><span></span><span></span><span></span><strong>备忘录</strong></div>
+          <div class="demo-body">
+            <p class="demo-row demo-said"><span class="demo-label">你说的</span><del>嗯那个</del>我想问一下<del>就是</del>这个 API 的<del>那个</del> rate limit <del>呃</del>是多少</p>
+            <p class="demo-row demo-out"><span class="demo-label">粘贴到光标处</span>我想问一下这个 API 的 rate limit 是多少？<span class="caret" aria-hidden="true"></span></p>
+          </div>
+        </div>
+        <div class="capsule" aria-hidden="true">
+          <span class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          整理
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="how-title">三步完成输入</h2>
+          <p>不用切换输入法，也不用对着屏幕一个字一个字地改。</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>按住 <kbd>Option</kbd> + <kbd>Command</kbd></h3>
+            <p>光标放在任意输入框里，按住快捷键，屏幕底部出现录音指示器。</p>
+          </li>
+          <li>
+            <h3>说一段话</h3>
+            <p>想到哪说到哪，说错了直接改口，指示器下方会显示实时文字。</p>
+          </li>
+          <li>
+            <h3>松开，文字就到了</h3>
+            <p>整理好的文字出现在光标处，原来剪贴板里的内容也会还原。</p>
+          </li>
+        </ol>
+
+        <div class="compare" aria-label="整理前后对比">
+          <figure>
+            <blockquote>嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少</blockquote>
+            <figcaption>我想问一下这个 API 的 rate limit 是多少？</figcaption>
+          </figure>
+          <figure>
+            <blockquote>项目要延期到下周三，不对，是下周四</blockquote>
+            <figcaption>项目要延期到下周四。</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="features-title">为想清楚再说的人设计</h2>
+          <p>只删口头禅和口误，不总结、不补充，保留你自己的说法。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <h3>声音不出这台 Mac</h3>
+            <p>用 SenseVoice 在本机识别，自动判断中文、英文、日文、韩文和粤语，中文里夹英文也没问题。</p>
+          </article>
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <h3>只整理，不改写</h3>
+            <p>删掉口头禅和重复，中途改口只留最后的说法，补全标点。听起来像指令的话也只会被整理成文字。</p>
+          </article>
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 20h8M12 16v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <h3>AI 服务随你选</h3>
+            <p>DeepSeek、OpenAI 等兼容接口都能用，也能接 Ollama、LM Studio 本机模型完全离线。不想用 AI，关掉整理即可。</p>
+          </article>
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            <h3>说中文，出英文</h3>
+            <p>选好输出语言，整理时顺便翻译。支持英文、简体、繁体、日文、韩文、法文、德文和西班牙文。</p>
+          </article>
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 00-3-3L5 17z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 7.5l3 3M13 20h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <h3>选中文字，用嘴改</h3>
+            <p>选中一段文字，按住右侧 <kbd>Option</kbd> 说"改得正式一点""缩短到一句话"，原文直接被替换成改写结果。</p>
+          </article>
+          <article class="card">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 4v5h6V4M8 14h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <h3>词库和快捷短语</h3>
+            <p>记住常用的人名、产品名，固定替换容易识别错的词；只说"我的邮箱"就输出完整地址。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="use-cases" aria-labelledby="use-cases-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="use-cases-title">适合你的工作方式</h2>
+          <p>写提示词、回邮件、记想法，用你习惯的语言说。</p>
+        </div>
+        <div class="cards">
+          <a class="card" href="/zh/use-cases/developers/">
+            <h3>程序员</h3>
+            <p>用语音写给 AI 编程工具的提示词、提交信息和代码注释，技术名词原样保留。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+          <a class="card" href="/zh/use-cases/translation/">
+            <h3>说中文出英文</h3>
+            <p>用中文说，直接粘贴整理好的英文邮件和消息，也支持日文、韩文和粤语。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+          <a class="card" href="/zh/use-cases/offline/">
+            <h3>完全离线</h3>
+            <p>接上 Ollama、LM Studio 本机模型，声音和文字都不离开你的 Mac。</p>
+            <span class="more">了解更多 →</span>
+          </a>
+        </div>
+        <p class="section-foot">还在比较？看看 Tidytalk 和 <a href="/zh/compare/">Wispr Flow、Superwhisper、macOS 听写</a>有什么不同。</p>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="screenshots" aria-labelledby="screenshots-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="screenshots-title">一分钟设置好</h2>
+          <p>首次打开有引导：授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型。</p>
+        </div>
+        <div class="shots">
+          <figure>
+            <picture><source srcset="/assets/onboarding-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/onboarding-light.jpg" alt="Tidytalk 首次启动引导，正在配置 AI 接口" width="1000" height="883" loading="lazy" decoding="async"></picture>
+            <figcaption>首次启动引导</figcaption>
+          </figure>
+          <figure>
+            <picture><source srcset="/assets/settings-vocabulary-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/settings-vocabulary-light.jpg" alt="Tidytalk 设置中的词库页面：常用词、固定替换、快捷短语和自定义规则" width="1000" height="1277" loading="lazy" decoding="async"></picture>
+            <figcaption>词库：常用词、固定替换、快捷短语、自定义规则</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="privacy" aria-labelledby="privacy-title">
+      <div class="container split">
+        <div>
+          <h2 id="privacy-title">隐私</h2>
+          <ul class="checklist">
+            <li>录音和语音识别都在你的 Mac 上完成，声音不会上传。</li>
+            <li>开启整理文字时，识别出的文字会发送给你自己配置的 AI 服务；用本机模型或关闭整理，文字也不会离开电脑。</li>
+            <li>API Key 等设置保存在本机的 <code>~/.tidytalk.json</code>，只有你自己能读写。</li>
+            <li>最近记录只保存在内存中，退出应用就清空。</li>
+            <li>代码完全开源，可以在 GitHub 上查看每一行。</li>
+          </ul>
+        </div>
+        <div id="install">
+          <h2>安装</h2>
+          <ol class="install-steps">
+            <li>在 <a href="https://github.com/byteyu2436/tidytalk/releases/latest">GitHub Releases</a> 下载最新的 <code>Tidytalk-x.y.z.dmg</code>。</li>
+            <li>打开安装包，把 Tidytalk 拖进 Applications 文件夹。</li>
+            <li>按引导完成设置，第一次需要下载约 240&nbsp;MB 的语音识别模型。</li>
+          </ol>
+          <div class="note">
+            <p>安装包目前没有经过苹果公证，第一次打开会被系统拦下。打开"系统设置 › 隐私与安全性"，在页面底部点"仍要打开"；或者在终端执行：</p>
+            <p><code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="faq-title">常见问题</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Tidytalk 收费吗？</summary>
+            <p>Tidytalk 免费开源，使用 MIT 许可证。如果整理文字时用 DeepSeek、OpenAI 等云端 AI，需要你自己的 API Key，费用由服务商收取；改用 Ollama、LM Studio 等本机模型，或者关闭整理，就完全不花钱。</p>
+          </details>
+          <details>
+            <summary>需要联网吗？</summary>
+            <p>第一次启动要联网下载约 240&nbsp;MB 的语音识别模型，之后语音识别完全离线。用云端 AI 整理文字时需要联网；用本机模型或关闭整理时，整个应用都可以离线使用。</p>
+          </details>
+          <details>
+            <summary>支持哪些语言？</summary>
+            <p>说话时自动判断语言，支持中文普通话（可以夹杂英文单词）、英文、日文、韩文和粤语。整理后还可以翻译成英文、简体中文、繁体中文、日文、韩文、法文、德文或西班牙文。界面支持简体中文和英文。</p>
+          </details>
+          <details>
+            <summary>我的声音和文字会被上传吗？</summary>
+            <p>声音不会。录音和语音识别都在你的 Mac 上完成。开启整理文字时，识别出的文字会发送给你自己配置的 AI 服务；用本机模型或关闭整理，文字也不会离开电脑。</p>
+          </details>
+          <details>
+            <summary>和 macOS 自带的听写有什么不同？</summary>
+            <p>系统听写会边说边把话逐字打出来。Tidytalk 是段落式的：等你说完一整段，去掉"嗯、那个"这类口头禅和口误，补好标点，再一次性输出，适合写消息、邮件和文档。</p>
+          </details>
+          <details>
+            <summary>支持 Windows 或 Intel 芯片的 Mac 吗？</summary>
+            <p>目前只支持 macOS 26 或更高版本、Apple 芯片（M 系列）的 Mac。</p>
+          </details>
+          <details>
+            <summary>第一次打开时提示无法验证开发者怎么办？</summary>
+            <p>安装包目前没有经过苹果公证。打开"系统设置 › 隐私与安全性"，在页面底部点"仍要打开"；或者在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>，之后就能直接打开。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta" aria-labelledby="cta-title">
+      <div class="container">
+        <h2 id="cta-title">把想法说出来，剩下的交给 Tidytalk</h2>
+        <div class="actions">
+          <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+          <a class="button button-secondary" href="/zh/docs/">阅读使用指南</a>
+        </div>
+      </div>
+    </section>
+  </main>

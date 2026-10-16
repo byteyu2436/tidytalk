@@ -1,0 +1,89 @@
+<!--
+path: /compare/
+alternate: /zh/compare/
+type: article
+breadcrumb: Compare
+title: Tidytalk vs Wispr Flow vs Superwhisper vs Mac Dictation
+headline: Tidytalk vs Wispr Flow vs Superwhisper vs macOS Dictation
+description: An honest comparison of four ways to dictate on a Mac: price, platforms, where your voice is processed, filler-word cleanup, and offline use.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Tidytalk vs Wispr Flow vs Superwhisper vs macOS Dictation</h1>
+      <p class="lead">Four ways to talk instead of type on a Mac. Here's how they differ on price, privacy, and what happens to your words.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <div class="callout">
+        <p>Tidytalk is our project, so we've kept this page factual. Competitor details come from their official websites and help pages, checked in October 2026. Prices and features change, so check each product's site before you decide.</p>
+      </div>
+
+      <h2 id="at-a-glance">At a glance</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>Tidytalk</th><th>Wispr Flow</th><th>Superwhisper</th><th>macOS Dictation</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Price</th><td>Free</td><td>Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly</td><td>Free plan; paid Pro plan (monthly, yearly, or lifetime)</td><td>Free, built in</td></tr>
+            <tr><th scope="row">Platforms</th><td>Mac (macOS 26+, Apple silicon)</td><td>Mac, Windows, iOS, Android</td><td>Mac, Windows, iOS, Android</td><td>Mac and other Apple devices</td></tr>
+            <tr><th scope="row">Where your voice is recognized</th><td>On your Mac</td><td>In the cloud</td><td>On your Mac with local models, or in the cloud</td><td>On your Mac for supported languages on Apple silicon; otherwise Apple's servers</td></tr>
+            <tr><th scope="row">Removes fillers and fixes slips</th><td><span class="yes">Yes</span>, with an AI service you choose</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes</span>, with AI modes</td><td><span class="no">No</span>, types what you say</td></tr>
+            <tr><th scope="row">Works fully offline</th><td><span class="yes">Yes</span>, with a local model or tidying off</td><td><span class="no">No</span></td><td><span class="yes">Yes</span>, with local models</td><td><span class="yes">Yes</span>, for supported languages</td></tr>
+            <tr><th scope="row">Open source</th><td><span class="yes">Yes</span>, MIT</td><td><span class="no">No</span></td><td><span class="no">No</span></td><td><span class="no">No</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tidytalk">Tidytalk</h2>
+      <p>Tidytalk is paragraph-style: you hold a shortcut, say a whole thought, and let go. Speech is recognized on your Mac with the <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> model, then an AI service you pick removes fillers and slips and adds punctuation before the text is pasted at your cursor.</p>
+      <ul>
+        <li><strong>You control where text goes.</strong> Use DeepSeek, OpenAI, or any OpenAI-compatible service with your own API key, or a local model in Ollama or LM Studio so nothing leaves your Mac. Your voice is never uploaded.</li>
+        <li><strong>Free and open source.</strong> No word limits or subscriptions. With a cloud AI service, you pay the provider directly for what you use.</li>
+        <li><strong>Strong for mixed Chinese and English.</strong> It handles English terms inside Chinese speech, adds Chinese–English spacing, and can translate as it tidies.</li>
+        <li><strong>Limits to know about:</strong> Mac only, and only macOS 26 or later on Apple silicon. It recognizes five spoken languages: Chinese, English, Japanese, Korean, and Cantonese. The app isn't notarized yet, so you approve it once in System Settings. Using AI cleanup means setting up an API key or a local model.</li>
+      </ul>
+
+      <h2 id="wispr-flow">Wispr Flow</h2>
+      <p>Wispr Flow is a polished commercial app that turns speech into clean writing in any app, and it learns your names and jargon. It runs on Mac, Windows, iOS, and Android, which makes it the easiest choice if you dictate across devices.</p>
+      <ul>
+        <li>The free plan allows 2,000 words a week on desktop and 1,000 on mobile. Pro removes the limit for $15 a month, or $12 a month billed yearly.</li>
+        <li>According to Wispr's own help center, transcription always runs in the cloud. Privacy settings control model training and storage, not where audio is processed, so there's no offline mode.</li>
+      </ul>
+
+      <h2 id="superwhisper">Superwhisper</h2>
+      <p>Superwhisper is a feature-rich commercial app with configurable AI modes that reformat what you say, from casual messages to structured notes. It runs on Mac, Windows, iOS, and Android.</p>
+      <ul>
+        <li>It can transcribe offline with local models, which its FAQ says run best on Apple silicon Macs. Cloud models are also available.</li>
+        <li>There's a free plan and a paid Pro plan with monthly, yearly, and lifetime options. Check the official site for current prices.</li>
+      </ul>
+
+      <h2 id="macos-dictation">macOS Dictation</h2>
+      <p>Dictation is built into macOS, free, and needs no setup. On Apple silicon Macs, supported languages are processed on the device. It types your words as you speak, so it's great for quick input, but it keeps fillers and doesn't clean up or restructure what you said. It stops automatically after 30 seconds of silence.</p>
+
+      <h2 id="which-one">Which one should you choose?</h2>
+      <ul>
+        <li><strong>Choose Tidytalk</strong> if you want a free, open-source tool, care where your text is sent, or dictate in Chinese mixed with English.</li>
+        <li><strong>Choose Wispr Flow</strong> if you want the same dictation on Windows and your phone and don't mind cloud processing or a subscription.</li>
+        <li><strong>Choose Superwhisper</strong> if you want lots of customizable AI modes and offline models on several platforms, and are happy to pay for Pro.</li>
+        <li><strong>Stick with macOS Dictation</strong> if you only need quick, word-for-word input and don't need fillers removed.</li>
+      </ul>
+
+      <h2 id="sources">Sources</h2>
+      <ul>
+        <li><a href="https://wisprflow.ai/pricing">Wispr Flow pricing</a> and <a href="https://docs.wisprflow.ai/articles/4709791908-understanding-privacy-mode-and-cloud-sync">Understanding Privacy Mode and Cloud Sync</a></li>
+        <li><a href="https://superwhisper.com/">Superwhisper website and FAQ</a></li>
+        <li><a href="https://support.apple.com/guide/mac-help/mh40584/mac">Apple: Dictate messages and documents on Mac</a></li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Try Tidytalk for free</h2>
+      <p>No account, no word limits. Your voice stays on your Mac.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/docs/">Read the user guide</a>
+      </div>
+    </aside>
+  </main>

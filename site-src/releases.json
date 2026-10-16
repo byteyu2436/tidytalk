@@ -1,0 +1,16 @@
+[
+  {
+    "tag": "v0.1.1",
+    "name": "Tidytalk 0.1.1",
+    "date": "2026-10-16",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.1.1",
+    "body": "- 没有配置 AI 时，直接粘贴识别结果，不再提示\"未配置 AI，已粘贴原文\"，指示器上也不显示\"整理\"。\n\n安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"，或在终端执行 `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`。\n\n- Without an AI service set up, the transcript is pasted directly. There's no \"AI not set up\" notice and no \"Tidy\" tag on the indicator.\n\nInstall: requires macOS 26 or later on a Mac with Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`.\n\nSHA-256 (Tidytalk-0.1.1.dmg): `8983ce3237fc10e198363c58be2757afd3aa9045c7c628a1660e27c350f75a82`\n"
+  },
+  {
+    "tag": "v0.1.0",
+    "name": "Tidytalk 0.1.0",
+    "date": "2026-10-16",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.1.0",
+    "body": "第一个试用版。按住快捷键说话，松开后文字出现在光标处：语音在本机识别，AI 去掉口头禅、修正口误和标点。\n\n- 需要 macOS 26 或更高版本、Apple 芯片的 Mac。\n- 安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"，或在终端执行 `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`。\n- 首次启动会下载约 230 MB 的语音识别模型。\n\nThe first preview release. Hold a shortcut and speak; let go and your words appear at the cursor. Speech is recognized on your Mac, and AI removes fillers and fixes slips and punctuation.\n\n- Requires macOS 26 or later on a Mac with Apple silicon.\n- The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`.\n- The speech model (about 230 MB) is downloaded on first launch.\n\nSHA-256 (Tidytalk-0.1.0.dmg): `1f0ca2718e5917a1d135019d99ebb9a857b6bde995992315bb904c048caa01b2`\n\n"
+  }
+]

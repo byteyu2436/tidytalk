@@ -1,0 +1,89 @@
+<!--
+path: /zh/compare/
+alternate: /compare/
+type: article
+breadcrumb: 对比
+title: Tidytalk、Wispr Flow、Superwhisper 和 macOS 听写对比（2026）
+headline: Tidytalk、Wispr Flow、Superwhisper 和 macOS 听写对比
+description: Mac 上四种语音输入方式的客观对比：价格、支持平台、语音在哪里识别、能否去掉口头禅、能否离线、是否开源。帮你挑选适合自己的 Mac 语音输入工具。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Tidytalk、Wispr Flow、Superwhisper 和 macOS 听写对比</h1>
+      <p class="lead">在 Mac 上用说话代替打字的四种方式，在价格、隐私和输出效果上有什么不同。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <div class="callout">
+        <p>Tidytalk 是我们自己的项目，所以这页尽量只摆事实。其他产品的信息来自它们的官网和帮助文档，核对于 2026 年 10 月。价格和功能可能会变，做决定前请以各家官网为准。</p>
+      </div>
+
+      <h2 id="at-a-glance">一览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>Tidytalk</th><th>Wispr Flow</th><th>Superwhisper</th><th>macOS 听写</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">价格</th><td>免费</td><td>电脑端每周 2,000 词以内免费；Pro 每月 15 美元，按年付每月 12 美元</td><td>有免费版；付费 Pro 可按月、按年或买断</td><td>免费，系统自带</td></tr>
+            <tr><th scope="row">支持平台</th><td>Mac（macOS 26 及以上，Apple 芯片）</td><td>Mac、Windows、iOS、Android</td><td>Mac、Windows、iOS、Android</td><td>Mac 和其他苹果设备</td></tr>
+            <tr><th scope="row">语音在哪里识别</th><td>你的 Mac 上</td><td>云端</td><td>本机模型在 Mac 上，也可选云端</td><td>Apple 芯片上支持的语言在本机；否则发到苹果服务器</td></tr>
+            <tr><th scope="row">去掉口头禅、修正口误</th><td><span class="yes">能</span>，用你选的 AI 服务</td><td><span class="yes">能</span></td><td><span class="yes">能</span>，通过 AI 模式</td><td><span class="no">不能</span>，说什么打什么</td></tr>
+            <tr><th scope="row">完全离线</th><td><span class="yes">能</span>，接本机模型或关闭整理</td><td><span class="no">不能</span></td><td><span class="yes">能</span>，用本机模型</td><td><span class="yes">能</span>，限支持的语言</td></tr>
+            <tr><th scope="row">开源</th><td><span class="yes">是</span>，MIT 许可证</td><td><span class="no">否</span></td><td><span class="no">否</span></td><td><span class="no">否</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tidytalk">Tidytalk</h2>
+      <p>Tidytalk 是段落式的：按住快捷键，说完一整段，松开。语音用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 模型在你的 Mac 上识别，再由你选的 AI 服务去掉口头禅和口误、补好标点，最后粘贴到光标处。</p>
+      <ul>
+        <li><strong>文字发到哪里由你决定。</strong>可以用 DeepSeek、OpenAI 等任何 OpenAI 兼容接口，配你自己的 API Key；也可以接 Ollama、LM Studio 本机模型，什么都不离开电脑。声音从不上传。</li>
+        <li><strong>免费开源。</strong>没有字数限制，也没有订阅。用云端 AI 时，按用量直接向服务商付费。</li>
+        <li><strong>擅长中英文混说。</strong>中文里夹着的英文术语原样保留，自动处理中英文之间的空格，还能在整理时顺便翻译。</li>
+        <li><strong>需要知道的限制：</strong>只支持 Mac，且需要 macOS 26 及以上、Apple 芯片。能识别的语言有五种：中文、英文、日文、韩文和粤语。安装包还没有公证，第一次打开要在系统设置里允许一次。用 AI 整理需要自己配置 API Key 或本机模型。</li>
+      </ul>
+
+      <h2 id="wispr-flow">Wispr Flow</h2>
+      <p>Wispr Flow 是一款打磨得很好的商业软件，能在任何应用里把语音变成通顺的文字，还会学习你常用的人名和术语。它支持 Mac、Windows、iOS 和 Android，如果你需要在多台设备上用语音输入，它最省心。</p>
+      <ul>
+        <li>免费版电脑端每周 2,000 词、手机端每周 1,000 词。Pro 不限字数，每月 15 美元，按年付每月 12 美元。</li>
+        <li>根据 Wispr 自己的帮助文档，转写始终在云端完成；隐私设置控制的是是否用于训练和是否保存，而不是在哪里处理，所以没有离线模式。</li>
+      </ul>
+
+      <h2 id="superwhisper">Superwhisper</h2>
+      <p>Superwhisper 是一款功能很多的商业软件，可以配置不同的 AI 模式来改写你说的话，从随手消息到结构化笔记都行。它支持 Mac、Windows、iOS 和 Android。</p>
+      <ul>
+        <li>可以用本机模型离线转写，官网说明本机模型在 Apple 芯片的 Mac 上效果最好，也可以选云端模型。</li>
+        <li>有免费版，付费 Pro 有按月、按年和买断三种方式，具体价格请看官网。</li>
+      </ul>
+
+      <h2 id="macos-dictation">macOS 听写</h2>
+      <p>听写是 macOS 自带的，免费，不用任何设置。在 Apple 芯片的 Mac 上，支持的语言会在本机处理。它边说边把话逐字打出来，适合快速输入，但会保留口头禅，不会整理或调整你说的内容。静默 30 秒后会自动停止。</p>
+
+      <h2 id="which-one">该选哪个？</h2>
+      <ul>
+        <li><strong>选 Tidytalk</strong>：你想要免费开源的工具，在意文字发到哪里，或者经常中英文混着说。</li>
+        <li><strong>选 Wispr Flow</strong>：你需要在 Windows 和手机上也用同样的语音输入，不介意云端处理和订阅。</li>
+        <li><strong>选 Superwhisper</strong>：你想要大量可自定义的 AI 模式和多平台离线模型，愿意为 Pro 付费。</li>
+        <li><strong>继续用 macOS 听写</strong>：你只需要逐字快速输入，不需要去掉口头禅。</li>
+      </ul>
+
+      <h2 id="sources">资料来源</h2>
+      <ul>
+        <li><a href="https://wisprflow.ai/pricing">Wispr Flow 价格页</a>和<a href="https://docs.wisprflow.ai/articles/4709791908-understanding-privacy-mode-and-cloud-sync">隐私模式与云同步说明</a></li>
+        <li><a href="https://superwhisper.com/">Superwhisper 官网和常见问题</a></li>
+        <li><a href="https://support.apple.com/zh-cn/guide/mac-help/mh40584/mac">Apple：在 Mac 上听写信息和文稿</a></li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>免费试试 Tidytalk</h2>
+      <p>不用注册，不限字数，声音只在你的 Mac 上识别。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/">阅读使用指南</a>
+      </div>
+    </aside>
+  </main>

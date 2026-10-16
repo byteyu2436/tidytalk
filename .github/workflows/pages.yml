@@ -1,4 +1,4 @@
-# 把 site/ 目录发布到 GitHub Pages：https://tidytalk.zayen.dev/
+# 用 scripts/build_site.py 生成页面，再把 site/ 目录发布到 GitHub Pages：https://tidytalk.zayen.dev/
 # 需要先在仓库 Settings › Pages 里把 Source 设为 "GitHub Actions"。
 name: Deploy website
 
@@ -7,7 +7,12 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "site-src/**"
+      - "scripts/build_site.py"
       - ".github/workflows/pages.yml"
+  # 发布新版本时更新官网的更新日志
+  release:
+    types: [published, edited]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +32,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 页面的更新日期取自源文件的提交记录，需要完整历史
+          fetch-depth: 0
+      - name: Build pages
+        run: python3 scripts/build_site.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

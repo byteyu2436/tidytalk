@@ -1,0 +1,208 @@
+<!--
+path: /zh/docs/
+alternate: /docs/
+type: article
+breadcrumb: 使用指南
+title: Tidytalk 使用指南：Mac 语音输入从安装到进阶
+headline: Tidytalk 使用指南
+description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说话、免按住录音、语音改写、整理强度与模式、翻译输出、本机大模型、词库和常见问题。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Tidytalk 使用指南</h1>
+      <p class="lead">从第一次语音输入，到接入本机大模型和排查问题，Tidytalk 的所有用法都在这里。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title">本页内容</h2>
+        <ol>
+          <li><a href="#install">安装和设置</a></li>
+          <li><a href="#hold-to-talk">按住说话</a></li>
+          <li><a href="#hands-free">免按住录音</a></li>
+          <li><a href="#rewrite">语音改写选中的文字</a></li>
+          <li><a href="#tidying">整理效果</a></li>
+          <li><a href="#strength-and-mode">整理强度和模式</a></li>
+          <li><a href="#output-language">输出语言</a></li>
+          <li><a href="#local-models">本机大模型</a></li>
+          <li><a href="#vocabulary">词库</a></li>
+          <li><a href="#spacing">中英文排版规范</a></li>
+          <li><a href="#recent">最近记录</a></li>
+          <li><a href="#languages">支持的语言</a></li>
+          <li><a href="#troubleshooting">常见问题</a></li>
+          <li><a href="#uninstall">卸载</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="install">安装和设置</h2>
+      <p>Tidytalk 需要 macOS 26 或更高版本、Apple 芯片的 Mac。</p>
+      <ol>
+        <li>在 <a href="https://github.com/byteyu2436/tidytalk/releases/latest">GitHub Releases</a> 下载最新的 <code>Tidytalk-x.y.z.dmg</code>，打开后把 Tidytalk 拖进 Applications 文件夹。</li>
+        <li>安装包目前没有经过苹果公证，第一次打开会被系统拦下。打开"系统设置 › 隐私与安全性"，在页面底部点"仍要打开"；或者在终端执行：
+          <pre><code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code></pre>
+        </li>
+        <li>按首次启动的引导完成：
+          <ul>
+            <li><strong>授权麦克风</strong>：用于录音。</li>
+            <li><strong>授权辅助功能</strong>：用于监听快捷键，并把文字粘贴到光标处。</li>
+            <li><strong>配置 AI</strong>：填写 OpenAI 兼容接口的地址、API Key 和模型，默认 DeepSeek。可以跳过，跳过后直接输出识别结果。</li>
+            <li><strong>下载语音识别模型</strong>：约 240&nbsp;MB，只需下载一次，之后识别不用联网。</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Tidytalk 只在菜单栏显示图标，不出现在 Dock 里。设置、最近记录和输出语言都在菜单栏图标里。</p>
+
+      <h2 id="hold-to-talk">按住说话</h2>
+      <ol>
+        <li>在任意输入框里放好光标。</li>
+        <li>按住 <kbd>Option</kbd> + <kbd>Command</kbd> 说话。屏幕底部会出现一个玻璃质感的指示器，随音量跳动。</li>
+        <li>说完松开，稍等片刻，整理好的文字出现在光标处。</li>
+      </ol>
+      <ul>
+        <li>按住约 0.4 秒才开始录音，日常按 Option + Command + 某个键的快捷键不会误触发。</li>
+        <li>按住期间按下其他键、点击鼠标或按 <kbd>Esc</kbd>，会取消本次录音。</li>
+        <li>单次录音最长约 2 分钟，不足 0.5 秒的录音会被忽略。</li>
+        <li>快捷键可以在"设置 › 录音"里换成 Control、Option、Command、Fn（🌐）、右侧 Option 或右侧 Command。选 Fn 时，要在"系统设置 › 键盘"里把"按下 🌐 键时"设为"无操作"，否则会同时弹出表情或听写。</li>
+        <li>说话时指示器下方会显示实时文字，这只是预览，最终结果在松开后整段识别、整理再粘贴。</li>
+        <li>当前没有可以输入的地方时（例如焦点在桌面或网页正文上），结果会放进剪贴板，而不是模拟粘贴。</li>
+        <li>粘贴完成后，剪贴板会恢复成原来的内容，图片、文件和富文本也会完整恢复。</li>
+      </ul>
+
+      <h2 id="hands-free">免按住录音</h2>
+      <p>快速双击快捷键，开始录音后就可以松手，适合说较长的内容；再按一次快捷键结束，按 <kbd>Esc</kbd> 取消。录音期间打字、点击鼠标不会打断录音。可以在"设置 › 录音"里关闭。</p>
+
+      <h2 id="rewrite">语音改写选中的文字</h2>
+      <p>先选中一段文字，按住<kbd>右侧 Option</kbd>说出修改要求，例如"改得正式一点""缩短到一句话""翻译成英文"，松开后选中的文字会被替换成改写结果。</p>
+      <ul>
+        <li>需要配置 AI；选中的文字和修改要求会发送给 AI 服务。</li>
+        <li>没有选中文字时会提示先选中；改写失败时原文不会改动。</li>
+        <li>改写键可以在"设置 › 录音"里更换或关闭。</li>
+      </ul>
+
+      <h2 id="tidying">整理效果</h2>
+      <p>整理只做删减和修正，不改变你说的内容：</p>
+      <ul>
+        <li>删除没有实际含义的填充词，例如：嗯、呃、那个、就是说、um、uh、like。</li>
+        <li>删除重复的词句和口误；中途改口时，只保留改口后的说法。</li>
+        <li>补全标点，必要时断句。</li>
+        <li>不总结、不补充，保持原文的语气；句中的英文单词和术语原样保留。</li>
+        <li>即使你说的话听起来像指令（比如"帮我写一封邮件"），也只会被整理成文字，不会被执行。</li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你说的</th><th>输出</th></tr></thead>
+          <tbody>
+            <tr><td>嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少</td><td>我想问一下这个 API 的 rate limit 是多少？</td></tr>
+            <tr><td>项目要延期到下周三，不对，是下周四</td><td>项目要延期到下周四。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>在"设置 › 配置 AI"里关闭"整理文字"后，直接输出识别结果，应用完全离线工作。AI 服务超时、连不上或返回异常时，会粘贴识别原文并给出提示。</p>
+
+      <h2 id="strength-and-mode">整理强度和模式</h2>
+      <p>都在"设置 › 配置 AI › 整理方式"里切换。</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>强度</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td>轻度</td><td>只补全标点、删除"嗯、呃"这类语气词，其余原话保留</td></tr>
+            <tr><td>标准（默认）</td><td>删除填充词和口误，补全标点</td></tr>
+            <tr><td>深度</td><td>在标准基础上进一步精简啰嗦、重复的表达，但不改变原意</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>模式</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td>标准（默认）</td><td>删除填充词、修正口误、补全标点，保持原意</td></tr>
+            <tr><td>聊天（口语）</td><td>保持口语化的语气，保留句末语气词</td></tr>
+            <tr><td>邮件（书面）</td><td>使用书面表达，句子完整</td></tr>
+            <tr><td>代码（保留术语）</td><td>严格保留术语、命令、文件名和符号，不转换标点</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="output-language">输出语言</h2>
+      <p>默认"与原文相同"。选择其他语言后，说中文或英文，整理时直接翻译，例如说中文、粘贴出英文邮件。支持英文、简体中文、繁体中文、日文、韩文、法文、德文和西班牙文。</p>
+      <ul>
+        <li>在"设置 › 配置 AI › 整理方式"里修改，也可以在菜单栏图标的"输出语言"子菜单里快速切换。</li>
+        <li>翻译和整理在同一次请求里完成，速度和只整理差不多；词库和整理模式同样生效。</li>
+        <li>翻译需要开启"整理文字"，请求失败时粘贴原文。</li>
+      </ul>
+      <p>更多例子见<a href="/zh/use-cases/translation/">说中文，直接出英文</a>。</p>
+
+      <h2 id="local-models">本机大模型</h2>
+      <p>Tidytalk 用 OpenAI 兼容协议连接 AI 服务，所以也能接本机运行的模型，文字不会离开电脑：</p>
+      <ol>
+        <li>安装 <a href="https://ollama.com">Ollama</a> 并下载一个模型，例如 <code>ollama pull qwen2.5:7b</code>；或者在 LM Studio 里下载并加载模型，打开本地服务。</li>
+        <li>在"设置 › 配置 AI"里点"预设"，选"Ollama（本机）"或"LM Studio（本机）"，确认模型名后保存。本机模型不需要 API Key，超时默认放宽到 60 秒。</li>
+        <li>点"测试连接"确认可用。</li>
+      </ol>
+      <p>效果取决于模型大小。小模型对"只整理、不回答"和自定义规则的遵守不如云端模型稳定，建议用 7B 左右或更大的模型。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
+
+      <h2 id="vocabulary">词库</h2>
+      <p>都在"设置 › 词库"里。</p>
+      <h3>常用词</h3>
+      <p>每行一个人名、产品名或专业术语，这些词最容易识别错。它们会放进 AI 整理的提示里，让模型把读音相近的错误识别改成正确写法，例如"森斯沃伊斯"改为"SenseVoice"。需要开启"整理文字"。</p>
+      <h3>固定替换</h3>
+      <p>识别结果里出现某个词时，总是替换成指定写法，例如"克劳德"总是替换成"Claude"。英文不区分大小写，只匹配完整单词。在本机处理，关闭整理时也生效。在菜单栏图标的"最近记录"里选一条，点"加入词库…"，可以直接把识别错的词加进来。</p>
+      <h3>快捷短语</h3>
+      <p>例如"我的邮箱"对应完整的邮箱地址。整句话只说这个短语时，直接输出设置好的内容；句子中间提到这个短语不会被替换。</p>
+      <h3>自定义规则</h3>
+      <p>每行写一条自己的写法要求，例如"金额一律用阿拉伯数字""产品名写作 Tidytalk"。AI 整理和语音改写时都会遵守；规则只影响写法，不会让 AI 补充原文没有的内容。最多 20 条。</p>
+
+      <h2 id="spacing">中英文排版规范</h2>
+      <p>在本机自动处理：中文与英文、数字之间加空格；中文后面的标点统一为全角；全角字母和数字转为半角。数字里的小数点、文件名、网址等不受影响。可以在"设置 › 通用"里关闭。</p>
+
+      <h2 id="recent">最近记录</h2>
+      <p>最近 20 次的结果记在内存里。在菜单栏图标的"最近记录"里，可以重新粘贴或拷贝、拷贝未经整理的识别原文、用其他模式或语言"重新整理"并粘贴到当前输入框，或者把识别错的词"加入词库"。记录不写入磁盘，退出应用即清空。</p>
+
+      <h2 id="languages">支持的语言</h2>
+      <p>说话时不需要选择语言，识别会自动判断：</p>
+      <ul>
+        <li>中文普通话，包括句中夹杂的英文单词和技术术语</li>
+        <li>英文</li>
+        <li>日文</li>
+        <li>韩文</li>
+        <li>粤语（识别结果用简体字，保留粤语的说法）</li>
+      </ul>
+      <p>暂不支持其他语言和方言。需要输出法文、德文、西班牙文时，可以用中文或英文说，再设置输出语言。界面支持简体中文和英文，跟随系统语言。</p>
+
+      <h2 id="troubleshooting">常见问题</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>情况</th><th>原因和处理</th></tr></thead>
+          <tbody>
+            <tr><td>提示"整理失败，已粘贴原文"</td><td>AI 服务连不上、超时或返回异常。检查网络，在"设置 › 配置 AI"里点"测试连接"。</td></tr>
+            <tr><td>提示"没有听到内容"</td><td>没有识别到内容。在"设置 › 录音"里检查麦克风。</td></tr>
+            <tr><td>按快捷键没反应</td><td>缺少辅助功能权限，在"设置 › 权限"里授权。</td></tr>
+            <tr><td>打开时提示无法验证开发者</td><td>安装包还没有公证，在"系统设置 › 隐私与安全性"里点"仍要打开"。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>辅助功能一直显示未授权</h3>
+      <p>系统设置里已经打开了 Tidytalk 的开关，应用却仍显示未授权，通常是列表里留着旧版本的条目。在"系统设置 › 隐私与安全性 › 辅助功能"里选中 Tidytalk 点"−"删除，再回到 Tidytalk 点"授权"重新添加；或者在终端执行：</p>
+      <pre><code>tccutil reset Accessibility app.tidytalk.Tidytalk</code></pre>
+      <p>所有设置都保存在 <code>~/.tidytalk.json</code>，也可以直接编辑，字段说明见<a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">配置文件文档</a>。</p>
+
+      <h2 id="uninstall">卸载</h2>
+      <p>把 Tidytalk 拖进废纸篓只会删除应用本身，语音识别模型、配置和授权记录都会留在电脑上。完整卸载：先退出 Tidytalk（开启过开机自动启动的话先关掉），把应用拖进废纸篓，再在终端执行：</p>
+      <pre><code>rm -rf ~/Library/Application\ Support/Tidytalk
+rm -f ~/.tidytalk.json
+rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
+defaults delete app.tidytalk.Tidytalk
+tccutil reset All app.tidytalk.Tidytalk</code></pre>
+      <p>这几行依次删除语音识别模型（约 230&nbsp;MB）、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风和辅助功能授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>现在试试？</h2>
+      <p>Tidytalk 免费开源。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/compare/">和其他工具对比</a>
+      </div>
+    </aside>
+  </main>

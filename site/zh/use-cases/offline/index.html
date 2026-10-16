@@ -1,0 +1,174 @@
+<!doctype html>
+<!-- 由 scripts/build_site.py 从 site-src/zh/use-cases-offline.html 生成，请修改源文件 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>完全离线的 Mac 语音输入：本机识别 + 本机大模型整理</title>
+  <meta name="description" content="在 Mac 上语音输入，声音和文字都不上传。Tidytalk 在本机识别语音，并可以接 Ollama、LM Studio 本机大模型来整理文字。">
+  <link rel="canonical" href="https://tidytalk.zayen.dev/zh/use-cases/offline/">
+  <link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/offline/">
+  <link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/offline/">
+  <link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/offline/">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tidytalk">
+  <meta property="og:title" content="完全离线的 Mac 语音输入：本机识别 + 本机大模型整理">
+  <meta property="og:description" content="在 Mac 上语音输入，声音和文字都不上传。Tidytalk 在本机识别语音，并可以接 Ollama、LM Studio 本机大模型来整理文字。">
+  <meta property="og:url" content="https://tidytalk.zayen.dev/zh/use-cases/offline/">
+  <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Tidytalk 图标和标语：按住说话，松开就是整理好的文字">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="完全离线的 Mac 语音输入：本机识别 + 本机大模型整理">
+  <meta name="twitter:description" content="在 Mac 上语音输入，声音和文字都不上传。Tidytalk 在本机识别语音，并可以接 Ollama、LM Studio 本机大模型来整理文字。">
+  <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+  <link rel="apple-touch-icon" href="/assets/icon-180.png">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "完全离线的 Mac 语音输入",
+  "description": "在 Mac 上语音输入，声音和文字都不上传。Tidytalk 在本机识别语音，并可以接 Ollama、LM Studio 本机大模型来整理文字。",
+  "inLanguage": "zh-CN",
+  "url": "https://tidytalk.zayen.dev/zh/use-cases/offline/",
+  "mainEntityOfPage": "https://tidytalk.zayen.dev/zh/use-cases/offline/",
+  "image": "https://tidytalk.zayen.dev/assets/og-zh.jpg",
+  "datePublished": "2026-10-16",
+  "dateModified": "2026-10-16",
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Tidytalk",
+    "operatingSystem": "macOS",
+    "url": "https://tidytalk.zayen.dev/zh/"
+  }
+}
+</script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": "https://tidytalk.zayen.dev/zh/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "完全离线",
+      "item": "https://tidytalk.zayen.dev/zh/use-cases/offline/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="主导航">
+      <a class="brand" href="/zh/" aria-label="Tidytalk 首页">
+        <img src="/assets/icon-180.png" alt="" width="28" height="28">
+        Tidytalk
+      </a>
+      <ul class="nav-links">
+        <li class="nav-section"><a href="/zh/docs/">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
+        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li><a href="/use-cases/offline/" hreflang="en" lang="en">English</a></li>
+      </ul>
+    </nav>
+  </header>
+  <nav class="breadcrumbs container" aria-label="Breadcrumb"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <span aria-current="page">完全离线</span></nav>
+<main id="main" class="page container">
+    <header class="page-head">
+      <h1>声音和文字都不离开你的 Mac</h1>
+      <p class="lead">Tidytalk 始终在你的 Mac 上识别语音。再接上本机大模型，整理文字也在本机完成。</p>
+      <p class="updated">更新于 2026-10-16</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="what-leaves">什么会离开你的 Mac</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>设置</th><th>声音</th><th>文字</th></tr></thead>
+          <tbody>
+            <tr><td>云端 AI 服务（例如 DeepSeek、OpenAI）</td><td>留在本机</td><td>发送给你选的 AI 服务</td></tr>
+            <tr><td>Ollama 或 LM Studio 本机模型</td><td>留在本机</td><td>留在本机</td></tr>
+            <tr><td>关闭"整理文字"</td><td>留在本机</td><td>留在本机（识别原文）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>语音识别用的是 SenseVoice 模型，第一次下载约 240&nbsp;MB 后就在本机运行。最近记录只保存在内存中，退出即清空。API Key 等设置保存在 <code>~/.tidytalk.json</code>，只有你自己能读写。</p>
+      <p>除此之外唯一的联网请求是检查更新：每天最多一次从 GitHub 读取最新版本号，可以在"设置 › 通用"里关闭。</p>
+
+      <h2 id="ollama">接入 Ollama</h2>
+      <ol>
+        <li>安装 <a href="https://ollama.com">Ollama</a>。</li>
+        <li>在终端下载一个模型，例如：
+          <pre><code>ollama pull qwen2.5:7b</code></pre>
+        </li>
+        <li>在 Tidytalk 里打开"设置 › 配置 AI"，点"预设"，选"Ollama（本机）"，确认模型名和刚才下载的一致，点"保存"。</li>
+        <li>点"测试连接"，显示"连接成功"就可以用了。</li>
+      </ol>
+
+      <h2 id="lm-studio">接入 LM Studio</h2>
+      <ol>
+        <li>安装 <a href="https://lmstudio.ai">LM Studio</a>，下载并加载一个模型。</li>
+        <li>打开 LM Studio 的本地服务。</li>
+        <li>在 Tidytalk 的"预设"里选"LM Studio（本机）"，填上已加载的模型名，保存后点"测试连接"。</li>
+      </ol>
+      <p>本机模型不需要 API Key，超时时间也从 12 秒放宽到 60 秒。</p>
+
+      <h2 id="choosing-a-model">怎么选模型</h2>
+      <ul>
+        <li>整理文字不难，但模型要听话：只整理你说的话，而不是去回答它。小模型在这点和遵守自定义规则上不太稳定。</li>
+        <li>建议从 7B 左右或更大的模型开始。<code>qwen2.5:7b</code> 下载约 5&nbsp;GB，中英文都处理得不错。</li>
+        <li>本机模型太慢或返回异常时，Tidytalk 会粘贴识别原文，你说的话不会丢。</li>
+      </ul>
+
+      <h2 id="no-ai">完全不用 AI</h2>
+      <p>在"设置 › 配置 AI"里关闭"整理文字"，Tidytalk 就是一个快速、完全离线的语音转文字工具。固定替换、快捷短语和中英文排版规范仍然有效，因为它们本来就在本机处理，不需要 AI。</p>
+
+      <h2 id="open-source">可以自己核实</h2>
+      <p>Tidytalk 以 MIT 许可证开源。它什么时候发送什么内容，都可以在 <a href="https://github.com/byteyu2436/tidytalk">GitHub</a> 上看源码确认，也可以自己从源码编译。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>让你说的话只留在本机</h2>
+      <p>免费开源，支持 Apple 芯片、macOS 26 及以上。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/compare/">和其他工具对比</a>
+      </div>
+    </aside>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/zh/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
+        <p>Tidytalk 以 MIT 许可证开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
+      </div>
+      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/compare/">对比</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
+      <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li></ul></div>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+        <li><a href="/use-cases/offline/" hreflang="en" lang="en">English</a></li></ul></div>
+    </div>
+  </footer>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "88c5b4942b344ed7a3a8023fb3a384a4"}'></script>
+</body>
+</html>

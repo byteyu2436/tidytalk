@@ -1,0 +1,67 @@
+<!--
+path: /zh/use-cases/translation/
+alternate: /use-cases/translation/
+type: article
+breadcrumb: 说中文出英文
+title: 说中文，直接出英文：Mac 上边说边翻译的语音输入
+headline: 说中文，直接出英文
+description: 在 Mac 上用中文说话，直接粘贴整理好的英文邮件和消息。Tidytalk 支持说中文、英文、日文、韩文、粤语，输出英文、简繁中文、日文、韩文、法文、德文和西班牙文。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>说中文，直接出英文</h1>
+      <p class="lead">用你习惯的语言把事情讲清楚，用对方需要的语言发出去。整理和翻译一步完成。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="how">怎么用</h2>
+      <ol>
+        <li>在菜单栏图标的"输出语言"里选目标语言，或者在"设置 › 配置 AI › 整理方式"里设置。</li>
+        <li>按住 <kbd>Option</kbd> + <kbd>Command</kbd>，用中文、英文、日文、韩文或粤语说话。不用选说的是哪种语言，会自动判断。</li>
+        <li>松开。口头禅和口误被去掉，文字翻译成目标语言，粘贴到光标处。处理时指示器上会显示"译成英文"这样的标签。</li>
+      </ol>
+      <p>可以输出：英文、简体中文、繁体中文、日文、韩文、法文、德文和西班牙文。</p>
+
+      <h2 id="example">例子</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你说的（中文）</th><th>粘贴的（英文）</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>嗯，那个，麻烦跟客户说一下我们下周三之前会把报价发过去，呃，有问题随时联系我</td>
+              <td>Please let the client know we'll send the quote by next Wednesday. Feel free to contact me with any questions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>具体用词取决于你用的 AI 模型，但意思不会变：Tidytalk 只翻译你说的内容，不会额外补充。</p>
+
+      <h2 id="email">写正式邮件</h2>
+      <p>把模式切到<strong>邮件（书面）</strong>，得到完整、礼貌的英文句子；发消息时用<strong>聊天（口语）</strong>更自然。词库同样生效，人名和产品名的拼写不会错。</p>
+
+      <h2 id="switch">快速切换语言</h2>
+      <ul>
+        <li>菜单栏的"输出语言"子菜单可以直接改下一次的输出语言，不用打开设置。</li>
+        <li>刚粘贴了英文，还要一份日文？在菜单栏的"最近记录"里选这条结果，用"重新整理"换成日文，直接粘贴到当前输入框，不用再说一遍。</li>
+        <li>要翻译已经写好的文字：选中它，按住<kbd>右侧 Option</kbd>说"翻译成德文"。</li>
+      </ul>
+
+      <h2 id="good-to-know">需要知道的</h2>
+      <ul>
+        <li>翻译和整理在同一次 AI 请求里完成，速度和只整理差不多。</li>
+        <li>说的内容即使是问题或指令，也只会被翻译，不会被回答。"你帮我看下日志"会被翻译成一句请求，而不是被执行。</li>
+        <li>翻译需要开启"整理文字"并配置 AI 服务。请求失败时会粘贴原文并提示。</li>
+        <li>想完全不外传，可以用本机模型；模型越大，翻译质量越好。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>试试边说边翻译</h2>
+      <p>免费开源，支持 Apple 芯片、macOS 26 及以上。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#output-language">看使用指南里的输出语言</a>
+      </div>
+    </aside>
+  </main>
