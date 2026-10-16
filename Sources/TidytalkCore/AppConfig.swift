@@ -1,0 +1,269 @@
+import Foundation
+
+/// 文本整理使用的 OpenAI 兼容接口配置。
+public struct AIConfig: Equatable, Sendable {
+    /// 例如 https://api.deepseek.com/v1、https://api.openai.com/v1
+    public var baseURL: String
+    public var apiKey: String
+    public var model: String
+    /// 为 nil 时不发送，适用于不允许修改 temperature 的模型。
+    public var temperature: Double?
+    /// 请求超时（秒），超时后直接粘贴原文。
+    public var timeout: Double
+
+    public init(baseURL: String, apiKey: String, model: String, temperature: Double?, timeout: Double) {
+        self.baseURL = baseURL
+        self.apiKey = apiKey
+        self.model = model
+        self.temperature = temperature
+        self.timeout = timeout
+    }
+
+    public static let `default` = AIConfig(
+        baseURL: "https://api.deepseek.com/v1",
+        apiKey: "",
+        model: "deepseek-chat",
+        temperature: 0,
+        timeout: 12
+    )
+
+    /// `{base_url}/chat/completions`
+    public var chatCompletionsURL: URL? {
+        var base = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        while base.hasSuffix("/") { base.removeLast() }
+        guard let url = URL(string: base + "/chat/completions"),
+              let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http",
+              url.host != nil
+        else { return nil }
+        return url
+    }
+
+    /// 接口在本机（Ollama、LM Studio 等），文字不会离开这台 Mac，也不需要 API Key。
+    public var isLocal: Bool {
+        guard let host = chatCompletionsURL?.host()?.lowercased() else { return false }
+        return ["localhost", "127.0.0.1", "::1", "[::1]"].contains(host) || host.hasSuffix(".local")
+    }
+
+    public var isConfigured: Bool {
+        chatCompletionsURL != nil
+            && (isLocal || !apiKey.trimmingCharacters(in: .whitespaces).isEmpty)
+            && !model.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+}
+
+/// 用户配置，保存在 `~/.tidytalk.json`：
+///
+/// ```json
+/// {
+///   "cleanup_enabled": true,
+///   "ai": {
+///     "base_url": "https://api.deepseek.com/v1",
+///     "api_key": "sk-...",
+///     "model": "deepseek-chat",
+///     "temperature": 0,
+///     "timeout": 12
+///   },
+///   "typography": true,
+///   "vocabulary": ["Claude", "SenseVoice"],
+///   "replacements": { "克劳德": "Claude" },
+///   "style": "standard",
+///   "output_language": "original",
+///   "hotkey": "option_command",
+///   "microphone": "",
+///   "history": true,
+///   "hands_free": true,
+///   "rewrite_hotkey": "right_option",
+///   "sounds": true,
+///   "cleanup_level": "standard",
+///   "snippets": { "我的邮箱": "name@example.com" },
+///   "custom_rules": ["金额一律用阿拉伯数字"],
+///   "auto_update_check": true,
+///   "live_preview": true
+/// }
+/// ```
+public struct AppConfig: Equatable, Sendable {
+    public var cleanupEnabled: Bool
+    public var ai: AIConfig
+    /// 中英文排版规范（加空格、统一标点），本地处理，不依赖 AI 整理。
+    public var typography: Bool
+    /// 个人词库，放进 AI 整理的提示里。
+    public var vocabulary: [String]
+    /// 固定替换表，错误写法 → 正确写法，本地处理。
+    public var replacements: [String: String]
+    /// 整理模式。
+    public var style: CleanupStyle
+    /// 输出语言，选了其他语言时整理后翻译。
+    public var outputLanguage: OutputLanguage
+    /// 按住说话的触发键。
+    public var hotkey: HotkeyKey
+    /// 录音使用的麦克风（Core Audio 设备 UID），空字符串表示跟随系统默认。
+    public var microphone: String
+    /// 是否记住最近的结果（只保存在内存中，退出应用即清空）。
+    public var history: Bool
+    /// 双击触发键进入免按住录音。
+    public var handsFree: Bool
+    /// 语音改写选中文字的触发键，nil 表示关闭。不能和 `hotkey` 相同。
+    public var rewriteHotkey: HotkeyKey?
+    /// 开始、结束录音时的提示音。
+    public var sounds: Bool
+    /// 整理强度。
+    public var cleanupLevel: CleanupLevel
+    /// 快捷短语：说出的短语 → 输出的内容。
+    public var snippets: [String: String]
+    /// 用户补充的整理规则，AI 整理和语音改写时遵守。
+    public var customRules: [String]
+    /// 启动时自动检查更新（需要构建时配置了更新地址）。
+    public var autoUpdateCheck: Bool
+    /// 说话时在指示器下方显示实时识别的文字（只是预览，最终结果仍在松开后生成）。
+    public var livePreview: Bool
+
+    public init(cleanupEnabled: Bool = true, ai: AIConfig = .default, typography: Bool = true,
+                vocabulary: [String] = [], replacements: [String: String] = [:],
+                style: CleanupStyle = .standard, outputLanguage: OutputLanguage = .original,
+                hotkey: HotkeyKey = .optionCommand, microphone: String = "", history: Bool = true,
+                handsFree: Bool = true, rewriteHotkey: HotkeyKey? = .rightOption, sounds: Bool = true,
+                cleanupLevel: CleanupLevel = .standard, snippets: [String: String] = [:],
+                customRules: [String] = [], autoUpdateCheck: Bool = true, livePreview: Bool = true) {
+        self.cleanupEnabled = cleanupEnabled
+        self.ai = ai
+        self.typography = typography
+        self.vocabulary = vocabulary
+        self.replacements = replacements
+        self.style = style
+        self.outputLanguage = outputLanguage
+        self.hotkey = hotkey
+        self.microphone = microphone
+        self.history = history
+        self.handsFree = handsFree
+        // 两个触发键相同时关闭语音改写
+        self.rewriteHotkey = rewriteHotkey == hotkey ? nil : rewriteHotkey
+        self.sounds = sounds
+        self.cleanupLevel = cleanupLevel
+        self.snippets = snippets
+        self.customRules = customRules
+        self.autoUpdateCheck = autoUpdateCheck
+        self.livePreview = livePreview
+    }
+
+    /// 实际生效的语音改写触发键：和说话的触发键相同时视为关闭。
+    public var activeRewriteHotkey: HotkeyKey? {
+        rewriteHotkey == hotkey ? nil : rewriteHotkey
+    }
+
+    public enum ParseError: LocalizedError {
+        case notAnObject
+
+        public var errorDescription: String? { String(localized: "配置文件不是有效的 JSON 对象") }
+    }
+
+    private enum Key {
+        static let cleanupEnabled = "cleanup_enabled"
+        static let ai = "ai"
+        static let baseURL = "base_url"
+        static let apiKey = "api_key"
+        static let model = "model"
+        static let temperature = "temperature"
+        static let timeout = "timeout"
+        static let typography = "typography"
+        static let vocabulary = "vocabulary"
+        static let replacements = "replacements"
+        static let style = "style"
+        static let outputLanguage = "output_language"
+        static let hotkey = "hotkey"
+        static let microphone = "microphone"
+        static let history = "history"
+        static let handsFree = "hands_free"
+        static let rewriteHotkey = "rewrite_hotkey"
+        static let sounds = "sounds"
+        static let cleanupLevel = "cleanup_level"
+        static let snippets = "snippets"
+        static let customRules = "custom_rules"
+        static let autoUpdateCheck = "auto_update_check"
+        static let livePreview = "live_preview"
+        static let off = "off"
+        /// 旧版本的按应用风格，已废弃，写回时删除
+        static let legacyAppStyles = "app_styles"
+    }
+
+    /// 缺少的字段使用默认值。
+    public static func decode(_ data: Data) throws -> AppConfig {
+        guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw ParseError.notAnObject
+        }
+        let ai = root[Key.ai] as? [String: Any] ?? [:]
+        let defaults = AIConfig.default
+
+        let temperature: Double?
+        if ai.keys.contains(Key.temperature) {
+            temperature = (ai[Key.temperature] as? NSNumber)?.doubleValue
+        } else {
+            temperature = defaults.temperature
+        }
+
+        return AppConfig(
+            cleanupEnabled: (root[Key.cleanupEnabled] as? Bool) ?? true,
+            ai: AIConfig(
+                baseURL: (ai[Key.baseURL] as? String) ?? defaults.baseURL,
+                apiKey: (ai[Key.apiKey] as? String) ?? defaults.apiKey,
+                model: (ai[Key.model] as? String) ?? defaults.model,
+                temperature: temperature,
+                timeout: (ai[Key.timeout] as? NSNumber)?.doubleValue ?? defaults.timeout
+            ),
+            typography: (root[Key.typography] as? Bool) ?? true,
+            vocabulary: (root[Key.vocabulary] as? [Any])?.compactMap { $0 as? String } ?? [],
+            replacements: (root[Key.replacements] as? [String: Any])?.compactMapValues { $0 as? String } ?? [:],
+            // 无法识别的模式名使用标准模式
+            style: (root[Key.style] as? String).flatMap(CleanupStyle.init(rawValue:)) ?? .standard,
+            // 无法识别的语言按"与原文相同"处理
+            outputLanguage: (root[Key.outputLanguage] as? String).flatMap(OutputLanguage.init(rawValue:)) ?? .original,
+            hotkey: (root[Key.hotkey] as? String).flatMap(HotkeyKey.init(rawValue:)) ?? .optionCommand,
+            microphone: (root[Key.microphone] as? String) ?? "",
+            history: (root[Key.history] as? Bool) ?? true,
+            handsFree: (root[Key.handsFree] as? Bool) ?? true,
+            rewriteHotkey: {
+                guard let raw = root[Key.rewriteHotkey] as? String else { return .rightOption }
+                return raw == Key.off ? nil : HotkeyKey(rawValue: raw) ?? .rightOption
+            }(),
+            sounds: (root[Key.sounds] as? Bool) ?? true,
+            cleanupLevel: (root[Key.cleanupLevel] as? String).flatMap(CleanupLevel.init(rawValue:)) ?? .standard,
+            snippets: (root[Key.snippets] as? [String: Any])?.compactMapValues { $0 as? String } ?? [:],
+            customRules: (root[Key.customRules] as? [Any])?.compactMap { $0 as? String } ?? [],
+            autoUpdateCheck: (root[Key.autoUpdateCheck] as? Bool) ?? true,
+            livePreview: (root[Key.livePreview] as? Bool) ?? true
+        )
+    }
+
+    /// 写回时保留文件里其他未知字段。
+    public func encode(merging existing: Data? = nil) throws -> Data {
+        var root = existing.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] } ?? [:]
+        var ai = root[Key.ai] as? [String: Any] ?? [:]
+
+        root[Key.cleanupEnabled] = cleanupEnabled
+        ai[Key.baseURL] = self.ai.baseURL
+        ai[Key.apiKey] = self.ai.apiKey
+        ai[Key.model] = self.ai.model
+        ai[Key.temperature] = self.ai.temperature.map { $0 as Any } ?? NSNull()
+        ai[Key.timeout] = self.ai.timeout
+        root[Key.ai] = ai
+        root[Key.typography] = typography
+        root[Key.vocabulary] = vocabulary
+        root[Key.replacements] = replacements
+        root[Key.style] = style.rawValue
+        root[Key.outputLanguage] = outputLanguage.rawValue
+        root[Key.hotkey] = hotkey.rawValue
+        root[Key.microphone] = microphone
+        root[Key.history] = history
+        root[Key.handsFree] = handsFree
+        root[Key.rewriteHotkey] = rewriteHotkey?.rawValue ?? Key.off
+        root[Key.sounds] = sounds
+        root[Key.cleanupLevel] = cleanupLevel.rawValue
+        root[Key.snippets] = snippets
+        root[Key.customRules] = customRules
+        root[Key.autoUpdateCheck] = autoUpdateCheck
+        root[Key.livePreview] = livePreview
+        root[Key.legacyAppStyles] = nil
+
+        return try JSONSerialization.data(withJSONObject: root,
+                                          options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+    }
+}

@@ -1,0 +1,662 @@
+/* Tidytalk 英文界面文字。键是源代码里的简体中文原文。
+   检查是否齐全：scripts/localization.py */
+
+/* AppDelegate.swift:81 */
+"设置…" = "Settings…";
+
+/* AppDelegate.swift:84 */
+"关闭窗口" = "Close Window";
+
+/* AppDelegate.swift:85 */
+"退出 Tidytalk" = "Quit Tidytalk";
+
+/* AppDelegate.swift:88 */
+"编辑" = "Edit";
+
+/* AppDelegate.swift:89 */
+"撤销" = "Undo";
+
+/* AppDelegate.swift:90 */
+"重做" = "Redo";
+
+/* AppDelegate.swift:92 */
+"剪切" = "Cut";
+
+/* AppDelegate.swift:93 */
+"拷贝" = "Copy";
+
+/* AppDelegate.swift:94 */
+"粘贴" = "Paste";
+
+/* AppDelegate.swift:95 */
+"全选" = "Select All";
+
+/* AppDelegate.swift:128 */
+"欢迎使用 Tidytalk" = "Welcome to Tidytalk";
+
+/* AppModel.swift:94 */
+"就绪：按住%@说话" = "Ready: hold %@ to talk";
+
+/* AppModel.swift:95 */
+"需要授权麦克风" = "Microphone access required";
+
+/* AppModel.swift:96 */
+"需要授权辅助功能" = "Accessibility access required";
+
+/* AppModel.swift:99 */
+"正在下载语音识别模型 %lld%%" = "Downloading speech model %lld%%";
+
+/* AppModel.swift:100 */
+"正在校验语音识别模型" = "Verifying speech model";
+
+/* AppModel.swift:101 */
+"语音识别模型尚未就绪" = "Speech model not ready";
+
+/* DictationController.swift:107 */
+"请先在设置里配置 AI" = "Set up AI in Settings first";
+
+/* DictationController.swift:117 */
+"无法开始录音：%@" = "Couldn't start recording: %@";
+
+/* DictationController.swift:132 */
+"改写" = "Rewrite";
+
+/* DictationController.swift:134 */
+"整理" = "Tidy";
+
+/* DictationController.swift:169 */
+"语音识别模型加载失败" = "Couldn't load the speech model";
+
+/* DictationController.swift:175 */
+"没有听到内容" = "Didn't hear anything";
+
+/* DictationController.swift:218 */
+"翻译失败，已粘贴原文" = "Translation failed, pasted original";
+
+/* DictationController.swift:218 */
+"整理失败，已粘贴原文" = "Cleanup failed, pasted original";
+
+/* DictationController.swift:221 */
+"配置文件格式错误，已粘贴原文" = "Invalid config file, pasted original";
+
+/* DictationController.swift:223 */
+"未配置 AI，已粘贴原文" = "AI not set up, pasted original";
+
+/* DictationController.swift:242 */
+"未开启整理文字，已粘贴原文" = "Tidy up text is off, pasted original";
+
+/* DictationController.swift:272 */
+"重新整理失败，没有粘贴" = "Re-tidy failed, nothing pasted";
+
+/* DictationController.swift:281 */
+"请先选中要改写的文字" = "Select the text to rewrite first";
+
+/* DictationController.swift:289 */
+"改写失败，原文未改动" = "Rewrite failed, text unchanged";
+
+/* DictationController.swift:294 */
+"改写：%@" = "Rewrite: %@";
+
+/* DictationController.swift:309 */
+"需要授权辅助功能才能粘贴" = "Accessibility access is needed to paste";
+
+/* DictationController.swift:316 */
+"已拷贝到剪贴板" = "Copied to clipboard";
+
+/* AudioRecorder.swift:13 */
+"没有可用的麦克风" = "No microphone available";
+
+/* AudioRecorder.swift:14 */
+"麦克风格式不受支持" = "Unsupported microphone format";
+
+/* ChatCompletionClient.swift:16 */
+"接口地址、API Key 或模型未填写" = "Endpoint, API key, or model is missing";
+
+/* ChatCompletionClient.swift:17 */
+"API Key 无效或已失效" = "The API key is invalid or has expired";
+
+/* ChatCompletionClient.swift:19 */
+"接口返回错误 %lld：%@" = "The service returned error %lld: %@";
+
+/* ChatCompletionClient.swift:19 */
+"接口返回错误 %lld" = "The service returned error %lld";
+
+/* ChatCompletionClient.swift:20 */
+"AI 服务返回了无法识别的内容" = "The AI service sent a response Tidytalk couldn't read";
+
+/* ConfigStore.swift:35 */
+"配置文件 ~/.tidytalk.json 格式错误：%@" = "~/.tidytalk.json is invalid: %@";
+
+/* ConfigStore.swift:60 */
+"无法写入配置文件：%@" = "Couldn't save the config file: %@";
+
+/* ModelManager.swift:100 */
+"下载已暂停" = "Download paused";
+
+/* ModelManager.swift:156 */
+"没有可用的下载源" = "No download source available";
+
+/* ModelManager.swift:157 */
+"下载不完整，请重试" = "Download incomplete. Please try again.";
+
+/* ModelManager.swift:158 */
+"文件已损坏，请重新下载" = "The file is damaged. Please download again.";
+
+/* ModelManager.swift:159 */
+"下载失败，请检查网络后重试" = "Download failed. Check your connection and try again.";
+
+/* UpdateChecker.swift:52 */
+"已是最新版本" = "You're up to date";
+
+/* UpdateChecker.swift:52 */
+"当前版本 %@。" = "Current version: %@.";
+
+/* UpdateChecker.swift:55 */
+"检查更新失败" = "Couldn't check for updates";
+
+/* UpdateChecker.swift:70 */
+"发现新版本 %@" = "Version %@ is available";
+
+/* UpdateChecker.swift:72 */
+"下载" = "Download";
+
+/* UpdateChecker.swift:73 */
+"以后再说" = "Later";
+
+/* OnboardingView.swift:18 */
+"授权麦克风" = "Allow Microphone";
+
+/* OnboardingView.swift:19 */
+"授权辅助功能" = "Allow Accessibility";
+
+/* OnboardingView.swift:20 */
+"配置 AI" = "Set Up AI";
+
+/* OnboardingView.swift:21 */
+"下载语音识别模型" = "Download Speech Model";
+
+/* OnboardingView.swift:80 */
+"按住%@说话，松开后文字出现在光标处。" = "Hold %@ and speak. Let go, and your words appear at the cursor.";
+
+/* OnboardingView.swift:115 */
+"用于录音。声音只在这台 Mac 上识别，不会上传。" = "Used for recording. Your voice is recognized on this Mac and never uploaded.";
+
+/* OnboardingView.swift:118 */
+"已授权" = "Allowed";
+
+/* OnboardingView.swift:120 */
+"麦克风权限已关闭，请在系统设置中打开。" = "Microphone access is off. Turn it on in System Settings.";
+
+/* OnboardingView.swift:121 */
+"打开系统设置" = "Open System Settings";
+
+/* OnboardingView.swift:133 */
+"用于监听%@键，并把文字输入到光标处。" = "Used to detect the %@ key and type text at the cursor.";
+
+/* OnboardingView.swift:138 */
+"点击下方按钮，在系统设置中打开 Tidytalk 的开关。" = "Click the button below, then turn on Tidytalk in System Settings.";
+
+/* OnboardingView.swift:151 */
+"文字会发送给你配置的 AI 服务，去掉\"嗯、那个\"并修正口误。可以跳过，直接输出识别结果。" = "Text is sent to the AI service you choose to remove fillers like \"um\" and fix slips. You can skip this and get the raw transcript.";
+
+/* OnboardingView.swift:154 */
+"整理文字" = "Tidy up text";
+
+/* OnboardingView.swift:158 */
+"获取 DeepSeek API Key" = "Get a DeepSeek API Key";
+
+/* OnboardingView.swift:162 */
+"在这台 Mac 上识别语音，支持中文、英文、日文、韩文和粤语，自动判断语言。" = "Recognizes speech on this Mac. Supports Chinese, English, Japanese, Korean, and Cantonese, and detects the language automatically.";
+
+/* OnboardingView.swift:171 */
+"下载完成后即可使用" = "Ready once the download finishes";
+
+/* OnboardingView.swift:177 */
+"上一步" = "Back";
+
+/* OnboardingView.swift:180 */
+"完成" = "Done";
+
+/* OnboardingView.swift:187 */
+"下一步" = "Next";
+
+/* OnboardingView.swift:190 */
+"跳过" = "Skip";
+
+/* SettingsView.swift:14 */
+"通用" = "General";
+
+/* SettingsView.swift:15 */
+"录音" = "Recording";
+
+/* SettingsView.swift:17 */
+"词库" = "Vocabulary";
+
+/* SettingsView.swift:18 */
+"权限" = "Permissions";
+
+/* SettingsView.swift:52 */
+"开机自动启动" = "Open at login";
+
+/* SettingsView.swift:61 */
+"需要在系统设置里允许" = "Needs approval in System Settings";
+
+/* SettingsView.swift:63 */
+"打开登录项设置" = "Open Login Items";
+
+/* SettingsView.swift:70 */
+"自动检查更新" = "Check for updates automatically";
+
+/* SettingsView.swift:75 */
+"当前版本 %@" = "Version %@";
+
+/* SettingsView.swift:77 */
+"检查更新" = "Check for Updates";
+
+/* SettingsView.swift:80 */
+"版本" = "Version";
+
+/* SettingsView.swift:83 */
+"启动与更新" = "Startup & Updates";
+
+/* SettingsView.swift:87 */
+"中英文排版规范" = "Chinese–English spacing";
+
+/* SettingsView.swift:92 */
+"排版" = "Typography";
+
+/* SettingsView.swift:94 */
+"在中文与英文、数字之间加空格，统一使用全角标点。" = "Adds spaces between Chinese and English or numbers, and uses full-width punctuation.";
+
+/* SettingsView.swift:100 */
+"记住最近的结果" = "Remember recent results";
+
+/* SettingsView.swift:109 */
+"已记住 %lld 条" = "%lld remembered";
+
+/* SettingsView.swift:111 */
+"清空" = "Clear";
+
+/* SettingsView.swift:116 */
+"历史记录" = "History";
+
+/* SettingsView.swift:118 */
+"可以在菜单栏的\"最近记录\"里再次粘贴。退出后清空。" = "Paste recent results again from \"Recent\" in the menu bar. Cleared when you quit.";
+
+/* SettingsView.swift:143 */
+"按住说话，松开结束，按 Esc 取消。" = "Hold to talk, let go to finish, or press Esc to cancel.";
+
+/* SettingsView.swift:145 */
+"双击可免按住录音，再按一次结束。" = " Double-tap for hands-free recording; press again to finish.";
+
+/* SettingsView.swift:148 */
+"选中文字后按住%@说出修改要求，即可改写。" = " Select text, then hold %@ and say how to change it.";
+
+/* SettingsView.swift:151 */
+"使用 Fn 时，请在\"系统设置 › 键盘\"里把\"按下 🌐 键时\"设为\"无操作\"。" = " When using Fn, set \"Press 🌐 key to\" to \"Do Nothing\" in System Settings › Keyboard.";
+
+/* SettingsView.swift:160 */
+"按住说话" = "Hold to Talk";
+
+/* SettingsView.swift:166 */
+"双击免按住录音" = "Double-tap for hands-free recording";
+
+/* SettingsView.swift:170 */
+"改写选中文字" = "Rewrite Selection";
+
+/* SettingsView.swift:174 */
+"关闭" = "Off";
+
+/* SettingsView.swift:179 */
+"按住%@" = "Hold %@";
+
+/* SettingsView.swift:184 */
+"快捷键" = "Shortcuts";
+
+/* SettingsView.swift:192 */
+"麦克风" = "Microphone";
+
+/* SettingsView.swift:196 */
+"系统默认" = "System Default";
+
+/* SettingsView.swift:200 */
+"已选的麦克风（未连接）" = "Selected microphone (not connected)";
+
+/* SettingsView.swift:203 */
+"显示实时文字" = "Show live text";
+
+/* SettingsView.swift:207 */
+"播放提示音" = "Play sounds";
+
+/* SettingsView.swift:214 */
+"未连接时使用系统默认麦克风。" = "Uses the system default when it isn't connected.";
+
+/* SettingsView.swift:219 */
+"语音识别模型" = "Speech Model";
+
+/* SettingsView.swift:250 */
+"整理后翻译成 %@。" = " Then translated into %@.";
+
+/* SettingsView.swift:265 */
+"接口" = "Service";
+
+/* SettingsView.swift:267 */
+"用 AI 去掉口头禅，修正口误和标点。关闭后直接输出识别结果。" = "AI removes filler words and fixes slips and punctuation. When off, you get the raw transcript.";
+
+/* SettingsView.swift:273 */
+"整理强度" = "Cleanup Strength";
+
+/* SettingsView.swift:279 */
+"整理模式" = "Cleanup Mode";
+
+/* SettingsView.swift:285 */
+"输出语言" = "Output Language";
+
+/* SettingsView.swift:296 */
+"整理方式" = "Tidying";
+
+/* SettingsView.swift:314 */
+"授权" = "Allow";
+
+/* SettingsView.swift:315 */
+"用于录音" = "Used for recording";
+
+/* SettingsView.swift:326 */
+"辅助功能" = "Accessibility";
+
+/* SettingsView.swift:327 */
+"用于监听%@键和粘贴文字" = "Used to detect the %@ key and paste text";
+
+/* SettingsView.swift:337 */
+"隐私" = "Privacy";
+
+/* SettingsView.swift:338 */
+"声音只在这台 Mac 上识别。开启整理文字后，文字会发送给你配置的 AI 服务。最近记录只保存在内存中，退出后清空。" = "Your voice is recognized on this Mac. With Tidy up text on, the text is sent to the AI service you set up. Recent results stay in memory and are cleared when you quit.";
+
+/* SharedViews.swift:34 */
+"接口地址" = "Endpoint";
+
+/* SharedViews.swift:39 */
+"本机模型可以不填" = "Not needed for local models";
+
+/* SharedViews.swift:42 */
+"模型" = "Model";
+
+/* SharedViews.swift:44 */
+"本机已下载或加载的模型名" = "Name of a downloaded or loaded local model";
+
+/* SharedViews.swift:47 */
+"超时" = "Timeout";
+
+/* SharedViews.swift:51 */
+"秒" = "seconds";
+
+/* SharedViews.swift:60 */
+"保存" = "Save";
+
+/* SharedViews.swift:62 */
+"测试连接" = "Test Connection";
+
+/* SharedViews.swift:64 */
+"预设" = "Presets";
+
+/* SharedViews.swift:71 */
+"打开配置文件" = "Open Config File";
+
+/* SharedViews.swift:90 */
+"有未保存的修改" = "Unsaved changes";
+
+/* SharedViews.swift:92 */
+"使用本机模型，文字不会离开这台 Mac" = "Using a local model — text never leaves this Mac";
+
+/* SharedViews.swift:95 */
+"已保存" = "Saved";
+
+/* SharedViews.swift:98 */
+"正在测试…" = "Testing…";
+
+/* SharedViews.swift:100 */
+"连接成功" = "Connected";
+
+/* SharedViews.swift:149 */
+"网络不可用" = "No network connection";
+
+/* SharedViews.swift:150 */
+"连接超时" = "Connection timed out";
+
+/* SharedViews.swift:151 */
+"无法连接到接口地址" = "Couldn't reach the endpoint";
+
+/* SharedViews.swift:152 */
+"连接失败：%@" = "Connection failed: %@";
+
+/* SharedViews.swift:167 */
+"语音识别模型已就绪" = "Speech model ready";
+
+/* SharedViews.swift:170 */
+"需要下载约 %@，之后可离线识别。" = "About %@ to download. After that, recognition works offline.";
+
+/* SharedViews.swift:172 */
+"下载模型" = "Download Model";
+
+/* SharedViews.swift:176 */
+"正在下载… %lld%%" = "Downloading… %lld%%";
+
+/* SharedViews.swift:179 */
+"暂停" = "Pause";
+
+/* SharedViews.swift:181 */
+"正在校验文件…" = "Verifying files…";
+
+/* SharedViews.swift:185 */
+"继续下载" = "Resume Download";
+
+/* SharedViews.swift:230 */
+"打开开关后仍显示未授权？在列表中选中 Tidytalk 点\"−\"删除，再点\"授权\"重新添加。" = "Still not allowed after turning it on? Remove Tidytalk from the list with \"−\", then click \"Allow\" to add it again.";
+
+/* SharedViews.swift:235 */
+"重新检测" = "Check Again";
+
+/* StatusItemController.swift:45 */
+"Tidytalk：正在录音" = "Tidytalk: Recording";
+
+/* StatusItemController.swift:45 */
+"Tidytalk：%@" = "Tidytalk: %@";
+
+/* StatusItemController.swift:75 */
+"输出语言：%@" = "Output Language: %@";
+
+/* StatusItemController.swift:86 */
+"设置引导…" = "Setup Guide…";
+
+/* StatusItemController.swift:88 */
+"检查更新…" = "Check for Updates…";
+
+/* StatusItemController.swift:102 */
+"最近记录" = "Recent";
+
+/* StatusItemController.swift:106 */
+"暂无记录" = "No Recent Results";
+
+/* StatusItemController.swift:119 */
+"拷贝识别原文" = "Copy Raw Transcript";
+
+/* StatusItemController.swift:124 */
+"加入词库…" = "Add to Vocabulary…";
+
+/* StatusItemController.swift:133 */
+"清空记录" = "Clear Recent";
+
+/* StatusItemController.swift:137 */
+"退出后清空" = "Cleared when you quit";
+
+/* StatusItemController.swift:161 */
+"重新整理" = "Re-tidy";
+
+/* StatusItemController.swift:225 */
+"识别成（例如 克劳德）" = "Recognized as (e.g. cloud)";
+
+/* StatusItemController.swift:227 */
+"正确写法（例如 Claude）" = "Correct spelling (e.g. Claude)";
+
+/* StatusItemController.swift:228 */
+"同时加入常用词" = "Also add to Common Words";
+
+/* StatusItemController.swift:238 */
+"加入词库" = "Add to Vocabulary";
+
+/* StatusItemController.swift:239 */
+"识别结果：%@\n\n以后识别出左边的写法时，替换成右边的写法。" = "Transcript: %@\n\nFrom now on, the spelling on the left is replaced with the one on the right.";
+
+/* StatusItemController.swift:241 */
+"加入" = "Add";
+
+/* StatusItemController.swift:242 */
+"取消" = "Cancel";
+
+/* VocabularySettings.swift:58 */
+"例如：\nClaude\nSenseVoice\n张伟" = "For example:\nClaude\nSenseVoice\nJane Doe";
+
+/* VocabularySettings.swift:65 */
+"常用词" = "Common Words";
+
+/* VocabularySettings.swift:67 */
+"每行一个人名、产品名或术语，AI 会把读音相近的词纠正成这些写法。" = "One name, product, or term per line. AI corrects similar-sounding words to these spellings.";
+
+/* VocabularySettings.swift:75 */
+"识别成" = "Recognized as";
+
+/* VocabularySettings.swift:75 */
+"克劳德" = "cloud";
+
+/* VocabularySettings.swift:78 */
+"替换为" = "Replace with";
+
+/* VocabularySettings.swift:91 */
+"添加替换" = "Add Replacement";
+
+/* VocabularySettings.swift:94 */
+"固定替换" = "Replacements";
+
+/* VocabularySettings.swift:96 */
+"识别出左边的词时，替换成右边的写法。" = "Replaces the word on the left with the one on the right.";
+
+/* VocabularySettings.swift:104 */
+"说出" = "Say";
+
+/* VocabularySettings.swift:104 */
+"我的邮箱" = "my email";
+
+/* VocabularySettings.swift:108 */
+"输出" = "Output";
+
+/* VocabularySettings.swift:123 */
+"添加快捷短语" = "Add Snippet";
+
+/* VocabularySettings.swift:126 */
+"快捷短语" = "Snippets";
+
+/* VocabularySettings.swift:128 */
+"只说出左边的短语时，直接输出右边的内容，适合邮箱、地址等。" = "Say just the phrase on the left to insert the text on the right — handy for emails and addresses.";
+
+/* VocabularySettings.swift:140 */
+"例如：\n金额一律用阿拉伯数字\n称呼对方统一用\"您\"\n产品名写作 Tidytalk" = "For example:\nWrite amounts as digits\nAlways address people formally\nWrite the product name as Tidytalk";
+
+/* VocabularySettings.swift:147 */
+"自定义规则" = "Custom Rules";
+
+/* VocabularySettings.swift:149 */
+"每行一条写法要求，AI 整理和改写时会遵守。最多 %lld 条。" = "One writing rule per line, followed when AI tidies or rewrites. Up to %lld rules.";
+
+/* VocabularySettings.swift:162 */
+"还原" = "Revert";
+
+/* AIPreset.swift:16 */
+"Ollama（本机）" = "Ollama (local)";
+
+/* AIPreset.swift:18 */
+"LM Studio（本机）" = "LM Studio (local)";
+
+/* AppConfig.swift:156 */
+"配置文件不是有效的 JSON 对象" = "The config file isn't a valid JSON object";
+
+/* CleanupLevel.swift:13 */
+"轻度" = "Light";
+
+/* CleanupLevel.swift:14 */
+"标准" = "Standard";
+
+/* CleanupLevel.swift:15 */
+"深度" = "Thorough";
+
+/* CleanupLevel.swift:21 */
+"只加标点、删语气词。" = "Only adds punctuation and removes fillers.";
+
+/* CleanupLevel.swift:22 */
+"删除口头禅和口误，补全标点。" = "Removes fillers and slips, and adds punctuation.";
+
+/* CleanupLevel.swift:23 */
+"进一步精简重复、啰嗦的表达，不改原意。" = "Also tightens wordy or repetitive phrasing, keeping your meaning.";
+
+/* CleanupStyle.swift:16 */
+"聊天（口语）" = "Chat (casual)";
+
+/* CleanupStyle.swift:17 */
+"邮件（书面）" = "Email (formal)";
+
+/* CleanupStyle.swift:18 */
+"代码（保留术语）" = "Code (keep terms)";
+
+/* CleanupStyle.swift:24 */
+"删除填充词、修正口误、补全标点，保持原意。" = "Removes fillers, fixes slips, and adds punctuation, keeping your meaning.";
+
+/* CleanupStyle.swift:25 */
+"保留口语语气，适合聊天。" = "Keeps a casual tone. Good for chat.";
+
+/* CleanupStyle.swift:26 */
+"改成书面表达，适合邮件和文档。" = "Uses formal writing. Good for email and documents.";
+
+/* CleanupStyle.swift:27 */
+"原样保留术语、命令和符号，适合技术内容。" = "Keeps terms, commands, and symbols as is. Good for technical writing.";
+
+/* HotkeyKey.swift:20 */
+"Fn（🌐）" = "Fn (🌐)";
+
+/* HotkeyKey.swift:21 */
+"右侧 Option" = "Right Option";
+
+/* HotkeyKey.swift:22 */
+"右侧 Command" = "Right Command";
+
+/* HotkeyKey.swift:34 */
+"右 Option" = "Right Option";
+
+/* HotkeyKey.swift:35 */
+"右 Command" = "Right Command";
+
+/* OutputLanguage.swift:18 */
+"与原文相同" = "Same as spoken";
+
+/* OutputLanguage.swift:34 */
+"译成英文" = "To English";
+
+/* OutputLanguage.swift:35 */
+"译成简体" = "To Simplified Chinese";
+
+/* OutputLanguage.swift:36 */
+"译成繁体" = "To Traditional Chinese";
+
+/* OutputLanguage.swift:37 */
+"译成日文" = "To Japanese";
+
+/* OutputLanguage.swift:38 */
+"译成韩文" = "To Korean";
+
+/* OutputLanguage.swift:39 */
+"译成法文" = "To French";
+
+/* OutputLanguage.swift:40 */
+"译成德文" = "To German";
+
+/* OutputLanguage.swift:41 */
+"译成西班牙文" = "To Spanish";

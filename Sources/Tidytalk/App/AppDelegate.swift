@@ -1,0 +1,143 @@
+import AppKit
+import Observation
+import SwiftUI
+
+@MainActor
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+    private let model = AppModel()
+    private var indicator: IndicatorPanel!
+    private var controller: DictationController!
+    private var statusItem: StatusItemController!
+    private var onboardingWindow: NSWindow?
+    private var settingsWindow: NSWindow?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.mainMenu = makeMainMenu()
+        indicator = IndicatorPanel(model: model)
+        controller = DictationController(model: model, indicator: indicator)
+        statusItem = StatusItemController(model: model)
+        statusItem.onOpenSettings = { [weak self] in self?.showSettings() }
+        statusItem.onOpenOnboarding = { [weak self] in self?.showOnboarding() }
+        statusItem.onReprocess = { [weak self] entry, style, language in
+            self?.controller.reprocess(entry, style: style, language: language)
+        }
+
+        controller.start()
+        observeAccessibility()
+        UpdateChecker.checkInBackgroundIfNeeded(enabled: model.configStore.config.autoUpdateCheck)
+
+        if !model.onboardingCompleted || model.readiness != .ready {
+            showOnboarding()
+        }
+    }
+
+    /// 应用已在运行时再次打开（Finder、启动台、Spotlight 或点击 Dock 图标）。
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !model.onboardingCompleted || model.readiness != .ready {
+            showOnboarding()
+        } else {
+            showSettings()
+        }
+        return false
+    }
+
+    /// 窗口打开期间在 Dock 中显示图标，切到其他应用后也能找回来；
+    /// 所有窗口关闭后恢复为只在菜单栏显示。
+    func windowWillClose(_ notification: Notification) {
+        let closing = notification.object as? NSWindow
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            let stillOpen = [self.onboardingWindow, self.settingsWindow].contains {
+                $0 != nil && $0 !== closing && $0!.isVisible
+            }
+            if !stillOpen { NSApp.setActivationPolicy(.accessory) }
+        }
+    }
+
+    /// 授权辅助功能后立即开始监听按键，无需重启应用。
+    private func observeAccessibility() {
+        withObservationTracking {
+            _ = model.accessibilityGranted
+        } onChange: { [weak self] in
+            Task { @MainActor in
+                self?.controller.startHotkeysIfPossible()
+                self?.observeAccessibility()
+            }
+        }
+        // 在没有打开任何窗口时也定期检查一次
+        Task { [weak self] in
+            while let self, !self.model.accessibilityGranted {
+                try? await Task.sleep(for: .seconds(2))
+                self.model.refreshPermissions()
+            }
+        }
+    }
+
+    /// 窗口里的输入框要靠主菜单才能响应 Cmd+C / Cmd+V 等快捷键。
+    private func makeMainMenu() -> NSMenu {
+        let main = NSMenu()
+
+        let appMenu = NSMenu()
+        let settings = appMenu.addItem(withTitle: String(localized: "设置…"), action: #selector(openSettingsFromMenu), keyEquivalent: ",")
+        settings.target = self
+        appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: String(localized: "关闭窗口"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        appMenu.addItem(withTitle: String(localized: "退出 Tidytalk"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        main.addItem(withTitle: "Tidytalk", action: nil, keyEquivalent: "").submenu = appMenu
+
+        let edit = NSMenu(title: String(localized: "编辑"))
+        edit.addItem(withTitle: String(localized: "撤销"), action: Selector(("undo:")), keyEquivalent: "z")
+        edit.addItem(withTitle: String(localized: "重做"), action: Selector(("redo:")), keyEquivalent: "Z")
+        edit.addItem(.separator())
+        edit.addItem(withTitle: String(localized: "剪切"), action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        edit.addItem(withTitle: String(localized: "拷贝"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        edit.addItem(withTitle: String(localized: "粘贴"), action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        edit.addItem(withTitle: String(localized: "全选"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        main.addItem(withTitle: String(localized: "编辑"), action: nil, keyEquivalent: "").submenu = edit
+
+        return main
+    }
+
+    @objc private func openSettingsFromMenu() { showSettings() }
+
+    private func showOnboarding() {
+        if onboardingWindow == nil {
+            onboardingWindow = Self.makeOnboardingWindow(model: model) { [weak self] in
+                self?.onboardingWindow?.close()
+            }
+            onboardingWindow?.delegate = self
+        }
+        present(onboardingWindow)
+    }
+
+    private func showSettings() {
+        if settingsWindow == nil {
+            let window = SettingsWindow.make(model: model)
+            window.isReleasedWhenClosed = false
+            window.delegate = self
+            window.center()
+            settingsWindow = window
+        }
+        present(settingsWindow)
+    }
+
+    static func makeOnboardingWindow(model: AppModel, step: OnboardingView.Step? = nil,
+                                     onFinish: @escaping () -> Void = {}) -> NSWindow {
+        let view = OnboardingView(model: model, onFinish: onFinish, initialStep: step)
+        let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
+        window.title = String(localized: "欢迎使用 Tidytalk")
+        window.styleMask = [.titled, .closable, .fullSizeContentView]
+        // 内容延伸到标题栏下面，标题由页面自己的大标题显示，避免两行标题重叠
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.isReleasedWhenClosed = false
+        window.center()
+        return window
+    }
+
+    private func present(_ window: NSWindow?) {
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate()
+        window?.makeKeyAndOrderFront(nil)
+    }
+}
