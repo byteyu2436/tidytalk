@@ -635,6 +635,25 @@ h3 {
   margin: 0;
 }
 
+/* 两张截图用同样的比例显示；更长的那张从顶部截取，底部渐隐 */
+.shots picture {
+  display: block;
+  aspect-ratio: 1000 / 883;
+  overflow: hidden;
+}
+
+.shots picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.shots .shot-fade picture {
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}
+
 .shots figcaption {
   text-align: center;
   color: var(--muted);
@@ -1124,4 +1143,22 @@ a.card .more {
 
 .prose td {
   min-width: 140px;
+}
+
+/* 首页演示动画（由 demo.js 播放；不运行脚本时显示静态效果） */
+.demo.is-animated .demo-said del {
+  color: inherit;
+  text-decoration-color: transparent;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+
+.demo.is-animated .demo-said del.struck {
+  color: var(--strike);
+  text-decoration-color: currentColor;
+}
+
+.demo.is-animated .capsule:not(.is-listening) .bars i {
+  animation: none;
+  transform: scaleY(0.3);
+  transition: transform 0.3s ease;
 }

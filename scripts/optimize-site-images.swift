@@ -4,9 +4,10 @@ import UniformTypeIdentifiers
 
 // 为网站压缩图片。
 //
-//   swift optimize-site-images.swift screenshot <窗口截图.png> <输出前缀> <宽度>
-//     把带透明阴影的窗口截图缩放后，分别铺在浅色和深色页面背景上，生成 <前缀>-light.jpg 和 <前缀>-dark.jpg
-//     （背景色与 site/assets/style.css 里的 --bg 一致）。
+//   swift optimize-site-images.swift screenshot <窗口截图.png> <输出前缀> <宽度> [浅色背景 深色背景]
+//     把带透明阴影的窗口截图缩放后，分别铺在浅色和深色页面背景上，生成 <前缀>-light.jpg 和 <前缀>-dark.jpg。
+//     背景色默认是 site/assets/style.css 里的 --bg；放在灰色区块里的截图传 --surface-2 的颜色，
+//     例如 f2f2f5 1d1d20，否则截图四周会露出一块颜色不同的方框。
 //   swift optimize-site-images.swift jpeg <图片.png> <输出.jpg>
 //     不透明的图片（例如分享封面图）直接转成 JPEG。
 //   swift optimize-site-images.swift ico <图标.png> <输出.ico>
@@ -44,8 +45,13 @@ case "screenshot":
     let image = load(args[2])
     let width = Int(args[4])!
     let height = Int((Double(image.height) * Double(width) / Double(image.width)).rounded())
-    let backgrounds = [("light", CGColor(srgbRed: 0xfb / 255, green: 0xfb / 255, blue: 0xfd / 255, alpha: 1)),
-                       ("dark", CGColor(srgbRed: 0, green: 0, blue: 0, alpha: 1))]
+    func color(_ hex: String) -> CGColor {
+        let value = Int(hex, radix: 16)!
+        return CGColor(srgbRed: CGFloat((value >> 16) & 0xff) / 255, green: CGFloat((value >> 8) & 0xff) / 255,
+                       blue: CGFloat(value & 0xff) / 255, alpha: 1)
+    }
+    let backgrounds = [("light", color(args.count > 6 ? args[5] : "fbfbfd")),
+                       ("dark", color(args.count > 6 ? args[6] : "000000"))]
     for (name, color) in backgrounds {
         write([draw(image, width: width, height: height, background: color)],
               to: "\(args[3])-\(name).jpg", type: .jpeg, quality: 0.82)

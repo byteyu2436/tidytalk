@@ -98,7 +98,7 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 
 - 访问统计用 Cloudflare Web Analytics（不使用 Cookie），统计代码在每个页面的 `</body>` 前，数据在 Cloudflare 账户的 Web Analytics 里查看。
 - 每次发布后，流程会用 IndexNow 通知必应等搜索引擎重新抓取 `sitemap.xml` 里的网址，密钥文件是 `site/<密钥>.txt`。
-- 截图和分享图要先压缩：`swift scripts/optimize-site-images.swift screenshot <截图.png> site/assets/<名字> 1000` 会生成浅色、深色两张 JPEG，页面里用 `<picture>` 按系统主题切换。
+- 截图和分享图要先压缩：`swift scripts/optimize-site-images.swift screenshot <截图.png> site/assets/<名字> 1000` 会生成浅色、深色两张 JPEG，页面里用 `<picture>` 按系统主题切换。放在灰色区块里的截图要在命令末尾加上背景色 `f2f2f5 1d1d20`，否则四周会露出颜色不同的方框；原图保存在 `docs/images/`。首页的演示动画在 `site/assets/demo.js`。
 
 本地预览：
 
