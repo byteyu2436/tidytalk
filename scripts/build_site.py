@@ -44,6 +44,7 @@ UI = {
         "og_alt": "The Tidytalk icon with the tagline: Hold to talk. Let go, and you get clean text.",
         "home": "/",
         "skip": "Skip to content",
+        "download": "Download",
         "nav_label": "Main",
         "brand_label": "Tidytalk home",
         "nav": [("Docs", "/docs/"), ("Compare", "/compare/"), ("Changelog", "/changelog/")],
@@ -71,6 +72,7 @@ UI = {
         "og_alt": "Tidytalk 图标和标语：按住说话，松开就是整理好的文字",
         "home": "/zh/",
         "skip": "跳到正文",
+        "download": "下载",
         "nav_label": "主导航",
         "brand_label": "Tidytalk 首页",
         "nav": [("使用指南", "/zh/docs/"), ("对比", "/zh/compare/"), ("更新日志", "/zh/changelog/")],
@@ -222,6 +224,7 @@ def render(page, lang):
         {nav_items}
         <li><a href="{GITHUB}" aria-label="GitHub">{GITHUB_ICON}<span class="nav-github-label">GitHub</span></a></li>
         <li><a href="{other_href}" hreflang="{other_hreflang}" lang="{other_hreflang}">{other_label}</a></li>
+        <li><a class="button button-primary button-small" href="{GITHUB}/releases/latest">{ui["download"]}</a></li>
       </ul>
     </nav>
   </header>"""

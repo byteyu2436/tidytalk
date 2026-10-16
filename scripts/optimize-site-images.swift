@@ -6,7 +6,7 @@ import UniformTypeIdentifiers
 //
 //   swift optimize-site-images.swift screenshot <窗口截图.png> <输出前缀> <宽度> [浅色背景 深色背景]
 //     把带透明阴影的窗口截图缩放后，分别铺在浅色和深色页面背景上，生成 <前缀>-light.jpg 和 <前缀>-dark.jpg。
-//     背景色默认是 site/assets/style.css 里的 --bg；放在灰色区块里的截图传 --surface-2 的颜色，
+//     背景色默认是页面底色（浅色 ffffff、深色 000000）；放在灰色区块里的截图传 --surface-2 的颜色，
 //     例如 f2f2f5 1d1d20，否则截图四周会露出一块颜色不同的方框。
 //   swift optimize-site-images.swift jpeg <图片.png> <输出.jpg>
 //     不透明的图片（例如分享封面图）直接转成 JPEG。
@@ -50,7 +50,7 @@ case "screenshot":
         return CGColor(srgbRed: CGFloat((value >> 16) & 0xff) / 255, green: CGFloat((value >> 8) & 0xff) / 255,
                        blue: CGFloat(value & 0xff) / 255, alpha: 1)
     }
-    let backgrounds = [("light", color(args.count > 6 ? args[5] : "fbfbfd")),
+    let backgrounds = [("light", color(args.count > 6 ? args[5] : "ffffff")),
                        ("dark", color(args.count > 6 ? args[6] : "000000"))]
     for (name, color) in backgrounds {
         write([draw(image, width: width, height: height, background: color)],

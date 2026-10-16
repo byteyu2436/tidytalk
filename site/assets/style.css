@@ -1,9 +1,9 @@
 /* Tidytalk 网站样式：中英文页面共用。颜色都定义成变量，深色模式只改变量。 */
 
 :root {
-  --bg: #fbfbfd;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f2f2f5;
+  --surface-2: #f5f5f7;
   --text: #1d1d1f;
   --muted: #6e6e73;
   --faint: #a1a1a6;
@@ -259,10 +259,10 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 0 24px;
-  border-radius: 999px;
-  font-size: 17px;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 600;
   border: 1px solid transparent;
   transition: background-color 0.15s ease, transform 0.15s ease;
@@ -1161,4 +1161,352 @@ a.card .more {
   animation: none;
   transform: scaleY(0.3);
   transition: transform 0.3s ease;
+}
+
+
+/* ---------- 首页（清爽版）：白底、少边框、短句 ---------- */
+
+.nav .button-small {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  color: var(--on-accent);
+}
+
+.nav .button-small:hover {
+  color: var(--on-accent);
+}
+
+.eyebrow-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 22px;
+}
+
+.hero-clean {
+  padding-top: 72px;
+  padding-bottom: 24px;
+  text-align: center;
+}
+
+@media (min-width: 760px) {
+  .hero-clean {
+    padding-top: 104px;
+  }
+}
+
+.hero-clean h1 {
+  font-size: clamp(36px, 6vw, 60px);
+  letter-spacing: -0.025em;
+  max-width: 15em;
+}
+
+.hero-clean .lead {
+  font-size: clamp(17px, 2vw, 20px);
+  max-width: 32em;
+}
+
+.block {
+  padding: 72px 0;
+}
+
+@media (min-width: 760px) {
+  .block {
+    padding: 104px 0;
+  }
+}
+
+.block-head {
+  text-align: center;
+  max-width: 36em;
+  margin: 0 auto 48px;
+}
+
+.block-head h2 {
+  font-size: clamp(28px, 3.6vw, 38px);
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+.block-head p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 18px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* 图标 + 一句话，不加边框 */
+.points {
+  display: grid;
+  gap: 36px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 760px) {
+  .points {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 48px;
+  }
+}
+
+.points li {
+  text-align: center;
+}
+
+.points-left li {
+  text-align: left;
+}
+
+.icon-tile {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.icon-tile svg {
+  width: 22px;
+  height: 22px;
+}
+
+.points h3 {
+  font-size: 17px;
+  margin: 0 0 6px;
+}
+
+.points p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* 一边文字一边截图 */
+.feature-split {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .feature-split {
+    grid-template-columns: 5fr 6fr;
+    gap: 64px;
+  }
+  .feature-split.reverse > :first-child {
+    order: 2;
+  }
+}
+
+.feature-split + .feature-split {
+  margin-top: 96px;
+}
+
+.feature-split h2 {
+  font-size: clamp(28px, 3.4vw, 36px);
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+
+.feature-split > div > p {
+  color: var(--muted);
+  font-size: 17px;
+  margin: 0 0 22px;
+}
+
+.ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.ticks li {
+  position: relative;
+  padding-left: 28px;
+}
+
+.ticks li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 16px;
+  height: 10px;
+  border-left: 2px solid #1f9d55;
+  border-bottom: 2px solid #1f9d55;
+  transform: rotate(-45deg) scale(0.8);
+}
+
+.feature-split figure {
+  margin: 0;
+}
+
+.feature-split picture {
+  display: block;
+  aspect-ratio: 1000 / 883;
+  overflow: hidden;
+}
+
+.feature-split picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.feature-split .shot-fade picture {
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}
+
+/* 使用场景：三条链接 */
+.use-links {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 760px) {
+  .use-links {
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 0;
+    gap: 32px;
+  }
+}
+
+.use-links a {
+  display: block;
+  color: inherit;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 760px) {
+  .use-links a {
+    border-bottom: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+
+.use-links a:hover {
+  text-decoration: none;
+}
+
+.use-links a:hover h3 {
+  color: var(--accent);
+}
+
+.use-links h3 {
+  font-size: 17px;
+  margin: 0 0 6px;
+  transition: color 0.15s ease;
+}
+
+.use-links h3::after {
+  content: " →";
+  color: var(--accent);
+}
+
+.use-links p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* 常见问题：分隔线列表 */
+.faq-clean {
+  max-width: 760px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+}
+
+.faq-clean details {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-clean summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 20px 32px 20px 0;
+  font-weight: 600;
+  position: relative;
+}
+
+.faq-clean summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-clean summary::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--faint);
+}
+
+.faq-clean details[open] summary::after {
+  content: "−";
+}
+
+.faq-clean details p {
+  margin: -4px 0 20px;
+  color: var(--muted);
+}
+
+/* 底部深色下载区 */
+.cta-dark {
+  background: #111113;
+  color: #f5f5f7;
+  text-align: center;
+  padding: 88px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cta-dark {
+    background: var(--surface-2);
+  }
+}
+
+.cta-dark h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.02em;
+  margin: 0 0 26px;
+}
+
+.cta-dark .button-secondary {
+  background: transparent;
+  color: #f5f5f7;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.cta-dark .meta {
+  color: #a1a1a6;
 }
