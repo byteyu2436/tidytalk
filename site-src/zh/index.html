@@ -2,8 +2,8 @@
 path: /zh/
 alternate: /
 type: home
-title: Tidytalk：Mac 语音输入，按住说话自动整理成文字
-description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按住快捷键说话，语音在本机识别，AI 自动去掉口头禅、修正口误和标点，松开后文字直接出现在光标处。支持中文、英文、日文、韩文和粤语。
+title: Tidytalk：本地运行的 Mac 语音输入，自动整理口语
+description: Tidytalk 是免费开源的 Mac 语音输入工具。语音在本机识别，接上 Ollama 本地模型后整理也在本机完成，数据不出电脑。按住说话，松开就得到去掉口头禅、修正口误的文字。
 -->
     <script type="application/ld+json">
   {
@@ -11,7 +11,7 @@ description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按
     "@type": "SoftwareApplication",
     "name": "Tidytalk",
     "alternateName": "Tidytalk 语音输入",
-    "description": "macOS 段落式语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点，松开后把文字粘贴到光标处。",
+    "description": "本地运行的 macOS 语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点（可用 Ollama、LM Studio 本机模型，也可用你选的云端服务），松开后把文字粘贴到光标处。",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "macOS 26 或更高版本（Apple 芯片）",
     "url": "https://tidytalk.zayen.dev/zh/",
@@ -71,14 +71,14 @@ description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按
   </script>
   <main id="main">
     <section class="hero-clean container" aria-labelledby="hero-title">
-      <p class="eyebrow-pill">Mac 语音输入</p>
+      <p class="eyebrow-pill">本地运行的 Mac 语音输入</p>
       <h1 id="hero-title">按住说话，松开就是整理好的文字</h1>
-      <p class="lead">放心说，口头禅和口误交给 Tidytalk，整理好的文字直接出现在光标处。声音只在你的 Mac 上识别。</p>
+      <p class="lead">放心说，口头禅和口误交给 Tidytalk，整理好的文字直接出现在光标处。语音在本机识别；接上 Ollama，整理也在本机完成。</p>
       <div class="actions">
         <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>下载 Mac 版</a>
         <a class="button button-secondary" href="https://github.com/byteyu2436/tidytalk">在 GitHub 上查看</a>
       </div>
-      <p class="meta">免费开源 · macOS 26 及以上 · Apple 芯片</p>
+      <p class="meta">免费开源 · 语音不上传 · macOS 26 及以上</p>
 
       <div class="demo" aria-label="使用示例">
         <div class="demo-window">
@@ -111,13 +111,30 @@ description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按
 
     <hr class="divider">
 
+    <section class="block" id="privacy" aria-labelledby="privacy-title">
+      <div class="container">
+        <div class="block-head">
+          <h2 id="privacy-title">你说的话，只留在你的 Mac 上</h2>
+          <p>语音始终在本机识别。需要 AI 整理时，也可以选本机模型，全程不联网。</p>
+        </div>
+        <ul class="points points-left privacy-points">
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 11a7 7 0 0014 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>语音识别 <span class="tag">始终在本机</span></h3><p>SenseVoice 模型在 Mac 上运行，录音从不上传。</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><h3>AI 整理 <span class="tag">由你决定</span></h3><p>接 Ollama、LM Studio 本机模型，文字也不出电脑；用云端接口时，只发送识别出的文字。</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6.1A9.6 9.6 0 0112 6c5 0 9 6 9 6a16.6 16.6 0 01-3.1 3.8M6.4 7.6C4.3 9.2 3 12 3 12s4 6 9 6a8.8 8.8 0 004.2-1.1M9.9 10a3 3 0 004.1 4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>其他 <span class="tag">什么都不收集</span></h3><p>不用注册，应用里没有统计和追踪；最近记录只在内存里，退出即清空。</p></li>
+        </ul>
+        <p class="section-foot"><a href="/zh/use-cases/offline/">每种设置下什么会离开你的 Mac →</a></p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
     <section class="block" id="features" aria-label="功能">
       <div class="container">
         <div class="feature-split">
           <div>
-            <h2>用你信得过的 AI，或者不用</h2>
-            <p>整理文字可以接任何 OpenAI 兼容接口，语音识别始终在你的 Mac 上完成。</p>
-            <ul class="ticks"><li>DeepSeek、OpenAI 等兼容接口都能用</li><li>接 Ollama、LM Studio，整理也在本机完成</li><li>关闭整理，就是离线的语音转文字</li></ul>
+            <h2>AI 整理也可以完全在本机</h2>
+            <p>用 Ollama 或 LM Studio 跑一个本机模型，整理文字不再需要联网。</p>
+            <ul class="ticks"><li>内置 Ollama、LM Studio 预设，选一下就能用</li><li>不需要 API Key，不经过互联网</li><li>也可以用 DeepSeek、OpenAI 等云端接口</li></ul>
           </div>
           <figure><picture><source srcset="/assets/onboarding-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/onboarding-light.jpg" alt="在 Tidytalk 首次启动引导里配置 AI 接口" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
         </div>
@@ -141,7 +158,7 @@ description: Tidytalk 是免费开源的 macOS 段落式语音输入工具。按
           <p>小巧、私密，而且完全属于你。</p>
         </div>
         <ul class="points points-left">
-          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>声音不上传</h3><p>语音识别在本机完成，录音不会离开你的 Mac。</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 12.6a5 5 0 017 0M5 9.2a10 10 0 0111.5-1.6M19 9.2a10 10 0 00-1.3-1M12 18h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>离线也能用</h3><p>接上本机模型，断网也能正常使用。</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>免费开源</h3><p>MIT 许可证，不用注册，不限字数。</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><h3>只整理，不改意思</h3><p>去掉口头禅和口误，不总结、不补充。</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><h3>说中文，出英文</h3><p>整理时顺便翻译，支持 8 种语言。</p></li>

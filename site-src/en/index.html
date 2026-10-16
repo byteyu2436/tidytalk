@@ -2,15 +2,15 @@
 path: /
 alternate: /zh/
 type: home
-title: Tidytalk – Voice Input for Mac That Tidies Your Words
-description: Free, open-source voice input for Mac. Hold a shortcut and speak: Tidytalk recognizes speech on device, removes filler words, and types clean text at your cursor.
+title: Tidytalk – Private, On-Device Voice Input for Mac
+description: Free, open-source voice input for Mac. Speech is recognized on device, and with Ollama even AI cleanup stays local. Hold a shortcut, speak, and get clean text.
 -->
     <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Tidytalk",
-    "description": "Paragraph-style voice input for macOS. Hold a shortcut and speak; speech is recognized on your Mac, AI removes filler words and fixes slips and punctuation, and the text is pasted at your cursor.",
+    "description": "Private voice input for macOS. Hold a shortcut and speak; speech is recognized on your Mac, AI removes filler words and fixes slips (locally with Ollama or LM Studio, or with a cloud service you choose), and the text is pasted at your cursor.",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "macOS 26 or later (Apple silicon)",
     "url": "https://tidytalk.zayen.dev/",
@@ -70,14 +70,14 @@ description: Free, open-source voice input for Mac. Hold a shortcut and speak: T
   </script>
   <main id="main">
     <section class="hero-clean container" aria-labelledby="hero-title">
-      <p class="eyebrow-pill">Voice input for Mac</p>
+      <p class="eyebrow-pill">Private voice input for Mac</p>
       <h1 id="hero-title">Hold to talk. Let go, and you get clean text.</h1>
-      <p class="lead">Speak naturally. Tidytalk removes the ums and slips and pastes polished text at your cursor. Your voice never leaves your Mac.</p>
+      <p class="lead">Speak naturally and get polished text at your cursor. Speech is recognized on your Mac, and with Ollama, AI tidying happens there too.</p>
       <div class="actions">
         <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download for Mac</a>
         <a class="button button-secondary" href="https://github.com/byteyu2436/tidytalk">View on GitHub</a>
       </div>
-      <p class="meta">Free and open source · macOS 26+ · Apple silicon</p>
+      <p class="meta">Free and open source · Your voice is never uploaded · macOS 26+</p>
 
       <div class="demo" aria-label="Example">
         <div class="demo-window">
@@ -110,13 +110,30 @@ description: Free, open-source voice input for Mac. Hold a shortcut and speak: T
 
     <hr class="divider">
 
+    <section class="block" id="privacy" aria-labelledby="privacy-title">
+      <div class="container">
+        <div class="block-head">
+          <h2 id="privacy-title">What you say stays on your Mac</h2>
+          <p>Your voice is always recognized on your Mac. When you want AI tidying, pick a local model and nothing goes online.</p>
+        </div>
+        <ul class="points points-left privacy-points">
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 11a7 7 0 0014 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Speech recognition <span class="tag">Always on your Mac</span></h3><p>The SenseVoice model runs on your Mac. Recordings are never uploaded.</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><h3>AI tidying <span class="tag">Your choice</span></h3><p>With Ollama or LM Studio, your text stays on your Mac too. With a cloud service, only the recognized text is sent.</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6.1A9.6 9.6 0 0112 6c5 0 9 6 9 6a16.6 16.6 0 01-3.1 3.8M6.4 7.6C4.3 9.2 3 12 3 12s4 6 9 6a8.8 8.8 0 004.2-1.1M9.9 10a3 3 0 004.1 4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Everything else <span class="tag">Nothing collected</span></h3><p>No account and no tracking in the app. Recent results live in memory and are cleared when you quit.</p></li>
+        </ul>
+        <p class="section-foot"><a href="/use-cases/offline/">See what leaves your Mac in each setup →</a></p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
     <section class="block" id="features" aria-label="Features">
       <div class="container">
         <div class="feature-split">
           <div>
-            <h2>Use the AI you trust, or none at all</h2>
-            <p>Tidying works with any OpenAI-compatible service. Speech recognition always happens on your Mac.</p>
-            <ul class="ticks"><li>DeepSeek, OpenAI, or any compatible API</li><li>Ollama and LM Studio for fully local tidying</li><li>Turn tidying off for an offline transcript</li></ul>
+            <h2>Keep AI tidying on your Mac too</h2>
+            <p>Run a local model with Ollama or LM Studio and Tidytalk never needs the internet to clean up your words.</p>
+            <ul class="ticks"><li>Built-in presets for Ollama and LM Studio</li><li>No API key, and nothing sent over the internet</li><li>Prefer the cloud? DeepSeek, OpenAI, or any compatible API works too</li></ul>
           </div>
           <figure><picture><source srcset="/assets/onboarding-en-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/onboarding-en-light.jpg" alt="Setting up an AI service in the Tidytalk setup guide" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
         </div>
@@ -140,7 +157,7 @@ description: Free, open-source voice input for Mac. Hold a shortcut and speak: T
           <p>Small, private, and yours to change.</p>
         </div>
         <ul class="points points-left">
-          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Private by design</h3><p>Speech is recognized on your Mac. Audio is never uploaded.</p></li>
+          <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 12.6a5 5 0 017 0M5 9.2a10 10 0 0111.5-1.6M19 9.2a10 10 0 00-1.3-1M12 18h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><h3>Works offline</h3><p>With a local model, Tidytalk works without an internet connection.</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>Free and open source</h3><p>MIT licensed. No account and no word limits.</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><h3>Tidies, never invents</h3><p>Removes fillers and slips without summarizing or adding.</p></li>
           <li><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><h3>Speak one language, write another</h3><p>Translate into 8 languages as you dictate.</p></li>

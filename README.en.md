@@ -1,6 +1,6 @@
 # Tidytalk
 
-**Hold to talk. Let go, and you get clean text.** Paragraph-style voice input for macOS.
+**Hold to talk. Let go, and you get clean text.** Private voice input for macOS: speech is recognized on your Mac, and with Ollama, AI tidying stays local too.
 
 [简体中文](README.md) | English | [Website](https://tidytalk.zayen.dev/)
 
@@ -17,9 +17,9 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 
 ## Features
 
-- **Your voice stays on your Mac.** Speech is recognized locally with [SenseVoice](https://github.com/FunAudioLLM/SenseVoice). It supports Chinese (with mixed-in English), English, Japanese, Korean, and Cantonese, and detects the language automatically.
-- **Tidies, doesn't rewrite.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
-- **Bring your own AI.** Any OpenAI-compatible service works, such as DeepSeek or OpenAI. You can also use a local model in Ollama or LM Studio to stay fully offline, or turn tidying off and get the raw transcript.
+- **Your data stays on your Mac.** Speech is recognized locally with [SenseVoice](https://github.com/FunAudioLLM/SenseVoice), and recordings are never uploaded. With a local model in Ollama or LM Studio, AI tidying stays on your Mac too. It supports Chinese (with mixed-in English), English, Japanese, Korean, and Cantonese, and detects the language automatically.
+- **Cleans up, keeps your words.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
+- **Local AI or cloud, your choice.** Built-in presets for Ollama and LM Studio need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
 - **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
 - **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
 - **And more:** personal vocabulary, replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
@@ -51,10 +51,18 @@ The interface is available in English and Simplified Chinese and follows your sy
 
 ## Privacy
 
-- Recording and speech recognition happen on your Mac. Your voice is never uploaded.
-- With Tidy up text on, the recognized **text** is sent to the AI service you set up. With a local model, or with tidying off, text never leaves your Mac either.
+Recording and speech recognition always happen on your Mac, and your voice is never uploaded. Whether the recognized text leaves your Mac depends on how you set up tidying:
+
+| Setup | Your voice | Your text |
+| --- | --- | --- |
+| Local model (Ollama, LM Studio) | Stays on your Mac | Stays on your Mac |
+| Tidy up text turned off | Stays on your Mac | Stays on your Mac (raw transcript) |
+| Cloud AI (DeepSeek, OpenAI, and others) | Stays on your Mac | Sent to the AI service you chose |
+
+- No account and no tracking in the app. Apart from the AI service you set up, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
 - Settings, including your API key, are stored in `~/.tidytalk.json`, readable only by you.
 - Recent results are kept in memory only and cleared when you quit.
+- The code is fully open source, so you can verify all of this yourself.
 
 ## Documentation
 

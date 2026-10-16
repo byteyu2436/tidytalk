@@ -1510,3 +1510,22 @@ a.card .more {
 .cta-dark .meta {
   color: #a1a1a6;
 }
+
+/* 隐私区块的小标签 */
+.privacy-points .tag {
+  display: inline-block;
+  vertical-align: 2px;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1f9d55 12%, transparent);
+  color: #1a7f45;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .privacy-points .tag {
+    color: #4ade80;
+  }
+}
