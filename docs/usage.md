@@ -186,7 +186,7 @@ tccutil reset Accessibility app.tidytalk.Tidytalk
 
 | 位置 | 内容 |
 | --- | --- |
-| `~/Library/Application Support/Tidytalk/` | 语音识别模型，约 230 MB |
+| `~/Library/Application Support/Tidytalk/` | 语音识别模型，约 240 MB |
 | `~/.tidytalk.json` | 设置、AI 接口地址和 API Key、词库、快捷短语、自定义规则 |
 | `~/Library/Caches/app.tidytalk.Tidytalk/`、`~/Library/HTTPStorages/app.tidytalk.Tidytalk/` | 系统为联网请求留下的缓存 |
 | `~/Library/Preferences/app.tidytalk.Tidytalk.plist` | 系统保存的窗口位置等偏好，用 `defaults delete` 删除 |

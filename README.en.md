@@ -35,7 +35,7 @@ Requires macOS 26 or later on a Mac with Apple silicon.
    xattr -dr com.apple.quarantine /Applications/Tidytalk.app
    ```
 
-3. Follow the setup guide: allow microphone and accessibility access, set up an AI service (optional), and download the speech model (about 230 MB, one time).
+3. Follow the setup guide: allow microphone and accessibility access, set up an AI service (optional), and download the speech model (about 240 MB, one time).
 
 You can also [build from source](docs/development.md).
 

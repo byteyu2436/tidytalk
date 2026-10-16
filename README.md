@@ -35,7 +35,7 @@
    xattr -dr com.apple.quarantine /Applications/Tidytalk.app
    ```
 
-3. 按引导授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型（约 230 MB，只需一次）。
+3. 按引导授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型（约 240 MB，只需一次）。
 
 也可以[从源码编译](docs/development.md)。
 

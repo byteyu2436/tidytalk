@@ -51,7 +51,7 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
           </ul>
         </li>
       </ol>
-      <p>Tidytalk 只在菜单栏显示图标，不出现在 Dock 里。设置、最近记录和输出语言都在菜单栏图标里。</p>
+      <p>Tidytalk 平时只在菜单栏显示图标，只有打开引导或设置窗口时才会出现在 Dock 里。设置、最近记录和输出语言都在菜单栏图标里。</p>
 
       <h2 id="hold-to-talk">按住说话</h2>
       <ol>
@@ -194,7 +194,7 @@ rm -f ~/.tidytalk.json
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>这几行依次删除语音识别模型（约 230&nbsp;MB）、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风和辅助功能授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
+      <p>这几行依次删除语音识别模型（约 240&nbsp;MB）、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风和辅助功能授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
     </div>
 
     <aside class="page-cta">
