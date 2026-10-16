@@ -179,6 +179,7 @@ tccutil reset Accessibility app.tidytalk.Tidytalk
    ```bash
    rm -rf ~/Library/Application\ Support/Tidytalk
    rm -f ~/.tidytalk.json
+   rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
    defaults delete app.tidytalk.Tidytalk
    tccutil reset All app.tidytalk.Tidytalk
    ```
@@ -187,6 +188,7 @@ tccutil reset Accessibility app.tidytalk.Tidytalk
 | --- | --- |
 | `~/Library/Application Support/Tidytalk/` | 语音识别模型，约 230 MB |
 | `~/.tidytalk.json` | 设置、AI 接口地址和 API Key、词库、快捷短语、自定义规则 |
+| `~/Library/Caches/app.tidytalk.Tidytalk/`、`~/Library/HTTPStorages/app.tidytalk.Tidytalk/` | 系统为联网请求留下的缓存 |
 | `~/Library/Preferences/app.tidytalk.Tidytalk.plist` | 系统保存的窗口位置等偏好，用 `defaults delete` 删除 |
 | 系统设置里的麦克风、辅助功能授权 | 用 `tccutil reset` 清除，也可以在"系统设置 › 隐私与安全性"里选中 Tidytalk 点"−"移除 |
 

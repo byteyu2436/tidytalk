@@ -69,7 +69,7 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 ## 发布
 
 ```bash
-# 未公证的试用版（DMG 里会附上首次打开的说明）
+# 未公证的试用版
 VERSION=0.2.0 scripts/make-dmg.sh
 
 # Developer ID 签名并公证
@@ -78,7 +78,7 @@ SIGN_IDENTITY="Developer ID Application: 你的名字 (TEAMID)" \
 NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 ```
 
-生成的安装包在 `build/Tidytalk-<版本号>.dmg`。在 GitHub 上新建 Release，标签写 `v0.2.0`，上传 DMG，发布说明会显示在应用的更新提示里。
+生成的安装包在 `build/Tidytalk-<版本号>.dmg`。打开后的窗口里只有 Tidytalk 和"应用程序"文件夹，背景上的箭头提示拖过去；背景图由 `scripts/make-dmg-background.swift` 生成。打包时会让访达排好窗口，第一次运行时系统可能会询问是否允许控制访达；如果已经挂着一个叫 Tidytalk 的磁盘，要先推出。在 GitHub 上新建 Release，标签写 `v0.2.0`，上传 DMG，发布说明会显示在应用的更新提示里。
 
 应用启动时（每天最多一次）和菜单"检查更新…"会读取 `UPDATE_URL`。默认是 GitHub 的 `releases/latest` 接口，取标签里的版本号，发现新版本时打开 Release 页面；还没有发布任何版本时视为已是最新。也可以指向自建的 JSON：
 

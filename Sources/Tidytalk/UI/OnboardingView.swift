@@ -177,11 +177,13 @@ struct OnboardingView: View {
                 Button("上一步") { move(-1) }
             }
             if step == Step.allCases.last {
+                // 没有模型就无法识别，下载完成前不能结束引导
                 Button("完成") {
                     model.onboardingCompleted = true
                     onFinish()
                 }
                 .keyboardShortcut(.defaultAction)
+                .disabled(!model.models.isReady)
             } else {
                 if isComplete(step) {
                     Button("下一步") { move(1) }
