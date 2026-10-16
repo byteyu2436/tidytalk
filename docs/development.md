@@ -88,13 +88,18 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 
 ## 官网
 
-`site/` 是产品官网的静态页面（中文 `index.html`、英文 `en/index.html`），推送到 main 后由 `.github/workflows/pages.yml` 自动发布到 https://byteyu2436.github.io/tidytalk/ 。仓库 Settings › Pages 的 Source 要设为 "GitHub Actions"。分享封面图由 `scripts/make-site-images.swift` 生成。
+`site/` 是产品官网的静态页面（中文 `index.html`、英文 `en/index.html`），推送到 main 后由 `.github/workflows/pages.yml` 自动发布到 https://tidytalk.zayen.dev/ 。分享封面图由 `scripts/make-site-images.swift` 生成。
+
+发布相关的设置：
+
+- 仓库 Settings › Pages 的 Source 设为 "GitHub Actions"，Custom domain 填 `tidytalk.zayen.dev`，并勾选 Enforce HTTPS。用 Actions 发布时不需要 `CNAME` 文件。
+- 域名在 Cloudflare 上解析：`tidytalk` 的 CNAME 记录指向 `byteyu2436.github.io`，代理状态为"仅 DNS"。打开 Cloudflare 代理会让 GitHub 无法签发 HTTPS 证书。
+- 页面里的规范链接、中英文互链、分享图和 `sitemap.xml` 都写的是这个域名，换域名时要一起改。
 
 本地预览：
 
 ```bash
-mkdir -p /tmp/www && ln -sfn "$PWD/site" /tmp/www/tidytalk
-python3 -m http.server 8765 --directory /tmp/www   # 打开 http://localhost:8765/tidytalk/
+python3 -m http.server 8765 --directory site   # 打开 http://localhost:8765/
 ```
 
 ## 开发命令

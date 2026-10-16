@@ -1,4 +1,4 @@
-# 把 site/ 目录发布到 GitHub Pages：https://byteyu2436.github.io/tidytalk/
+# 把 site/ 目录发布到 GitHub Pages：https://tidytalk.zayen.dev/
 # 需要先在仓库 Settings › Pages 里把 Source 设为 "GitHub Actions"。
 name: Deploy website
 

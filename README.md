@@ -2,7 +2,7 @@
 
 **按住说话，松开就是整理好的文字。** 一款 macOS 上的段落式语音输入工具。
 
-简体中文 | [English](README.en.md) | [官网](https://byteyu2436.github.io/tidytalk/)
+简体中文 | [English](README.en.md) | [官网](https://tidytalk.zayen.dev/)
 
 <p align="center">
   <img src="docs/images/onboarding.png" width="640" alt="Tidytalk 首次启动引导">
