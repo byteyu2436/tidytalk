@@ -55,7 +55,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Tidytalk",
-    "description": "Private voice input for macOS. Hold a shortcut and speak; speech is recognized on your Mac, AI removes filler words and fixes slips (locally with Ollama or LM Studio, or with a cloud service you choose), and the text is pasted at your cursor.",
+    "description": "Private voice input for macOS. Hold a shortcut and speak; speech is recognized on your Mac, AI removes filler words and fixes slips (locally with Ollama or LM Studio, or with a cloud service you choose), and the text is pasted at your cursor. It can also show live captions, with optional translation, for audio playing on your Mac.",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "macOS 26 or later (Apple silicon)",
     "url": "https://tidytalk.zayen.dev/",
@@ -94,6 +94,11 @@
         "@type": "Question",
         "name": "Is my voice or text uploaded?",
         "acceptedAnswer": { "@type": "Answer", "text": "Your voice never is. Recording and speech recognition happen on your Mac. With Tidy up text on, the recognized text is sent to the AI service you set up; with a local model or with tidying off, text never leaves your Mac either." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can it caption videos and meetings?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press ⌃⌥C (Control + Option + C) and Tidytalk shows live captions for whatever your Mac is playing, such as a video, a lecture, or a meeting. The audio is recognized on your Mac. You can translate each sentence with your AI service, and press ⌃⌥V to tidy and paste what was just said." }
       },
       {
         "@type": "Question",
@@ -199,6 +204,14 @@
           </div>
           <figure class="shot-fade"><picture><source srcset="/assets/settings-vocabulary-en-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/settings-vocabulary-en-light.jpg" alt="Tidytalk Vocabulary settings with common words, replacements, and snippets" width="1000" height="1277" loading="lazy" decoding="async"></picture></figure>
         </div>
+        <div class="feature-split" id="live-captions">
+          <div>
+            <h2>Live captions for what your Mac plays</h2>
+            <p>Press <kbd>⌃⌥C</kbd> to caption a video, a lecture, or a meeting. The audio is recognized on your Mac, just like your voice.</p>
+            <ul class="ticks"><li>Listen to all audio, or just one app</li><li>Translate each sentence, shown under the original</li><li>Press <kbd>⌃⌥V</kbd> or click a sentence to paste what was just said</li></ul>
+          </div>
+          <figure class="caption-shot"><picture><img src="/assets/captions-en.jpg" alt="Tidytalk live captions over a video, with each Chinese sentence translated into English" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
+        </div>
       </div>
     </section>
 
@@ -260,6 +273,10 @@
           <details>
             <summary>Is my voice or text uploaded?</summary>
             <p>Your voice never is. Recording and speech recognition happen on your Mac. With Tidy up text on, the recognized text is sent to the AI service you set up; with a local model or with tidying off, text never leaves your Mac either.</p>
+          </details>
+          <details>
+            <summary>Can it caption videos and meetings?</summary>
+            <p>Yes. Press <kbd>⌃⌥C</kbd> (Control + Option + C) and Tidytalk shows live captions for whatever your Mac is playing, such as a video, a lecture, or a meeting. The audio is recognized on your Mac. You can translate each sentence with your AI service, and press <kbd>⌃⌥V</kbd> to tidy and paste what was just said.</p>
           </details>
           <details>
             <summary>How is it different from macOS Dictation?</summary>

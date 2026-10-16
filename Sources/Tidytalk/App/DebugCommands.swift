@@ -834,4 +834,94 @@ enum CaptionCaptureCommand {
         }
     }
 }
+/// 开发用：官网配图。把真实的字幕条（打开翻译）放在模拟的视频画面上截图，生成 captions-en.png 和 captions-zh.png。
+/// 会修改配置，务必配合 `--config <临时配置>` 使用。
+///
+///     open -n Tidytalk.app --args --site-caption-capture <输出目录> --config <临时配置>
+@MainActor
+enum SiteCaptionCaptureCommand {
+    private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
+
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--site-caption-capture"), index + 1 < args.count,
+              args.contains("--config"),
+              let symbol = dlsym(dlopen(nil, RTLD_NOW), "CGWindowListCreateImage")
+        else { return false }
+        let capture = unsafeBitCast(symbol, to: CreateImage.self)
+        let dir = URL(fileURLWithPath: args[index + 1])
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        _ = NSApplication.shared
+        NSApp.setActivationPolicy(.accessory)
+
+        // 和官网功能区的配图同样的比例（1000 × 883）
+        let screen = NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) } ?? NSScreen.main!
+        let size = NSSize(width: 820, height: 724)
+        let frame = NSRect(x: (screen.visibleFrame.midX - size.width / 2).rounded(),
+                           y: screen.visibleFrame.minY + 40, width: size.width, height: size.height)
+        let backdrop = NSWindow(contentRect: frame, styleMask: [.borderless], backing: .buffered, defer: false)
+        backdrop.contentView = SceneView()
+        backdrop.level = .floating
+        backdrop.orderFrontRegardless()
+
+        let model = AppModel()
+        model.configStore.update {
+            $0.captionSize = .medium
+            $0.captionStyle = .dark
+            $0.captionTranslate = true
+        }
+        // 字幕条放在画面下方，左右居中
+        UserDefaults.standard.set(NSStringFromPoint(NSPoint(x: frame.midX - CaptionPanel.width / 2, y: frame.minY + 44)),
+                                  forKey: "captionPanelOrigin")
+        let panel = CaptionPanel(model: model)
+        model.isListening = true
+
+        let versions: [(String, [(String, String)])] = [
+            ("en", [("欢迎回来，今天我们来看看新版本的表现。", "Welcome back. Today we'll look at how the new release performs."),
+                    ("启动时间缩短了将近一半。", "Startup time dropped by almost half.")]),
+            ("zh", [("Welcome back. Today we'll look at how the new release performs.", "欢迎回来，今天我们来看看新版本的表现。"),
+                    ("Startup time dropped by almost half.", "启动时间缩短了将近一半。")]),
+        ]
+        for (name, pairs) in versions {
+            model.captions.clear()
+            for (original, translation) in pairs {
+                if let id = model.captions.commit(original) { model.captions.setTranslation(translation, for: id) }
+            }
+            panel.show()
+            RunLoop.main.run(until: Date().addingTimeInterval(1.5))
+            let rect = CGRect(x: frame.minX, y: NSScreen.screens[0].frame.maxY - frame.maxY,
+                              width: frame.width, height: frame.height)
+            if let image = capture(rect, 1, 0, 0)?.takeRetainedValue() {
+                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                    .write(to: dir.appending(path: "captions-\(name).png"))
+            }
+        }
+        UserDefaults.standard.removeObject(forKey: "captionPanelOrigin")
+        return true
+    }
+
+    /// 模拟的视频画面：深色的舞台，几团柔和的灯光。
+    private final class SceneView: NSView {
+        override func draw(_ dirtyRect: NSRect) {
+            NSGradient(colors: [NSColor(srgbRed: 0.05, green: 0.06, blue: 0.12, alpha: 1),
+                                NSColor(srgbRed: 0.13, green: 0.12, blue: 0.24, alpha: 1)])!
+                .draw(in: bounds, angle: 90)
+            let lights: [(CGFloat, CGFloat, CGFloat, NSColor)] = [
+                (0.22, 0.72, 260, NSColor(srgbRed: 0.98, green: 0.55, blue: 0.25, alpha: 0.55)),
+                (0.78, 0.62, 300, NSColor(srgbRed: 0.35, green: 0.45, blue: 1.0, alpha: 0.5)),
+                (0.52, 0.88, 200, NSColor(srgbRed: 0.85, green: 0.35, blue: 0.75, alpha: 0.4)),
+            ]
+            for (x, y, radius, color) in lights {
+                let center = NSPoint(x: bounds.width * x, y: bounds.height * y)
+                NSGradient(colors: [color, color.withAlphaComponent(0)])!
+                    .draw(fromCenter: center, radius: 0, toCenter: center, radius: radius, options: [])
+            }
+            // 讲台上的人影
+            NSColor(white: 0, alpha: 0.35).setFill()
+            NSBezierPath(ovalIn: NSRect(x: bounds.midX - 70, y: bounds.height * 0.42, width: 140, height: 150)).fill()
+            NSBezierPath(roundedRect: NSRect(x: bounds.midX - 150, y: -40, width: 300, height: bounds.height * 0.44),
+                         xRadius: 120, yRadius: 120).fill()
+        }
+    }
+}
 #endif

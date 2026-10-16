@@ -5,7 +5,7 @@ type: article
 breadcrumb: 使用指南
 title: Tidytalk 使用指南：Mac 语音输入从安装到进阶
 headline: Tidytalk 使用指南
-description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说话、免按住录音、语音改写、整理强度与模式、翻译输出、本机大模型、词库和常见问题。
+description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说话、免按住录音、语音改写、实时字幕、整理强度与模式、翻译输出、本机大模型、词库和常见问题。
 -->
   <main id="main" class="page container">
     <header class="page-head">
@@ -22,6 +22,7 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
           <li><a href="#hold-to-talk">按住说话</a></li>
           <li><a href="#hands-free">免按住录音</a></li>
           <li><a href="#rewrite">语音改写选中的文字</a></li>
+          <li><a href="#live-captions">实时字幕</a></li>
           <li><a href="#tidying">整理效果</a></li>
           <li><a href="#strength-and-mode">整理强度和模式</a></li>
           <li><a href="#output-language">输出语言</a></li>
@@ -78,6 +79,16 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
         <li>需要配置 AI；选中的文字和修改要求会发送给 AI 服务。</li>
         <li>没有选中文字时会提示先选中；改写失败时原文不会改动。</li>
         <li>改写键可以在"设置 › 录音"里更换或关闭。</li>
+      </ul>
+
+      <h2 id="live-captions">实时字幕</h2>
+      <p>收听电脑播放的声音（视频、网课、视频会议），在屏幕底部显示字幕。只录电脑输出的声音，不录麦克风；声音同样只在本机识别。</p>
+      <ul>
+        <li><strong>打开和关闭</strong>：按 <kbd>⌃⌥C</kbd>（Control + Option + C），或在菜单栏菜单里选"实时字幕"。第一次打开时，macOS 会询问是否允许 Tidytalk 录制系统音频。收听期间菜单栏图标右上角有一个橙色圆点；关掉后，内存里的声音和文字全部清空。</li>
+        <li><strong>字幕条</strong>：一句一段，前面的句子淡一些。可以拖到任意位置，位置会被记住；没有声音 10 秒后自动隐藏，有声音再出现。鼠标移上去时右上角出现翻译、暂停、关闭三个按钮，关闭就是停止收听。样式（深色或玻璃）和文字大小在"设置 › 字幕"里选。</li>
+        <li><strong>收听来源</strong>：默认收听全部声音（不含 Tidytalk 自己的提示音），也可以只听某个应用，在菜单的"收听来源"或"设置 › 字幕"里选。</li>
+        <li><strong>翻译</strong>：打开"翻译字幕"后，每句说完就用"配置 AI"里的服务翻译，译文显示在原文下面；原文已经是目标语言的句子不翻译。选 Ollama 或 LM Studio 时全程不联网，选云端服务时字幕文字会发送给该服务。</li>
+        <li><strong>粘贴刚才那段</strong>：收听时把光标放进输入框，按 <kbd>⌃⌥V</kbd>，把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）按说话输入的设置整理后粘贴。也可以直接点字幕条上的某一句，从那句粘贴到最新。没打开字幕时按 <kbd>⌃⌥V</kbd> 只会提示，不会录音。</li>
       </ul>
 
       <h2 id="tidying">整理效果</h2>
@@ -194,7 +205,7 @@ rm -f ~/.tidytalk.json
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>这几行依次删除语音识别模型（约 240&nbsp;MB）、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风和辅助功能授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
+      <p>这几行依次删除语音识别模型（约 240&nbsp;MB）、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风、辅助功能和录制系统音频的授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
     </div>
 
     <aside class="page-cta">

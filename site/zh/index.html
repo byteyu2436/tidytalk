@@ -56,7 +56,7 @@
     "@type": "SoftwareApplication",
     "name": "Tidytalk",
     "alternateName": "Tidytalk 语音输入",
-    "description": "本地运行的 macOS 语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点（可用 Ollama、LM Studio 本机模型，也可用你选的云端服务），松开后把文字粘贴到光标处。",
+    "description": "本地运行的 macOS 语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点（可用 Ollama、LM Studio 本机模型，也可用你选的云端服务），松开后把文字粘贴到光标处。也能为电脑播放的声音显示实时字幕，并可逐句翻译。",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "macOS 26 或更高版本（Apple 芯片）",
     "url": "https://tidytalk.zayen.dev/zh/",
@@ -98,8 +98,13 @@
       },
       {
         "@type": "Question",
+        "name": "能给视频和会议加字幕吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "可以。按 ⌃⌥C（Control + Option + C），Tidytalk 会为电脑正在播放的声音（视频、网课、会议）显示实时字幕，声音同样在本机识别。可以用你配置的 AI 服务逐句翻译，也可以按 ⌃⌥V 把刚才那段话整理后粘贴到光标处。" }
+      },
+      {
+        "@type": "Question",
         "name": "和 macOS 自带的听写有什么不同？",
-        "acceptedAnswer": { "@type": "Answer", "text": "系统听写会边说边把话逐字打出来。Tidytalk 是段落式的：等你说完一整段，去掉嗯、那个这类口头禅和口误，补好标点，再一次性输出，适合写消息、邮件和文档。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "系统听写会边说边把话逐字打出来。Tidytalk 是段落式的：等你说完一整段，去掉\"嗯、那个\"这类口头禅和口误，补好标点，再一次性输出，适合写消息、邮件和文档。" }
       },
       {
         "@type": "Question",
@@ -200,6 +205,14 @@
           </div>
           <figure class="shot-fade"><picture><source srcset="/assets/settings-vocabulary-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/settings-vocabulary-light.jpg" alt="Tidytalk 设置中的词库页面：常用词、固定替换和快捷短语" width="1000" height="1277" loading="lazy" decoding="async"></picture></figure>
         </div>
+        <div class="feature-split" id="live-captions">
+          <div>
+            <h2>电脑里的声音，也能出字幕</h2>
+            <p>按 <kbd>⌃⌥C</kbd>，视频、网课、会议的声音直接变成字幕。和你说的话一样，只在本机识别。</p>
+            <ul class="ticks"><li>收听全部声音，或者只听某一个应用</li><li>逐句翻译，译文显示在原文下面</li><li>按 <kbd>⌃⌥V</kbd> 或点某一句，把刚才那段话粘贴出来</li></ul>
+          </div>
+          <figure class="caption-shot"><picture><img src="/assets/captions-zh.jpg" alt="Tidytalk 在视频上显示实时字幕，每句英文下面是中文译文" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
+        </div>
       </div>
     </section>
 
@@ -261,6 +274,10 @@
           <details>
             <summary>我的声音和文字会被上传吗？</summary>
             <p>声音不会。录音和语音识别都在你的 Mac 上完成。开启整理文字时，识别出的文字会发送给你自己配置的 AI 服务；用本机模型或关闭整理，文字也不会离开电脑。</p>
+          </details>
+          <details>
+            <summary>能给视频和会议加字幕吗？</summary>
+            <p>可以。按 <kbd>⌃⌥C</kbd>（Control + Option + C），Tidytalk 会为电脑正在播放的声音（视频、网课、会议）显示实时字幕，声音同样在本机识别。可以用你配置的 AI 服务逐句翻译，也可以按 <kbd>⌃⌥V</kbd> 把刚才那段话整理后粘贴到光标处。</p>
           </details>
           <details>
             <summary>和 macOS 自带的听写有什么不同？</summary>

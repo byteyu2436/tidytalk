@@ -1376,6 +1376,11 @@ a.card .more {
   object-position: top;
 }
 
+/* 实时字幕的配图是视频画面，圆角显示 */
+.feature-split .caption-shot picture {
+  border-radius: 18px;
+}
+
 .feature-split .shot-fade picture {
   -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
   mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
