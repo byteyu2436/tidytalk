@@ -91,7 +91,14 @@ enum FileTranscriber {
         }
         segments += vad.flushSegments()
         let rate = Double(AudioMath.sampleRate)
-        return segments.map { Piece(start: Double($0.start) / rate, samples: $0.samples) }
+        // 检测器确认开始说话时，这句话已经开始了一小会儿；往前多取 0.3 秒，免得吞掉开头的字
+        // （录音一开头就有人说话时最明显）
+        let padding = AudioMath.sampleRate * 3 / 10
+        return segments.map { segment in
+            let start = max(0, segment.start - padding)
+            let end = min(samples.count, segment.start + segment.samples.count)
+            return Piece(start: Double(start) / rate, samples: Array(samples[start..<end]))
+        }
     }
 }
 

@@ -17,7 +17,7 @@ enum SettingsWindow {
         tabs.addTabViewItem(item(String(localized: "通用"), symbol: "gearshape", height: 690,
                                  GeneralSettings(model: model, onOpenOnboarding: onOpenOnboarding)))
         tabs.addTabViewItem(item(String(localized: "说话输入"), symbol: "mic", height: 530, RecordingSettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "识别模型"), symbol: "waveform", height: 410, ModelSettings(model: model)))
+        tabs.addTabViewItem(item(String(localized: "识别模型"), symbol: "waveform", height: 440, ModelSettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "配置 AI"), symbol: "sparkles", height: 640, AISettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "词库"), symbol: "character.book.closed", height: 640, VocabularySettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "实时字幕"), symbol: "captions.bubble", height: 610,
