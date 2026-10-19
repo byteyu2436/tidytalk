@@ -1268,6 +1268,50 @@ a.card .more {
   text-align: center;
 }
 
+/* 手机上竖着排太空：改成左右滑动的卡片，露出下一张的边，提示还能往后滑 */
+@media (max-width: 759px) {
+  .points {
+    display: flex;
+    gap: 12px;
+    margin: 0 -16px;
+    padding: 2px 16px 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 16px;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .points::-webkit-scrollbar {
+    display: none;
+  }
+
+  .points li {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+    padding: 26px 20px 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .points .icon-tile {
+    background: var(--surface);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 759px) {
+  .points {
+    margin: 0 -28px;
+    padding-inline: 28px;
+    scroll-padding: 0 28px;
+  }
+
+  .points li {
+    flex-basis: 46%;
+  }
+}
+
 .points-left li {
   text-align: left;
 }
