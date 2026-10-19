@@ -84,6 +84,10 @@ The detailed docs are currently in Chinese:
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party licenses.
 
+## Support the project
+
+If Tidytalk is useful to you, a ⭐ star on GitHub helps more people find it. Found a bug or have an idea? [Open an issue](https://github.com/byteyu2436/tidytalk/issues).
+
 ## License
 
 [MIT](LICENSE)

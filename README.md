@@ -82,6 +82,10 @@
 
 第三方组件的许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
+## 支持这个项目
+
+如果 Tidytalk 对你有用，欢迎在 GitHub 上点个 ⭐ Star，让更多人看到它。遇到问题或有想法，可以[提 Issue](https://github.com/byteyu2436/tidytalk/issues)。
+
 ## 许可证
 
 [MIT](LICENSE)
