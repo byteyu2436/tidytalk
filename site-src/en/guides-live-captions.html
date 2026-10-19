@@ -1,0 +1,72 @@
+<!--
+path: /guides/live-translated-captions/
+alternate: /zh/guides/live-translated-captions/
+type: article
+breadcrumb: Live translated captions
+title: Live Translated Captions for Any Video on Mac | Tidytalk
+headline: Live translated captions for any video or meeting on Mac
+description: Live captions with translation for any video, lecture, or call playing on your Mac. Audio is recognized on device; translation can stay local too.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Live translated captions for any video or meeting on Mac</h1>
+      <p class="lead">Watching a lecture in another language, or on a call where you miss half the words? Tidytalk captions whatever your Mac is playing and translates each sentence as it's spoken, in any app, with no browser extension.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <figure><picture><img src="/assets/captions-en.jpg" alt="Tidytalk live captions over a video, with each Chinese sentence translated into English" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
+
+      <h2 id="what-it-captions">What it can caption</h2>
+      <p>Anything your Mac plays: YouTube or Bilibili in a browser, a downloaded video, a podcast, a course, or the other people on a Zoom, Teams, or Meet call. Tidytalk records only the computer's audio, never your microphone, so your own voice on a call isn't captioned.</p>
+
+      <h2 id="setup">Set it up once</h2>
+      <ol>
+        <li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Install Tidytalk</a> and finish the setup guide.</li>
+        <li>For translation, choose an AI service in Settings › Set Up AI. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac; with a cloud service such as DeepSeek or OpenAI, caption text is sent to it.</li>
+        <li>In Settings › Live Captions, turn on <strong>Translate Captions</strong> and pick a language under <strong>Translate To</strong>: English, Simplified or Traditional Chinese, Japanese, Korean, French, German, or Spanish.</li>
+      </ol>
+
+      <h2 id="start">Start captions</h2>
+      <ol>
+        <li>Play the video or join the call.</li>
+        <li>Press <kbd>⌃⌥C</kbd> (Control + Option + C), or choose Start Listening under Live Captions in the menu bar menu. The first time, macOS asks you to allow Tidytalk to record system audio.</li>
+        <li>The caption bar appears with one sentence per line and the translation underneath. While listening, the menu bar icon shows an orange dot.</li>
+        <li>Press <kbd>⌃⌥C</kbd> again to stop. The audio and text are cleared from memory.</li>
+      </ol>
+
+      <h2 id="as-you-listen">Translation as you listen</h2>
+      <p>With <strong>Translate as You Listen</strong> on (the default), the sentence that's still being spoken is translated too and updates as it goes, so you're not waiting for the speaker to finish. When the sentence ends, the final translation replaces it. Turn it off in Settings › Live Captions to translate only finished sentences, which uses fewer AI calls. Sentences already in your target language are left alone.</p>
+
+      <h2 id="source">Caption just one app</h2>
+      <p>By default Tidytalk captions all audio except its own sounds. To ignore notifications or music, pick a single app under Listen To in the menu bar menu or in Settings › Live Captions.</p>
+
+      <h2 id="languages">Match the speech model to the video's language</h2>
+      <ul>
+        <li>The default <strong>SenseVoice</strong> model recognizes Mandarin (with English mixed in), English, Japanese, Korean, and Cantonese.</li>
+        <li>For other spoken languages, such as French or German, switch to <strong>Qwen3-ASR</strong> or <strong>Whisper Turbo</strong> in Settings › Speech Model.</li>
+      </ul>
+
+      <h2 id="look">Make it look right</h2>
+      <ul>
+        <li>Drag the caption bar anywhere; it remembers the spot.</li>
+        <li>Choose a dark or glass style and a text size in Settings › Live Captions.</li>
+        <li>It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons.</li>
+      </ul>
+
+      <h2 id="paste">Paste what was just said</h2>
+      <p>Taking notes? Put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage, from the last pause of more than 2 seconds and up to 30 seconds, and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward.</p>
+
+      <h2 id="privacy">Privacy</h2>
+      <p>Audio is recognized on your Mac and never uploaded. With a local AI service or Apple Intelligence, the translation stays on your Mac too, and captions work fully offline. Nothing is saved after you stop listening.</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Understand every word</h2>
+      <p>Free for macOS 26 on Apple silicon. Version {{version}}.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/docs/#live-captions">Read the captions guide</a>
+      </div>
+    </aside>
+  </main>

@@ -1,0 +1,78 @@
+<!--
+path: /zh/guides/mixed-chinese-english-dictation/
+alternate: /guides/mixed-chinese-english-dictation/
+type: article
+breadcrumb: 中英文混说
+title: Mac 语音输入中英文混着说，怎么识别得准 | Tidytalk
+headline: Mac 上中英文混着说，怎么让语音输入识别准
+description: 中文里夹着 API、deadline、产品名，语音输入总是认错？教你在 Mac 上选对识别模型、加好词库、保留英文术语和中英文空格，说完不用再改。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Mac 上中英文混着说，怎么让语音输入识别准</h1>
+      <p class="lead">工作中说中文，句子里却满是英文：API、deadline、PR、各种产品名。这篇教你把 Tidytalk 设置好，让这些词一次就认对，中英文之间自动加空格，说完不用再改。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="example">效果</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你说的</th><th>输出</th></tr></thead>
+          <tbody>
+            <tr><td>嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少</td><td>我想问一下这个 API 的 rate limit 是多少？</td></tr>
+            <tr><td>项目要延期到下周三，不对，是下周四</td><td>项目要延期到下周四。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>英文术语保持英文，"嗯、那个、就是说"被去掉，口误改成了正确的说法，中英文之间也加好了空格。</p>
+
+      <h2 id="model">1. 选一个擅长中英文混说的识别模型</h2>
+      <p>打开"设置 › 识别模型"。所有模型都在你的 Mac 上运行。</p>
+      <ul>
+        <li><strong>SenseVoice</strong>（默认，约 240&nbsp;MB）：速度快，普通话夹英文识别得好，先用它就行。</li>
+        <li><strong>Qwen3-ASR</strong>（约 1&nbsp;GB）：最准确，识别时会参考你的词库，人名和产品名一次就能认对。速度慢一些，20 秒的话约需 4 秒。</li>
+        <li><strong>Fun-ASR-Nano</strong>：支持中文、英文和日文，准确度接近 Qwen3-ASR。</li>
+        <li>中文不建议用 <strong>Whisper Turbo</strong>（会漏字），也不建议用 <strong>Apple 系统识别</strong>（按系统语言识别，中英文混说效果一般）。</li>
+      </ul>
+      <p>说话前不需要选语言，识别会逐句自动判断。</p>
+
+      <h2 id="vocabulary">2. 把常用的英文词加进词库</h2>
+      <p>语音识别最容易认错的就是不常见的人名和术语。在"设置 › 词库"的"常用词"里一行写一个：产品名、同事的名字、Kubernetes、Figma 这类工具名。</p>
+      <ul>
+        <li>用 Qwen3-ASR 时，这些词在识别阶段就能认对。</li>
+        <li>用任何模型时，整理阶段也会把这些词告诉 AI，读音相近的错词会被改成你的写法。</li>
+        <li>某个词总是错成同一个样子，可以加一条"固定替换"，比如把 "cloud" 换成 "Claude"。替换在本机进行，关闭整理也有效。</li>
+      </ul>
+      <p>更多方法见<a href="/zh/guides/custom-vocabulary/">怎么让语音输入认对人名和术语</a>。</p>
+
+      <h2 id="tidy">3. 整理时保留英文术语</h2>
+      <p>整理会去掉口头禅和口误、补全标点，但中文里夹着的英文单词和技术术语会原样保留，不会被翻译成中文（除非你设置了输出语言）。</p>
+      <ul>
+        <li>写技术内容时，在"设置 › 配置 AI › 整理"里选<strong>代码（保留术语）</strong>模式，术语、命令、文件名和符号都按你说的原样输出。</li>
+        <li>发消息时选<strong>聊天（口语）</strong>模式，会保留你的语气和"呢、吧"这类语气词。</li>
+      </ul>
+
+      <h2 id="spacing">4. 中英文空格自动处理</h2>
+      <p>Tidytalk 会在中文和英文、数字之间加空格，中文后面用全角标点，把全角的字母和数字转成半角。小数点、文件名和网址不受影响。这一步在本机完成，可以在"设置 › 通用"里关闭。</p>
+
+      <h2 id="english-output">5. 想直接输出英文？</h2>
+      <p>把输出语言设为英文，就能说中文、粘贴英文。翻译和整理在同一步完成，速度和只整理差不多。见<a href="/zh/use-cases/translation/">说中文，直接出英文</a>。</p>
+
+      <h2 id="tips">小技巧</h2>
+      <ul>
+        <li>英文词按平时的习惯说就行，不用放慢，也不用拼读。</li>
+        <li>结果有错时，在菜单栏的"最近记录"里选中这条结果，点"加入词库…"，下次就不会再错。</li>
+        <li>粘贴后你自己改了某个词，Tidytalk 会发现并提示你加入词库，确认之前什么都不会加。</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>想怎么说就怎么说</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 {{version}}。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#speech-models">对比识别模型</a>
+      </div>
+    </aside>
+  </main>

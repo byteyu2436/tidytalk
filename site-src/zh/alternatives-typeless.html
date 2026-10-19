@@ -1,0 +1,83 @@
+<!--
+path: /zh/alternatives/typeless/
+alternate: /alternatives/typeless/
+type: article
+breadcrumb: Typeless 替代
+title: Typeless 免费替代：离线可用的 Mac 语音输入 | Tidytalk
+headline: Typeless 的免费、离线替代
+description: Tidytalk 是 Typeless 的免费开源替代：同样把口语整理成通顺文字，但语音在 Mac 本机识别，可以离线使用，不用注册、不用订阅、没有每周字数限制。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Typeless 的免费、离线替代</h1>
+      <p class="lead">Typeless 和 Tidytalk 都能把随口说的话整理成通顺的文字：去掉口头禅，理清说错又改口的地方。Typeless 在云端完成，需要注册和订阅；Tidytalk 在你的 Mac 上完成，免费，也不用注册。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <p>Tidytalk 是我们自己的项目，所以这一页尽量只写事实。Typeless 的信息来自它的官方价格页和数据说明页，核对时间为 2026 年 10 月。产品会变化，做决定前请以官网为准。</p>
+
+      <h2 id="different">对比一览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Tidytalk</th><th>Typeless</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">价格</th><td>免费，不限字数</td><td>免费版每周有字数限制；Pro 按年付每月 12 美元，按月付每月 30 美元</td></tr>
+            <tr><th scope="row">语音在哪里识别</th><td>在你的 Mac 上</td><td>云端</td></tr>
+            <tr><th scope="row">AI 整理</th><td>自己选：Ollama、LM Studio、Apple 智能在本机运行，或者用自己的 Key 接云端接口</td><td>内置，在云端</td></tr>
+            <tr><th scope="row">能否离线</th><td>能，用本机模型或关闭整理</td><td>不能</td></tr>
+            <tr><th scope="row">账号</th><td>不需要</td><td>需要</td></tr>
+            <tr><th scope="row">支持平台</th><td>Mac（macOS 26 及以上、Apple 芯片）</td><td>Mac、Windows、iOS、Android 和 Linux</td></tr>
+            <tr><th scope="row">开源</th><td>是，MIT 协议</td><td>否</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Typeless 表示不保存音频，它使用的 AI 服务商也不会保留或用你的数据训练。而用 Tidytalk 时，声音从一开始就不会离开你的 Mac。</p>
+
+      <h2 id="same">一样的地方</h2>
+      <ul>
+        <li>在任何应用里自然地说，得到整理好的文字：去掉口头禅和重复，理清改口，补全标点。</li>
+        <li>可以建个人词典，记住人名和术语。</li>
+        <li>可以说一种语言，输出另一种语言。</li>
+        <li>可以用说话修改文字：选中一段，说出要怎么改。</li>
+      </ul>
+
+      <h2 id="when-typeless">更适合用 Typeless 的情况</h2>
+      <ul>
+        <li>你在 Windows、Linux 或手机上也要用同样的语音输入。</li>
+        <li>你不想做任何设置：不下载模型，也不想选 AI 服务。</li>
+        <li>你用的是 Intel 芯片的 Mac，或者 macOS 版本低于 26。</li>
+      </ul>
+
+      <h2 id="when-tidytalk">更适合用 Tidytalk 的情况</h2>
+      <ul>
+        <li>你不希望声音离开自己的电脑，或者需要离线也能用的语音输入。</li>
+        <li>你语音输入用得很多，不想受每周字数限制，也不想订阅或注册。</li>
+        <li>你经常中英文混着说：Tidytalk 会保留英文术语，并自动在中英文之间加空格。</li>
+        <li>你还想免费给视频和会议加实时字幕，或者转写录音。</li>
+      </ul>
+
+      <h2 id="switch">从 Typeless 换过来</h2>
+      <ol>
+        <li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Tidytalk</a>，按引导完成设置。</li>
+        <li>把 Typeless 词典里的词复制到"设置 › 词库 › 常用词"。</li>
+        <li>在"设置 › 配置 AI"里选 AI 服务。选 Ollama、LM Studio 或 Apple 智能，一切都留在本机。</li>
+        <li>在"设置 › 说话输入"里选快捷键。用说话修改选中文字，默认按住右侧 Option。</li>
+      </ol>
+
+      <h2 id="sources">来源</h2>
+      <ul>
+        <li>Typeless：<a href="https://www.typeless.com/pricing">价格页</a>、<a href="https://www.typeless.com/data-controls">数据说明</a>、<a href="https://www.typeless.com/help/billing">付费帮助</a></li>
+        <li>想同时对比 Wispr Flow、Superwhisper 和 macOS 听写，可以看<a href="/zh/compare/">完整对比</a>。</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>试试免费、离线的替代方案</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 {{version}}。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/">阅读使用指南</a>
+      </div>
+    </aside>
+  </main>

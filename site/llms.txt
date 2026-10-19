@@ -7,7 +7,7 @@ Current version: 0.2.0. Requires macOS 26 or later on a Mac with Apple silicon. 
 Key facts:
 
 - Dictation: hold Option + Command (configurable), speak, release. Paragraph-style, not word-by-word like macOS Dictation. Hands-free mode by double-tapping the shortcut. Press Esc to cancel.
-- Speech recognition runs on the Mac. Default model: SenseVoice-Small (about 240 MB; Mandarin with mixed English, English, Japanese, Korean, Cantonese). Optional models: Qwen3-ASR 0.6B (most accurate, 52 languages, uses the personal vocabulary as hotwords), Fun-ASR-Nano, Whisper Turbo (about 99 languages), or Apple's built-in speech recognition.
+- Speech recognition runs on the Mac. Default model: SenseVoice-Small (about 240 MB; Mandarin with mixed English, English, Japanese, Korean, Cantonese). Optional models: Qwen3-ASR 0.6B (most accurate; 30 languages and 22 Chinese dialects; uses the personal vocabulary as hotwords), Fun-ASR-Nano, Whisper Turbo (about 99 languages), or Apple's built-in speech recognition.
 - AI tidying is optional and only cleans up what was said: it removes fillers ("um", "嗯、那个"), keeps the corrected version when the speaker changes their mind, adds punctuation, and never summarizes, answers, or adds content. Providers: Ollama, LM Studio, Apple Intelligence, or any OpenAI-compatible API (DeepSeek, OpenAI). With tidying off it outputs the raw transcript.
 - Output language: tidy and translate into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish.
 - Live captions: press Control + Option + C to caption audio the Mac is playing (videos, lectures, video calls) using a Core Audio process tap; optional translation as you listen; Control + Option + V tidies and pastes what was just said.
@@ -33,6 +33,8 @@ Key facts:
 
 - [Open-source Wispr Flow alternative](https://tidytalk.zayen.dev/alternatives/wispr-flow/): how Tidytalk differs from Wispr Flow
 - [Tidytalk vs Wispr Flow vs Superwhisper vs macOS Dictation](https://tidytalk.zayen.dev/compare/): price, platforms, privacy, and offline use
+- [Open-source Superwhisper alternative](https://tidytalk.zayen.dev/alternatives/superwhisper/): free AI cleanup, local in any language
+- [Free, offline Typeless alternative](https://tidytalk.zayen.dev/alternatives/typeless/): on-device recognition, no account or word limit
 
 ## Use cases
 
@@ -41,8 +43,15 @@ Key facts:
 - [Dictation for developers: AI prompts and commit messages](https://tidytalk.zayen.dev/use-cases/developers/)
 - [Speak one language, write another](https://tidytalk.zayen.dev/use-cases/translation/)
 
+## Guides
+
+- [How to dictate mixed Chinese and English on Mac](https://tidytalk.zayen.dev/guides/mixed-chinese-english-dictation/)
+- [Live translated captions for videos and meetings](https://tidytalk.zayen.dev/guides/live-translated-captions/)
+- [How to make dictation get names and technical terms right](https://tidytalk.zayen.dev/guides/custom-vocabulary/)
+
 ## Chinese (简体中文)
 
 - [中文官网](https://tidytalk.zayen.dev/zh/)
 - [使用指南](https://tidytalk.zayen.dev/zh/docs/)
 - [Wispr Flow 免费开源替代](https://tidytalk.zayen.dev/zh/alternatives/wispr-flow/)
+- [Mac 语音输入法推荐：8 款工具怎么选](https://tidytalk.zayen.dev/zh/guides/mac-voice-input-apps/)

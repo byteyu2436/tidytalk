@@ -1,0 +1,76 @@
+<!--
+path: /zh/guides/custom-vocabulary/
+alternate: /guides/custom-vocabulary/
+type: article
+breadcrumb: 人名和术语
+title: Mac 语音输入总认错人名和术语？用词库解决 | Tidytalk
+headline: 怎么让语音输入认对人名、产品名和专业术语
+description: 语音输入总把同事名字、产品名、专业术语认错？在 Mac 上用常用词、固定替换、自动学词和自定义规则，让这些词每次都写对。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>怎么让语音输入认对人名、产品名和专业术语</h1>
+      <p class="lead">语音识别对日常用语很准，偏偏对你最在意的词最不准：同事的名字、自己的产品、常用的工具。Tidytalk 从识别到粘贴，一共有四种办法解决这个问题。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <p>下面这些都在"设置 › 词库"里。</p>
+
+      <h2 id="common-words">1. 列出你的常用词</h2>
+      <p>在"常用词"里一行写一个人名、产品名或术语，例如：</p>
+      <pre><code>Kubernetes
+Figma
+Claude
+张三丰</code></pre>
+      <p>这些词在两个阶段起作用：</p>
+      <ul>
+        <li><strong>识别时：</strong>识别模型选 Qwen3-ASR（"设置 › 识别模型"）时，识别阶段就能认对这些词，关闭整理也有效。</li>
+        <li><strong>整理时：</strong>用任何模型都会把这份列表交给 AI，读音相近的错词会被改成你的写法，比如把"森斯沃伊斯"改成 "SenseVoice"。这一步需要打开"整理文字"。</li>
+      </ul>
+
+      <h2 id="replacements">2. 用固定替换解决反复出现的错误</h2>
+      <p>某个词总是错成同一个样子，就加一条固定替换，例如"克劳德"总是换成 "Claude"。英文不区分大小写、只匹配完整单词。替换在本机进行，关闭整理也有效。</p>
+      <p>最快的加法：在菜单栏的"最近记录"里选中识别错的那条结果，点"加入词库…"。</p>
+
+      <h2 id="learn">3. 让它从你的修改里学习</h2>
+      <p>粘贴后，如果你在同一个输入框里把某个词改成了别的写法，Tidytalk 会发现，并在菜单栏的"发现 N 处改动"和"设置 › 词库"顶部列出来。点"加入词库"之前什么都不会加。</p>
+      <p>它只在粘贴后的一分半钟内比较，不保存任何内容。不需要的话，可以在词库页底部关掉。</p>
+
+      <h2 id="rules">4. 用自定义规则统一写法</h2>
+      <p>自定义规则管的是写法而不是拼写，一行一条，最多 20 条。例如：</p>
+      <ul>
+        <li>金额一律用阿拉伯数字</li>
+        <li>产品名写作 Tidytalk</li>
+        <li>"的地得"按规范使用</li>
+      </ul>
+      <p>AI 整理和语音改写都会遵守这些规则。规则只影响写法，不会让 AI 补充原文没有的内容。</p>
+
+      <h2 id="snippets">附加：快捷短语</h2>
+      <p>整句只说"我的邮箱"这样的短语，就能粘贴完整的邮箱地址、收货地址或常用回复。只有整段录音就是这个短语时才会替换，句子中间提到不会触发。</p>
+
+      <h2 id="which">该用哪一个？</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>问题</th><th>解决办法</th></tr></thead>
+          <tbody>
+            <tr><td>某个名字或术语每次错得不一样</td><td>常用词，最好配合 Qwen3-ASR</td></tr>
+            <tr><td>每次都错成同一个词</td><td>固定替换</td></tr>
+            <tr><td>粘贴后总要手动改几个词</td><td>让"自动学词"提示你加入</td></tr>
+            <tr><td>字都对，但写法不统一</td><td>自定义规则</td></tr>
+            <tr><td>同一段长文字要反复输入</td><td>快捷短语</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>经常中英文混着说？看看<a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说怎么识别得准</a>。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>认得你的词的语音输入</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 {{version}}。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#vocabulary">查看词库使用说明</a>
+      </div>
+    </aside>
+  </main>

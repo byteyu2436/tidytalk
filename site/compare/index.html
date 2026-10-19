@@ -114,10 +114,10 @@
             <tr><th></th><th>Tidytalk</th><th>Wispr Flow</th><th>Superwhisper</th><th>macOS Dictation</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row">Price</th><td>Free</td><td>Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly</td><td>Free plan; paid Pro plan (monthly, yearly, or lifetime)</td><td>Free, built in</td></tr>
+            <tr><th scope="row">Price</th><td>Free</td><td>Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly</td><td>Free plan with local models; Pro $8.49/month, $84.99/year, or $249.99 once</td><td>Free, built in</td></tr>
             <tr><th scope="row">Platforms</th><td>Mac (macOS 26+, Apple silicon)</td><td>Mac, Windows, iOS, Android</td><td>Mac, Windows, iOS, Android</td><td>Mac and other Apple devices</td></tr>
             <tr><th scope="row">Where your voice is recognized</th><td>On your Mac</td><td>In the cloud</td><td>On your Mac with local models, or in the cloud</td><td>On your Mac for supported languages on Apple silicon; otherwise Apple's servers</td></tr>
-            <tr><th scope="row">Removes fillers and fixes slips</th><td><span class="yes">Yes</span>, with an AI service you choose</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes</span>, with AI modes</td><td><span class="no">No</span>, types what you say</td></tr>
+            <tr><th scope="row">Removes fillers and fixes slips</th><td><span class="yes">Yes</span>, with an AI service you choose</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes</span>, with AI modes on Pro</td><td><span class="no">No</span>, types what you say</td></tr>
             <tr><th scope="row">Works fully offline</th><td><span class="yes">Yes</span>, with a local model or tidying off</td><td><span class="no">No</span></td><td><span class="yes">Yes</span>, with local models</td><td><span class="yes">Yes</span>, for supported languages</td></tr>
             <tr><th scope="row">Open source</th><td><span class="yes">Yes</span>, MIT</td><td><span class="no">No</span></td><td><span class="no">No</span></td><td><span class="no">No</span></td></tr>
           </tbody>
@@ -145,8 +145,10 @@
       <p>Superwhisper is a feature-rich commercial app with configurable AI modes that reformat what you say, from casual messages to structured notes. It runs on Mac, Windows, iOS, and Android.</p>
       <ul>
         <li>It can transcribe offline with local models, which its FAQ says run best on Apple silicon Macs. Cloud models are also available.</li>
-        <li>There's a free plan and a paid Pro plan with monthly, yearly, and lifetime options. Check the official site for current prices.</li>
+        <li>The free plan includes unlimited dictation with local Whisper models. AI modes, cloud models, and file transcription need Pro: $8.49 a month, $84.99 a year, or $249.99 once. Pro's local AI model works in English only.</li>
       </ul>
+
+      <p>See <a href="/alternatives/superwhisper/">Tidytalk as a Superwhisper alternative</a> for a closer comparison.</p>
 
       <h2 id="macos-dictation">macOS Dictation</h2>
       <p>Dictation is built into macOS, free, and needs no setup. On Apple silicon Macs, supported languages are processed on the device. It types your words as you speak, so it's great for quick input, but it keeps fillers and doesn't clean up or restructure what you said. It stops automatically after 30 seconds of silence.</p>
@@ -159,10 +161,12 @@
         <li><strong>Stick with macOS Dictation</strong> if you only need quick, word-for-word input and don't need fillers removed.</li>
       </ul>
 
+      <p>Considering Typeless? See <a href="/alternatives/typeless/">Tidytalk as a Typeless alternative</a>.</p>
+
       <h2 id="sources">Sources</h2>
       <ul>
         <li><a href="https://wisprflow.ai/pricing">Wispr Flow pricing</a> and <a href="https://docs.wisprflow.ai/articles/4709791908-understanding-privacy-mode-and-cloud-sync">Understanding Privacy Mode and Cloud Sync</a></li>
-        <li><a href="https://superwhisper.com/">Superwhisper website and FAQ</a></li>
+        <li><a href="https://superwhisper.com/docs/billing/plans">Superwhisper plans and pricing</a> and <a href="https://superwhisper.com/docs/models/language">language models</a></li>
         <li><a href="https://support.apple.com/guide/mac-help/mh40584/mac">Apple: Dictate messages and documents on Mac</a></li>
       </ul>
     </div>
@@ -182,8 +186,10 @@
         <a class="brand" href="/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
         <p>Tidytalk is open source under the MIT License. Speech recognition uses <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> and <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>.</p>
       </div>
-      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/compare/">Compare</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Compare</h2><ul><li><a href="/compare/">All dictation apps</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/alternatives/superwhisper/">Superwhisper alternative</a></li><li><a href="/alternatives/typeless/">Typeless alternative</a></li></ul></div>
       <div><h2>Use cases</h2><ul><li><a href="/use-cases/developers/">For developers</a></li><li><a href="/use-cases/translation/">Dictate and translate</a></li><li><a href="/use-cases/offline/">Private and offline</a></li><li><a href="/use-cases/transcribe/">Transcribe recordings</a></li></ul></div>
+      <div><h2>Guides</h2><ul><li><a href="/guides/mixed-chinese-english-dictation/">Mixed Chinese and English</a></li><li><a href="/guides/live-translated-captions/">Live translated captions</a></li><li><a href="/guides/custom-vocabulary/">Names and terms</a></li></ul></div>
       <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
         <li><a href="/zh/compare/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li></ul></div>
     </div>

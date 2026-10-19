@@ -174,7 +174,7 @@
       <h2 id="speech-models">Speech models</h2>
       <p>SenseVoice is the default: small (about 240&nbsp;MB), fast, and great with mixed Chinese and English. In Settings › Speech Model you can switch to another model. All of them run on your Mac.</p>
       <ul>
-        <li><strong>Qwen3-ASR</strong> (about 1&nbsp;GB): the most accurate, 52 languages, and it recognizes names and terms from your vocabulary. About 4 seconds for 20 seconds of speech.</li>
+        <li><strong>Qwen3-ASR</strong> (about 1&nbsp;GB): the most accurate, with 30 languages and 22 Chinese dialects, and it recognizes names and terms from your vocabulary. About 4 seconds for 20 seconds of speech.</li>
         <li><strong>Fun-ASR-Nano</strong> (about 1&nbsp;GB): Chinese, English, and Japanese, nearly as accurate as Qwen3-ASR and a bit faster.</li>
         <li><strong>Whisper Turbo</strong> (about 1&nbsp;GB): about 99 languages, good for less common ones. It drops characters in Chinese.</li>
         <li><strong>Apple Speech</strong>: built into macOS, nothing to download. It recognizes your system language and is weaker on mixed Chinese and English.</li>
@@ -190,6 +190,7 @@
         <li><strong>Translation:</strong> turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.</li>
         <li><strong>Paste what was just said:</strong> while listening, put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. If captions are off, <kbd>⌃⌥V</kbd> only shows a reminder and never starts recording.</li>
       </ul>
+      <p>For a step-by-step walkthrough, see <a href="/guides/live-translated-captions/">Live translated captions for videos and meetings</a>.</p>
 
       <h2 id="transcribe">Transcribe files and links</h2>
       <p>Choose "Transcribe File or Link…" in the menu bar menu.</p>
@@ -277,6 +278,8 @@
       <h3>Custom rules</h3>
       <p>Write your own rules, one per line, such as "Write amounts as digits" or "Write the product name as Tidytalk". Tidying and voice rewrite follow them. Rules only affect how things are written; they never make the AI add content. Up to 20 rules.</p>
 
+      <p>Not sure which to use? See <a href="/guides/custom-vocabulary/">how to make dictation get names and terms right</a>.</p>
+
       <h2 id="spacing">Chinese–English spacing</h2>
       <p>Tidytalk adds spaces between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs aren't affected. This runs on your Mac and can be turned off in Settings › General.</p>
 
@@ -284,7 +287,7 @@
       <p>Your last 20 results are kept in memory. From "Recent" in the menu bar you can paste or copy one again, copy the raw transcript, re-tidy it with another mode or language and paste it into the current text field, or add a misheard word to your vocabulary. Nothing is written to disk, and the list is cleared when you quit.</p>
 
       <h2 id="languages">Supported languages</h2>
-      <p>You don't choose a language before speaking. Tidytalk detects it automatically and supports:</p>
+      <p>You don't choose a language before speaking. Tidytalk detects it automatically. With the default SenseVoice model, it supports:</p>
       <ul>
         <li>Mandarin Chinese, including English words and technical terms mixed in</li>
         <li>English</li>
@@ -292,7 +295,8 @@
         <li>Korean</li>
         <li>Cantonese (written in Simplified Chinese, keeping Cantonese wording)</li>
       </ul>
-      <p>Other spoken languages aren't supported yet. To write in French, German, or Spanish, speak Chinese or English and set the output language. The interface is available in English and Simplified Chinese and follows your system language.</p>
+      <p>For other spoken languages, switch the speech model in Settings › Speech Model: Qwen3-ASR covers 30 languages and 22 Chinese dialects, such as Sichuanese, Northeastern, Wu, and Minnan, and Whisper Turbo covers about 99 languages. You can also speak one language and set the output language to write in another. The interface is available in English and Simplified Chinese and follows your system language.</p>
+      <p>Mixing Chinese and English? See <a href="/guides/mixed-chinese-english-dictation/">how to dictate mixed Chinese and English</a>.</p>
 
       <h2 id="troubleshooting">Troubleshooting</h2>
       <div class="table-wrap">
@@ -336,8 +340,10 @@ tccutil reset All app.tidytalk.Tidytalk</code></pre>
         <a class="brand" href="/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
         <p>Tidytalk is open source under the MIT License. Speech recognition uses <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> and <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>.</p>
       </div>
-      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/compare/">Compare</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Compare</h2><ul><li><a href="/compare/">All dictation apps</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/alternatives/superwhisper/">Superwhisper alternative</a></li><li><a href="/alternatives/typeless/">Typeless alternative</a></li></ul></div>
       <div><h2>Use cases</h2><ul><li><a href="/use-cases/developers/">For developers</a></li><li><a href="/use-cases/translation/">Dictate and translate</a></li><li><a href="/use-cases/offline/">Private and offline</a></li><li><a href="/use-cases/transcribe/">Transcribe recordings</a></li></ul></div>
+      <div><h2>Guides</h2><ul><li><a href="/guides/mixed-chinese-english-dictation/">Mixed Chinese and English</a></li><li><a href="/guides/live-translated-captions/">Live translated captions</a></li><li><a href="/guides/custom-vocabulary/">Names and terms</a></li></ul></div>
       <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
         <li><a href="/zh/docs/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li></ul></div>
     </div>

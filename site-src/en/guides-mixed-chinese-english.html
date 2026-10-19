@@ -1,0 +1,78 @@
+<!--
+path: /guides/mixed-chinese-english-dictation/
+alternate: /zh/guides/mixed-chinese-english-dictation/
+type: article
+breadcrumb: Mixed Chinese and English
+title: How to Dictate Mixed Chinese and English on Mac | Tidytalk
+headline: How to dictate mixed Chinese and English on Mac
+description: Speak Chinese with English terms mixed in and get accurate, well-spaced text on Mac: which speech model to pick, how to add terms, what tidying keeps.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>How to dictate mixed Chinese and English on Mac</h1>
+      <p class="lead">If you work in Chinese, your sentences are full of English: API, deadline, PR, product names. Here's how to set up Tidytalk so those words come out right, with proper spacing, without editing afterward.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="example">What you get</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>You say</th><th>You get</th></tr></thead>
+          <tbody>
+            <tr><td>嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少</td><td>我想问一下这个 API 的 rate limit 是多少？</td></tr>
+            <tr><td>项目要延期到下周三，不对，是下周四</td><td>项目要延期到下周四。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The English terms stay in English, fillers like 嗯、那个、就是说 are removed, the slip is corrected, and spaces are added between Chinese and English.</p>
+
+      <h2 id="model">1. Pick a speech model that handles mixing</h2>
+      <p>Open Settings › Speech Model. All models run on your Mac.</p>
+      <ul>
+        <li><strong>SenseVoice</strong> (the default, about 240&nbsp;MB) is fast and handles Mandarin with English mixed in well. Start here.</li>
+        <li><strong>Qwen3-ASR</strong> (about 1&nbsp;GB) is the most accurate, and it uses your vocabulary while recognizing, so names and product terms come out right the first time. It's slower: about 4 seconds for 20 seconds of speech.</li>
+        <li><strong>Fun-ASR-Nano</strong> covers Chinese, English, and Japanese and is nearly as accurate as Qwen3-ASR.</li>
+        <li>Avoid <strong>Whisper Turbo</strong> for Chinese, since it drops characters, and <strong>Apple Speech</strong>, which follows your system language and is weaker on mixed speech.</li>
+      </ul>
+      <p>You don't choose a language before speaking. The language is detected automatically, sentence by sentence.</p>
+
+      <h2 id="vocabulary">2. Add the English terms you use</h2>
+      <p>Speech recognition gets rare names and jargon wrong more than anything else. In Settings › Vocabulary, list them under Common Words, one per line: your product names, colleagues' names, tools like Kubernetes or Figma.</p>
+      <ul>
+        <li>With Qwen3-ASR, these words are recognized correctly from the start.</li>
+        <li>With any model, they're also given to the AI during tidying, so a similar-sounding mistake is corrected to your spelling.</li>
+        <li>If one word is always wrong in the same way, add one under Replacements, for example "cloud" → "Claude". Replacements run on your Mac even with tidying off.</li>
+      </ul>
+      <p>See <a href="/guides/custom-vocabulary/">how to teach dictation names and terms</a> for more.</p>
+
+      <h2 id="tidy">3. Let tidying keep your terms</h2>
+      <p>Tidying removes fillers and slips and adds punctuation, but English words and technical terms inside Chinese speech are kept as they are. It never translates them into Chinese unless you ask it to.</p>
+      <ul>
+        <li>For technical writing, choose the <strong>Code (keep terms)</strong> mode in Settings › Set Up AI › Tidying. It keeps terms, commands, file names, and symbols exactly as you said them.</li>
+        <li>For messages, the <strong>Chat (casual)</strong> mode keeps your tone and sentence-final particles.</li>
+      </ul>
+
+      <h2 id="spacing">4. Spacing is automatic</h2>
+      <p>Tidytalk adds a space between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs are left alone. It runs on your Mac and can be turned off in Settings › General.</p>
+
+      <h2 id="english-output">5. Need it in English instead?</h2>
+      <p>Set the output language to English, and you can speak Chinese and paste English. Translation happens in the same step as tidying, so it's about as fast. See <a href="/use-cases/translation/">Dictate and translate</a>.</p>
+
+      <h2 id="tips">Tips</h2>
+      <ul>
+        <li>Say English terms the way you normally would. You don't need to slow down or spell them.</li>
+        <li>If a result is wrong, open Recent in the menu bar, pick the result, and choose "Add to Vocabulary…" to fix the word for next time.</li>
+        <li>If you fix a word yourself right after pasting, Tidytalk notices and offers to add it to your vocabulary. Nothing is added until you confirm.</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Dictate the way you actually talk</h2>
+      <p>Free for macOS 26 on Apple silicon. Version {{version}}.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/docs/#speech-models">Compare speech models</a>
+      </div>
+    </aside>
+  </main>

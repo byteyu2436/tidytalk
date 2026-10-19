@@ -58,9 +58,17 @@ UI = {
         "footer_product": "Product",
         "footer_use_cases": "Use cases",
         "footer_project": "Project",
+        "footer_compare": "Compare",
+        "footer_guides": "Guides",
         "footer_links_product": [("Download", f"{GITHUB}/releases/latest"), ("User guide", "/docs/"),
-                                 ("Compare", "/compare/"), ("Wispr Flow alternative", "/alternatives/wispr-flow/"),
                                  ("Changelog", "/changelog/")],
+        "footer_links_compare": [("All dictation apps", "/compare/"),
+                                 ("Wispr Flow alternative", "/alternatives/wispr-flow/"),
+                                 ("Superwhisper alternative", "/alternatives/superwhisper/"),
+                                 ("Typeless alternative", "/alternatives/typeless/")],
+        "footer_links_guides": [("Mixed Chinese and English", "/guides/mixed-chinese-english-dictation/"),
+                                ("Live translated captions", "/guides/live-translated-captions/"),
+                                ("Names and terms", "/guides/custom-vocabulary/")],
         "footer_links_use_cases": [("For developers", "/use-cases/developers/"),
                                    ("Dictate and translate", "/use-cases/translation/"),
                                    ("Private and offline", "/use-cases/offline/"),
@@ -88,9 +96,18 @@ UI = {
         "footer_product": "产品",
         "footer_use_cases": "使用场景",
         "footer_project": "项目",
+        "footer_compare": "对比",
+        "footer_guides": "教程",
         "footer_links_product": [("下载", f"{GITHUB}/releases/latest"), ("使用指南", "/zh/docs/"),
-                                 ("对比", "/zh/compare/"), ("Wispr Flow 替代", "/zh/alternatives/wispr-flow/"),
                                  ("更新日志", "/zh/changelog/")],
+        "footer_links_compare": [("语音输入工具对比", "/zh/compare/"),
+                                 ("Mac 语音输入法推荐", "/zh/guides/mac-voice-input-apps/"),
+                                 ("Wispr Flow 替代", "/zh/alternatives/wispr-flow/"),
+                                 ("Superwhisper 替代", "/zh/alternatives/superwhisper/"),
+                                 ("Typeless 替代", "/zh/alternatives/typeless/")],
+        "footer_links_guides": [("中英文混说", "/zh/guides/mixed-chinese-english-dictation/"),
+                                ("实时翻译字幕", "/zh/guides/live-translated-captions/"),
+                                ("认对人名和术语", "/zh/guides/custom-vocabulary/")],
         "footer_links_use_cases": [("程序员", "/zh/use-cases/developers/"),
                                    ("说中文出英文", "/zh/use-cases/translation/"),
                                    ("完全离线", "/zh/use-cases/offline/"),
@@ -285,7 +302,9 @@ def render(page, lang):
         <p>{ui["footer_note"]}</p>
       </div>
       <div><h2>{ui["footer_product"]}</h2><ul>{links(ui["footer_links_product"])}</ul></div>
+      <div><h2>{ui["footer_compare"]}</h2><ul>{links(ui["footer_links_compare"])}</ul></div>
       <div><h2>{ui["footer_use_cases"]}</h2><ul>{links(ui["footer_links_use_cases"])}</ul></div>
+      <div><h2>{ui["footer_guides"]}</h2><ul>{links(ui["footer_links_guides"])}</ul></div>
       <div><h2>{ui["footer_project"]}</h2><ul>{links(ui["footer_links_project"])}
         <li><a href="{other_href}" hreflang="{other_hreflang}" lang="{other_hreflang}">{other_label}</a></li></ul></div>
     </div>
@@ -419,8 +438,10 @@ def write_llms(pages, version):
     with open(os.path.join(OUT, "llms.txt"), "w", encoding="utf-8") as f:
         f.write(open(source, encoding="utf-8").read().replace("{{version}}", version))
     # 英文页面的正文合集：首页、使用指南、对比、替代、使用场景
-    order = ["/", "/docs/", "/alternatives/wispr-flow/", "/compare/", "/use-cases/transcribe/",
-             "/use-cases/offline/", "/use-cases/developers/", "/use-cases/translation/"]
+    order = ["/", "/docs/", "/compare/", "/alternatives/wispr-flow/", "/alternatives/superwhisper/",
+             "/alternatives/typeless/", "/use-cases/transcribe/", "/use-cases/offline/", "/use-cases/developers/",
+             "/use-cases/translation/", "/guides/mixed-chinese-english-dictation/",
+             "/guides/live-translated-captions/", "/guides/custom-vocabulary/"]
     by_path = {p["path"]: p for p in pages}
     parts = [f"# Tidytalk – full text of the website\n\nVersion {version}. Source: {DOMAIN}/llms.txt"]
     for path in order:

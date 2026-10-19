@@ -162,7 +162,7 @@ Speech recognition needs it only once, to download the speech model (about 240 M
 
 **Which languages does it support?**
 
-With the default SenseVoice model it detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. For other languages, switch to Qwen3-ASR (52 languages) or Whisper Turbo (about 99) in Settings › Speech Model. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese.
+With the default SenseVoice model it detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. For other languages, switch to Qwen3-ASR (30 languages and 22 Chinese dialects) or Whisper Turbo (about 99) in Settings › Speech Model. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese.
 
 **Is my voice or text uploaded?**
 
@@ -270,7 +270,7 @@ Select some text, hold Right Option, and say how to change it, such as "make it 
 
 SenseVoice is the default: small (about 240 MB), fast, and great with mixed Chinese and English. In Settings › Speech Model you can switch to another model. All of them run on your Mac.
 
-- Qwen3-ASR (about 1 GB): the most accurate, 52 languages, and it recognizes names and terms from your vocabulary. About 4 seconds for 20 seconds of speech.
+- Qwen3-ASR (about 1 GB): the most accurate, with 30 languages and 22 Chinese dialects, and it recognizes names and terms from your vocabulary. About 4 seconds for 20 seconds of speech.
 
 - Fun-ASR-Nano (about 1 GB): Chinese, English, and Japanese, nearly as accurate as Qwen3-ASR and a bit faster.
 
@@ -293,6 +293,8 @@ Tidytalk can caption whatever your Mac is playing, such as a video, a lecture, o
 - Translation: turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.
 
 - Paste what was just said: while listening, put your cursor in a text field and press ⌃⌥V. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. If captions are off, ⌃⌥V only shows a reminder and never starts recording.
+
+For a step-by-step walkthrough, see Live translated captions for videos and meetings.
 
 ## Transcribe files and links
 
@@ -402,6 +404,8 @@ Say only a phrase such as "my email" to insert a full email address or a canned 
 
 Write your own rules, one per line, such as "Write amounts as digits" or "Write the product name as Tidytalk". Tidying and voice rewrite follow them. Rules only affect how things are written; they never make the AI add content. Up to 20 rules.
 
+Not sure which to use? See how to make dictation get names and terms right.
+
 ## Chinese–English spacing
 
 Tidytalk adds spaces between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs aren't affected. This runs on your Mac and can be turned off in Settings › General.
@@ -412,7 +416,7 @@ Your last 20 results are kept in memory. From "Recent" in the menu bar you can p
 
 ## Supported languages
 
-You don't choose a language before speaking. Tidytalk detects it automatically and supports:
+You don't choose a language before speaking. Tidytalk detects it automatically. With the default SenseVoice model, it supports:
 
 - Mandarin Chinese, including English words and technical terms mixed in
 
@@ -424,7 +428,9 @@ You don't choose a language before speaking. Tidytalk detects it automatically a
 
 - Cantonese (written in Simplified Chinese, keeping Cantonese wording)
 
-Other spoken languages aren't supported yet. To write in French, German, or Spanish, speak Chinese or English and set the output language. The interface is available in English and Simplified Chinese and follows your system language.
+For other spoken languages, switch the speech model in Settings › Speech Model: Qwen3-ASR covers 30 languages and 22 Chinese dialects, such as Sichuanese, Northeastern, Wu, and Minnan, and Whisper Turbo covers about 99 languages. You can also speak one language and set the output language to write in another. The interface is available in English and Simplified Chinese and follows your system language.
+
+Mixing Chinese and English? See how to dictate mixed Chinese and English.
 
 ## Troubleshooting
 
@@ -455,6 +461,90 @@ defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk
 
 These remove the speech models (SenseVoice is about 240 MB, other models about 1 GB each) and yt-dlp, your settings including your API key, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep ~/.tidytalk.json if you plan to reinstall and want your settings back.
+
+---
+
+URL: https://tidytalk.zayen.dev/compare/
+
+# Tidytalk vs Wispr Flow vs Superwhisper vs macOS Dictation
+
+Four ways to talk instead of type on a Mac. Here's how they differ on price, privacy, and what happens to your words.
+
+{{updated}}
+
+Tidytalk is our project, so we've kept this page factual. Competitor details come from their official websites and help pages, checked in October 2026. Prices and features change, so check each product's site before you decide.
+
+## At a glance
+
+| Tidytalk | Wispr Flow | Superwhisper | macOS Dictation
+
+Price | Free | Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly | Free plan with local models; Pro $8.49/month, $84.99/year, or $249.99 once | Free, built in
+
+Platforms | Mac (macOS 26+, Apple silicon) | Mac, Windows, iOS, Android | Mac, Windows, iOS, Android | Mac and other Apple devices
+
+Where your voice is recognized | On your Mac | In the cloud | On your Mac with local models, or in the cloud | On your Mac for supported languages on Apple silicon; otherwise Apple's servers
+
+Removes fillers and fixes slips | Yes, with an AI service you choose | Yes | Yes, with AI modes on Pro | No, types what you say
+
+Works fully offline | Yes, with a local model or tidying off | No | Yes, with local models | Yes, for supported languages
+
+Open source | Yes, MIT | No | No | No
+
+## Tidytalk
+
+Tidytalk is paragraph-style: you hold a shortcut, say a whole thought, and let go. Speech is recognized on your Mac with the SenseVoice model, then an AI service you pick removes fillers and slips and adds punctuation before the text is pasted at your cursor.
+
+- You control where text goes. Use DeepSeek, OpenAI, or any OpenAI-compatible service with your own API key, or a local model in Ollama or LM Studio so nothing leaves your Mac. Your voice is never uploaded.
+
+- Free and open source. No word limits or subscriptions. With a cloud AI service, you pay the provider directly for what you use.
+
+- Strong for mixed Chinese and English. It handles English terms inside Chinese speech, adds Chinese–English spacing, and can translate as it tidies.
+
+- Limits to know about: Mac only, and only macOS 26 or later on Apple silicon. It recognizes five spoken languages: Chinese, English, Japanese, Korean, and Cantonese. The app isn't notarized yet, so you approve it once in System Settings. Using AI cleanup means setting up an API key or a local model.
+
+## Wispr Flow
+
+Wispr Flow is a polished commercial app that turns speech into clean writing in any app, and it learns your names and jargon. It runs on Mac, Windows, iOS, and Android, which makes it the easiest choice if you dictate across devices.
+
+- The free plan allows 2,000 words a week on desktop and 1,000 on mobile. Pro removes the limit for $15 a month, or $12 a month billed yearly.
+
+- According to Wispr's own help center, transcription always runs in the cloud. Privacy settings control model training and storage, not where audio is processed, so there's no offline mode.
+
+Looking for something like Wispr Flow that's free and runs on your Mac? See Tidytalk as a Wispr Flow alternative.
+
+## Superwhisper
+
+Superwhisper is a feature-rich commercial app with configurable AI modes that reformat what you say, from casual messages to structured notes. It runs on Mac, Windows, iOS, and Android.
+
+- It can transcribe offline with local models, which its FAQ says run best on Apple silicon Macs. Cloud models are also available.
+
+- The free plan includes unlimited dictation with local Whisper models. AI modes, cloud models, and file transcription need Pro: $8.49 a month, $84.99 a year, or $249.99 once. Pro's local AI model works in English only.
+
+See Tidytalk as a Superwhisper alternative for a closer comparison.
+
+## macOS Dictation
+
+Dictation is built into macOS, free, and needs no setup. On Apple silicon Macs, supported languages are processed on the device. It types your words as you speak, so it's great for quick input, but it keeps fillers and doesn't clean up or restructure what you said. It stops automatically after 30 seconds of silence.
+
+## Which one should you choose?
+
+- Choose Tidytalk if you want a free, open-source tool, care where your text is sent, or dictate in Chinese mixed with English.
+
+- Choose Wispr Flow if you want the same dictation on Windows and your phone and don't mind cloud processing or a subscription.
+
+- Choose Superwhisper if you want lots of customizable AI modes and offline models on several platforms, and are happy to pay for Pro.
+
+- Stick with macOS Dictation if you only need quick, word-for-word input and don't need fillers removed.
+
+Considering Typeless? See Tidytalk as a Typeless alternative.
+
+## Sources
+
+- Wispr Flow pricing and Understanding Privacy Mode and Cloud Sync
+
+- Superwhisper plans and pricing and language models
+
+- Apple: Dictate messages and documents on Mac
 
 ---
 
@@ -534,83 +624,143 @@ Tidytalk also does a few things beyond dictation: live captions for audio your M
 
 ---
 
-URL: https://tidytalk.zayen.dev/compare/
+URL: https://tidytalk.zayen.dev/alternatives/superwhisper/
 
-# Tidytalk vs Wispr Flow vs Superwhisper vs macOS Dictation
+# A free, open-source Superwhisper alternative for Mac
 
-Four ways to talk instead of type on a Mac. Here's how they differ on price, privacy, and what happens to your words.
+Superwhisper and Tidytalk both turn speech into text at your cursor and can run fully on your Mac. The difference: in Tidytalk, AI cleanup is free, works with any local or cloud model in any language, and the code is open source.
 
 {{updated}}
 
-Tidytalk is our project, so we've kept this page factual. Competitor details come from their official websites and help pages, checked in October 2026. Prices and features change, so check each product's site before you decide.
+Tidytalk is our project, so we've kept this page factual. Superwhisper details come from its official documentation, checked in October 2026. Products change, so check their site before you decide.
 
 ## At a glance
 
-| Tidytalk | Wispr Flow | Superwhisper | macOS Dictation
+| Tidytalk | Superwhisper
 
-Price | Free | Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly | Free plan; paid Pro plan (monthly, yearly, or lifetime) | Free, built in
+Price | Free, everything included | Free plan; Pro $8.49/month, $84.99/year, or $249.99 once
 
-Platforms | Mac (macOS 26+, Apple silicon) | Mac, Windows, iOS, Android | Mac, Windows, iOS, Android | Mac and other Apple devices
+Speech recognition | On your Mac: SenseVoice, Qwen3-ASR, Fun-ASR-Nano, Whisper Turbo, or Apple's built-in recognition | Local Whisper models on Free; more local models and cloud models on Pro
 
-Where your voice is recognized | On your Mac | In the cloud | On your Mac with local models, or in the cloud | On your Mac for supported languages on Apple silicon; otherwise Apple's servers
+AI cleanup | Free, with Ollama, LM Studio, Apple Intelligence, or any OpenAI-compatible API | Pro only. Cloud models, or a small local model that's English only
 
-Removes fillers and fixes slips | Yes, with an AI service you choose | Yes | Yes, with AI modes | No, types what you say
+Fully offline with AI cleanup | Yes, in any language your local model handles | Yes, in English, with the local S1-mini model
 
-Works fully offline | Yes, with a local model or tidying off | No | Yes, with local models | Yes, for supported languages
+Platforms | Mac (macOS 26+, Apple silicon) | Mac, Windows, iOS, Android
 
-Open source | Yes, MIT | No | No | No
+Open source | Yes, MIT License | No
 
-## Tidytalk
+Both have custom vocabulary and text replacements. Tidytalk also includes live captions with translation for any audio your Mac plays, and transcription of files and YouTube or Bilibili links, all free.
 
-Tidytalk is paragraph-style: you hold a shortcut, say a whole thought, and let go. Speech is recognized on your Mac with the SenseVoice model, then an AI service you pick removes fillers and slips and adds punctuation before the text is pasted at your cursor.
+## When Superwhisper is the better choice
 
-- You control where text goes. Use DeepSeek, OpenAI, or any OpenAI-compatible service with your own API key, or a local model in Ollama or LM Studio so nothing leaves your Mac. Your voice is never uploaded.
+- You want the same app on Windows, iPhone, or Android.
 
-- Free and open source. No word limits or subscriptions. With a cloud AI service, you pay the provider directly for what you use.
+- You want many customizable AI modes, a meeting assistant, or team features like SSO.
 
-- Strong for mixed Chinese and English. It handles English terms inside Chinese speech, adds Chinese–English spacing, and can translate as it tidies.
+- You use an Intel Mac or a macOS version older than 26.
 
-- Limits to know about: Mac only, and only macOS 26 or later on Apple silicon. It recognizes five spoken languages: Chinese, English, Japanese, Korean, and Cantonese. The app isn't notarized yet, so you approve it once in System Settings. Using AI cleanup means setting up an API key or a local model.
+## When Tidytalk is the better choice
 
-## Wispr Flow
+- You want AI cleanup without paying for a subscription or a license.
 
-Wispr Flow is a polished commercial app that turns speech into clean writing in any app, and it learns your names and jargon. It runs on Mac, Windows, iOS, and Android, which makes it the easiest choice if you dictate across devices.
+- You want cleanup to stay on your Mac in Chinese, Japanese, or another language, not just English.
 
-- The free plan allows 2,000 words a week on desktop and 1,000 on mobile. Pro removes the limit for $15 a month, or $12 a month billed yearly.
+- You speak Chinese mixed with English. Tidytalk's default model is built for it and adds Chinese–English spacing.
 
-- According to Wispr's own help center, transcription always runs in the cloud. Privacy settings control model training and storage, not where audio is processed, so there's no offline mode.
+- You want to read the code or change it yourself.
 
-Looking for something like Wispr Flow that's free and runs on your Mac? See Tidytalk as a Wispr Flow alternative.
+## Switching from Superwhisper
 
-## Superwhisper
+- Download Tidytalk and follow the setup guide.
 
-Superwhisper is a feature-rich commercial app with configurable AI modes that reformat what you say, from casual messages to structured notes. It runs on Mac, Windows, iOS, and Android.
+- Copy your custom vocabulary into Settings › Vocabulary › Common Words, and your text replacements into Replacements.
 
-- It can transcribe offline with local models, which its FAQ says run best on Apple silicon Macs. Cloud models are also available.
+- Instead of modes, pick a cleanup mode (Standard, Chat, Email, or Code) in Settings › Set Up AI › Tidying, and add your own instructions as Custom Rules.
 
-- There's a free plan and a paid Pro plan with monthly, yearly, and lifetime options. Check the official site for current prices.
-
-## macOS Dictation
-
-Dictation is built into macOS, free, and needs no setup. On Apple silicon Macs, supported languages are processed on the device. It types your words as you speak, so it's great for quick input, but it keeps fillers and doesn't clean up or restructure what you said. It stops automatically after 30 seconds of silence.
-
-## Which one should you choose?
-
-- Choose Tidytalk if you want a free, open-source tool, care where your text is sent, or dictate in Chinese mixed with English.
-
-- Choose Wispr Flow if you want the same dictation on Windows and your phone and don't mind cloud processing or a subscription.
-
-- Choose Superwhisper if you want lots of customizable AI modes and offline models on several platforms, and are happy to pay for Pro.
-
-- Stick with macOS Dictation if you only need quick, word-for-word input and don't need fillers removed.
+- To keep everything local, choose Ollama, LM Studio, or Apple Intelligence as the AI service. See private and offline dictation.
 
 ## Sources
 
-- Wispr Flow pricing and Understanding Privacy Mode and Cloud Sync
+- Superwhisper: Plans and pricing, Voice models, Language models
 
-- Superwhisper website and FAQ
+- For Wispr Flow and macOS Dictation too, see the full comparison.
 
-- Apple: Dictate messages and documents on Mac
+---
+
+URL: https://tidytalk.zayen.dev/alternatives/typeless/
+
+# A free, offline Typeless alternative for Mac
+
+Typeless and Tidytalk both turn natural speech into polished text, removing fillers and fixing self-corrections. Typeless does it in the cloud with an account and a subscription. Tidytalk does it on your Mac, for free, with no account.
+
+{{updated}}
+
+Tidytalk is our project, so we've kept this page factual. Typeless details come from its official pricing and data controls pages, checked in October 2026. Products change, so check their site before you decide.
+
+## At a glance
+
+| Tidytalk | Typeless
+
+Price | Free, no word limits | Free plan with a weekly word limit; Pro $12/month billed yearly, or $30/month billed monthly
+
+Where your voice is recognized | On your Mac | In the cloud
+
+AI cleanup | Your choice: Ollama, LM Studio, or Apple Intelligence on your Mac, or a cloud API with your own key | Built in, in the cloud
+
+Works offline | Yes, with a local model or with cleanup off | No
+
+Account | None | Required
+
+Platforms | Mac (macOS 26+, Apple silicon) | Mac, Windows, iOS, Android, and Linux
+
+Open source | Yes, MIT License | No
+
+Typeless says audio isn't stored and its AI providers don't keep or train on your data. With Tidytalk, audio never leaves your Mac in the first place.
+
+## What works the same
+
+- Speak naturally in any app and get clean text: fillers and repetitions removed, self-corrections resolved, punctuation added.
+
+- A personal dictionary for names and terms.
+
+- Speak one language and get text in another.
+
+- Edit text by voice: select it and say what to change.
+
+## When Typeless is the better choice
+
+- You want the same dictation on Windows, Linux, or your phone.
+
+- You'd rather not set anything up: no model download and no AI service to choose.
+
+- You use an Intel Mac or a macOS version older than 26.
+
+## When Tidytalk is the better choice
+
+- You don't want your voice to leave your Mac, or you need dictation that works offline.
+
+- You dictate a lot and don't want a weekly word limit, a subscription, or an account.
+
+- You speak Chinese mixed with English. Tidytalk keeps the English terms and adds Chinese–English spacing.
+
+- You also want live captions for videos and meetings, or transcription of recordings, at no cost.
+
+## Switching from Typeless
+
+- Download Tidytalk and follow the setup guide.
+
+- Copy the words from your Typeless dictionary into Settings › Vocabulary › Common Words.
+
+- Choose an AI service in Settings › Set Up AI. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac.
+
+- Pick a shortcut in Settings › Dictation. Voice editing of selected text uses Right Option by default.
+
+## Sources
+
+- Typeless: Pricing, Data controls, Billing help
+
+- For Wispr Flow, Superwhisper, and macOS Dictation, see the full comparison.
 
 ---
 
@@ -646,7 +796,7 @@ Model | Best for
 
 SenseVoice (default) | Fast transcripts in Chinese, English, Japanese, Korean, or Cantonese, including mixed Chinese and English.
 
-Qwen3-ASR | The most accurate results and the best punctuation, in 52 languages. It also recognizes names and terms from your vocabulary.
+Qwen3-ASR | The most accurate results and the best punctuation, in 30 languages and 22 Chinese dialects. It also recognizes names and terms from your vocabulary.
 
 Whisper Turbo | Less common languages; it covers about 99. Use another model for Chinese.
 
@@ -840,3 +990,205 @@ Set the mode to Email (formal) to get complete, polite sentences in the target l
 - Translation needs "Tidy up text" turned on and an AI service. If the request fails, Tidytalk pastes the original text and tells you.
 
 - For full privacy, use a local model. Larger local models translate noticeably better than small ones. See Private and offline dictation.
+
+---
+
+URL: https://tidytalk.zayen.dev/guides/mixed-chinese-english-dictation/
+
+# How to dictate mixed Chinese and English on Mac
+
+If you work in Chinese, your sentences are full of English: API, deadline, PR, product names. Here's how to set up Tidytalk so those words come out right, with proper spacing, without editing afterward.
+
+{{updated}}
+
+## What you get
+
+You say | You get
+
+嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少 | 我想问一下这个 API 的 rate limit 是多少？
+
+项目要延期到下周三，不对，是下周四 | 项目要延期到下周四。
+
+The English terms stay in English, fillers like 嗯、那个、就是说 are removed, the slip is corrected, and spaces are added between Chinese and English.
+
+## 1. Pick a speech model that handles mixing
+
+Open Settings › Speech Model. All models run on your Mac.
+
+- SenseVoice (the default, about 240 MB) is fast and handles Mandarin with English mixed in well. Start here.
+
+- Qwen3-ASR (about 1 GB) is the most accurate, and it uses your vocabulary while recognizing, so names and product terms come out right the first time. It's slower: about 4 seconds for 20 seconds of speech.
+
+- Fun-ASR-Nano covers Chinese, English, and Japanese and is nearly as accurate as Qwen3-ASR.
+
+- Avoid Whisper Turbo for Chinese, since it drops characters, and Apple Speech, which follows your system language and is weaker on mixed speech.
+
+You don't choose a language before speaking. The language is detected automatically, sentence by sentence.
+
+## 2. Add the English terms you use
+
+Speech recognition gets rare names and jargon wrong more than anything else. In Settings › Vocabulary, list them under Common Words, one per line: your product names, colleagues' names, tools like Kubernetes or Figma.
+
+- With Qwen3-ASR, these words are recognized correctly from the start.
+
+- With any model, they're also given to the AI during tidying, so a similar-sounding mistake is corrected to your spelling.
+
+- If one word is always wrong in the same way, add one under Replacements, for example "cloud" → "Claude". Replacements run on your Mac even with tidying off.
+
+See how to teach dictation names and terms for more.
+
+## 3. Let tidying keep your terms
+
+Tidying removes fillers and slips and adds punctuation, but English words and technical terms inside Chinese speech are kept as they are. It never translates them into Chinese unless you ask it to.
+
+- For technical writing, choose the Code (keep terms) mode in Settings › Set Up AI › Tidying. It keeps terms, commands, file names, and symbols exactly as you said them.
+
+- For messages, the Chat (casual) mode keeps your tone and sentence-final particles.
+
+## 4. Spacing is automatic
+
+Tidytalk adds a space between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs are left alone. It runs on your Mac and can be turned off in Settings › General.
+
+## 5. Need it in English instead?
+
+Set the output language to English, and you can speak Chinese and paste English. Translation happens in the same step as tidying, so it's about as fast. See Dictate and translate.
+
+## Tips
+
+- Say English terms the way you normally would. You don't need to slow down or spell them.
+
+- If a result is wrong, open Recent in the menu bar, pick the result, and choose "Add to Vocabulary…" to fix the word for next time.
+
+- If you fix a word yourself right after pasting, Tidytalk notices and offers to add it to your vocabulary. Nothing is added until you confirm.
+
+---
+
+URL: https://tidytalk.zayen.dev/guides/live-translated-captions/
+
+# Live translated captions for any video or meeting on Mac
+
+Watching a lecture in another language, or on a call where you miss half the words? Tidytalk captions whatever your Mac is playing and translates each sentence as it's spoken, in any app, with no browser extension.
+
+{{updated}}
+
+## What it can caption
+
+Anything your Mac plays: YouTube or Bilibili in a browser, a downloaded video, a podcast, a course, or the other people on a Zoom, Teams, or Meet call. Tidytalk records only the computer's audio, never your microphone, so your own voice on a call isn't captioned.
+
+## Set it up once
+
+- Install Tidytalk and finish the setup guide.
+
+- For translation, choose an AI service in Settings › Set Up AI. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac; with a cloud service such as DeepSeek or OpenAI, caption text is sent to it.
+
+- In Settings › Live Captions, turn on Translate Captions and pick a language under Translate To: English, Simplified or Traditional Chinese, Japanese, Korean, French, German, or Spanish.
+
+## Start captions
+
+- Play the video or join the call.
+
+- Press ⌃⌥C (Control + Option + C), or choose Start Listening under Live Captions in the menu bar menu. The first time, macOS asks you to allow Tidytalk to record system audio.
+
+- The caption bar appears with one sentence per line and the translation underneath. While listening, the menu bar icon shows an orange dot.
+
+- Press ⌃⌥C again to stop. The audio and text are cleared from memory.
+
+## Translation as you listen
+
+With Translate as You Listen on (the default), the sentence that's still being spoken is translated too and updates as it goes, so you're not waiting for the speaker to finish. When the sentence ends, the final translation replaces it. Turn it off in Settings › Live Captions to translate only finished sentences, which uses fewer AI calls. Sentences already in your target language are left alone.
+
+## Caption just one app
+
+By default Tidytalk captions all audio except its own sounds. To ignore notifications or music, pick a single app under Listen To in the menu bar menu or in Settings › Live Captions.
+
+## Match the speech model to the video's language
+
+- The default SenseVoice model recognizes Mandarin (with English mixed in), English, Japanese, Korean, and Cantonese.
+
+- For other spoken languages, such as French or German, switch to Qwen3-ASR or Whisper Turbo in Settings › Speech Model.
+
+## Make it look right
+
+- Drag the caption bar anywhere; it remembers the spot.
+
+- Choose a dark or glass style and a text size in Settings › Live Captions.
+
+- It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons.
+
+## Paste what was just said
+
+Taking notes? Put your cursor in a text field and press ⌃⌥V. Tidytalk tidies the latest passage, from the last pause of more than 2 seconds and up to 30 seconds, and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward.
+
+## Privacy
+
+Audio is recognized on your Mac and never uploaded. With a local AI service or Apple Intelligence, the translation stays on your Mac too, and captions work fully offline. Nothing is saved after you stop listening.
+
+---
+
+URL: https://tidytalk.zayen.dev/guides/custom-vocabulary/
+
+# How to make dictation get names and technical terms right
+
+Speech recognition is good at everyday words and bad at the words that matter most to you: your colleagues' names, your product, your tools. Tidytalk gives you four ways to fix that, from the moment you speak to the text that's pasted.
+
+{{updated}}
+
+Everything here is in Settings › Vocabulary.
+
+## 1. List your common words
+
+Under Common Words, write the names, products, and terms you use, one per line. For example:
+Kubernetes
+Figma
+Claude
+SenseVoice
+
+These words help at two stages:
+
+- While recognizing: with Qwen3-ASR as the speech model (Settings › Speech Model), these words are recognized correctly from the start. This works even with tidying off.
+
+- While tidying: with any model, the list is given to the AI, so a similar-sounding mistake is corrected to your spelling. This needs "Tidy up text" on.
+
+## 2. Add replacements for repeat mistakes
+
+If a word is always misheard the same way, add a replacement, for example "cloud" → "Claude". English matching ignores case and only matches whole words, so "cloudy" is left alone. Replacements run on your Mac and work even with tidying off.
+
+The quickest way to add one: open Recent in the menu bar, pick the result that went wrong, and choose "Add to Vocabulary…".
+
+## 3. Let it learn from your corrections
+
+When you fix a word yourself right after pasting, in the same text field, Tidytalk notices. The change is listed under Edits Found in the menu bar and at the top of Settings › Vocabulary. Nothing is added until you click "Add to Vocabulary".
+
+It only compares within about a minute and a half of pasting and saves nothing. You can turn it off at the bottom of the Vocabulary page.
+
+## 4. Write rules for how things are written
+
+Custom Rules control style rather than spelling, one per line, up to 20. For example:
+
+- Write amounts as digits.
+
+- Write the product name as Tidytalk.
+
+- Write times in 24-hour format.
+
+Tidying and voice rewrite follow them. Rules only change how things are written; they never make the AI add content.
+
+## Bonus: snippets
+
+Say only a short phrase such as "my email" to paste a full email address, an address, or a canned reply. A snippet is used only when the whole recording is that phrase, never when it comes up mid-sentence.
+
+## Which one should I use?
+
+Problem | Fix
+
+A name or term is misspelled in different ways | Common Words, ideally with Qwen3-ASR
+
+The same wrong word appears every time | Replacements
+
+You keep fixing words after pasting | Let Edits Found suggest them
+
+Spelling is right, but the style isn't | Custom Rules
+
+You type the same long text again and again | Snippets
+
+Speak Chinese with English terms? See how to dictate mixed Chinese and English.

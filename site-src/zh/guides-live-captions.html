@@ -1,0 +1,72 @@
+<!--
+path: /zh/guides/live-translated-captions/
+alternate: /guides/live-translated-captions/
+type: article
+breadcrumb: 实时翻译字幕
+title: Mac 看视频、开会实时翻译字幕，本机识别 | Tidytalk
+headline: 在 Mac 上给任何视频和会议加实时翻译字幕
+description: 看英文网课、YouTube 或开跨国视频会议时，在 Mac 上实时显示字幕和中文翻译。声音在本机识别，接本机模型时翻译也不联网，任何应用都能用。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>在 Mac 上给任何视频和会议加实时翻译字幕</h1>
+      <p class="lead">看外语网课听不太懂，开会总漏掉几句？Tidytalk 能为电脑正在播放的声音显示字幕，并在说话的同时逐句翻译。任何应用都能用，不需要装浏览器插件。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <figure><picture><img src="/assets/captions-zh.jpg" alt="Tidytalk 在视频上显示实时字幕，每句英文下面是中文译文" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
+
+      <h2 id="what-it-captions">能给什么加字幕</h2>
+      <p>电脑播放的任何声音：浏览器里的 YouTube、B 站，下载的视频、播客、网课，以及腾讯会议、飞书、Zoom、Teams 里其他人的发言。Tidytalk 只录电脑的声音，从不录麦克风，所以开会时你自己说的话不会出现在字幕里。</p>
+
+      <h2 id="setup">先设置一次</h2>
+      <ol>
+        <li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">安装 Tidytalk</a>，按引导完成设置。</li>
+        <li>要翻译的话，在"设置 › 配置 AI"里选一个 AI 服务。选 Ollama、LM Studio 或 Apple 智能，一切都在本机完成；选 DeepSeek、OpenAI 等云端服务，字幕文字会发给它。</li>
+        <li>在"设置 › 实时字幕"里打开<strong>翻译字幕</strong>，在<strong>翻译成</strong>里选语言：英文、简体或繁体中文、日文、韩文、法文、德文、西班牙文。</li>
+      </ol>
+
+      <h2 id="start">打开字幕</h2>
+      <ol>
+        <li>开始播放视频，或者进入会议。</li>
+        <li>按 <kbd>⌃⌥C</kbd>（Control + Option + C），或在菜单栏菜单的"实时字幕"里点"开始收听"。第一次使用时，系统会请你允许 Tidytalk 录制系统音频。</li>
+        <li>字幕条出现，一行一句，译文在原文下面。收听时菜单栏图标上有一个橙色圆点。</li>
+        <li>再按一次 <kbd>⌃⌥C</kbd> 停止，声音和文字会从内存中清除。</li>
+      </ol>
+
+      <h2 id="as-you-listen">边听边翻译</h2>
+      <p>打开<strong>边听边翻译</strong>（默认打开）时，还没说完的句子也会先翻译，并随着说话不断更新，不用等对方说完一整句。句子结束后，用完整的译文替换。在"设置 › 实时字幕"里关掉它，就只翻译说完的句子，调用 AI 的次数更少。本来就是目标语言的句子不会再翻译。</p>
+
+      <h2 id="source">只听某一个应用</h2>
+      <p>默认会收听除 Tidytalk 自己以外的所有声音。不想把通知声、音乐也转成字幕的话，在菜单栏菜单或"设置 › 实时字幕"的"收听"里选一个应用。</p>
+
+      <h2 id="languages">按视频的语言选识别模型</h2>
+      <ul>
+        <li>默认的 <strong>SenseVoice</strong> 能识别普通话（可夹英文）、英文、日文、韩文和粤语。</li>
+        <li>法语、德语等其他语言的视频，在"设置 › 识别模型"里换成 <strong>Qwen3-ASR</strong> 或 <strong>Whisper Turbo</strong>。</li>
+      </ul>
+
+      <h2 id="look">调整外观</h2>
+      <ul>
+        <li>字幕条可以拖到任何位置，下次会记住。</li>
+        <li>在"设置 › 实时字幕"里可以选深色或玻璃样式，以及文字大小。</li>
+        <li>没有声音 10 秒后自动隐藏，有声音时再出现。鼠标移上去会显示翻译、暂停和关闭按钮。</li>
+      </ul>
+
+      <h2 id="paste">把刚才那段话粘贴下来</h2>
+      <p>要记笔记的话，把光标放进输入框，按 <kbd>⌃⌥V</kbd>，Tidytalk 会把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）整理后粘贴进去。也可以把鼠标移到字幕里的某一句上，点"粘贴"，从这一句开始粘贴。</p>
+
+      <h2 id="privacy">隐私</h2>
+      <p>声音在你的 Mac 上识别，从不上传。用本机 AI 服务或 Apple 智能时，翻译也在本机完成，字幕可以完全离线使用。停止收听后什么都不会保存。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>每一句都听得懂</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 {{version}}。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#live-captions">查看字幕使用说明</a>
+      </div>
+    </aside>
+  </main>

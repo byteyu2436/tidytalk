@@ -1,0 +1,181 @@
+<!doctype html>
+<!-- 由 scripts/build_site.py 从 site-src/zh/guides-custom-vocabulary.html 生成，请修改源文件 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mac 语音输入总认错人名和术语？用词库解决 | Tidytalk</title>
+  <meta name="description" content="语音输入总把同事名字、产品名、专业术语认错？在 Mac 上用常用词、固定替换、自动学词和自定义规则，让这些词每次都写对。">
+  <link rel="canonical" href="https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/">
+  <link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/guides/custom-vocabulary/">
+  <link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/">
+  <link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/guides/custom-vocabulary/">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tidytalk">
+  <meta property="og:title" content="Mac 语音输入总认错人名和术语？用词库解决 | Tidytalk">
+  <meta property="og:description" content="语音输入总把同事名字、产品名、专业术语认错？在 Mac 上用常用词、固定替换、自动学词和自定义规则，让这些词每次都写对。">
+  <meta property="og:url" content="https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/">
+  <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Tidytalk 图标和标语：按住说话，松开就是整理好的文字">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mac 语音输入总认错人名和术语？用词库解决 | Tidytalk">
+  <meta name="twitter:description" content="语音输入总把同事名字、产品名、专业术语认错？在 Mac 上用常用词、固定替换、自动学词和自定义规则，让这些词每次都写对。">
+  <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+  <link rel="apple-touch-icon" href="/assets/icon-180.png">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "怎么让语音输入认对人名、产品名和专业术语",
+  "description": "语音输入总把同事名字、产品名、专业术语认错？在 Mac 上用常用词、固定替换、自动学词和自定义规则，让这些词每次都写对。",
+  "inLanguage": "zh-CN",
+  "url": "https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/",
+  "mainEntityOfPage": "https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/",
+  "image": "https://tidytalk.zayen.dev/assets/og-zh.jpg",
+  "datePublished": "2026-10-19",
+  "dateModified": "2026-10-19",
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Tidytalk",
+    "operatingSystem": "macOS",
+    "url": "https://tidytalk.zayen.dev/zh/"
+  }
+}
+</script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": "https://tidytalk.zayen.dev/zh/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "人名和术语",
+      "item": "https://tidytalk.zayen.dev/zh/guides/custom-vocabulary/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="主导航">
+      <a class="brand" href="/zh/" aria-label="Tidytalk 首页">
+        <img src="/assets/icon-180.png" alt="" width="28" height="28">
+        Tidytalk
+      </a>
+      <ul class="nav-links">
+        <li class="nav-section"><a href="/zh/docs/">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
+        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li><a href="/guides/custom-vocabulary/" hreflang="en" lang="en">English</a></li>
+        <li><a class="button button-primary button-small" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li>
+      </ul>
+    </nav>
+  </header>
+  <nav class="breadcrumbs container" aria-label="Breadcrumb"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <span aria-current="page">人名和术语</span></nav>
+<main id="main" class="page container">
+    <header class="page-head">
+      <h1>怎么让语音输入认对人名、产品名和专业术语</h1>
+      <p class="lead">语音识别对日常用语很准，偏偏对你最在意的词最不准：同事的名字、自己的产品、常用的工具。Tidytalk 从识别到粘贴，一共有四种办法解决这个问题。</p>
+      <p class="updated">更新于 2026-10-19</p>
+    </header>
+
+    <div class="prose">
+      <p>下面这些都在"设置 › 词库"里。</p>
+
+      <h2 id="common-words">1. 列出你的常用词</h2>
+      <p>在"常用词"里一行写一个人名、产品名或术语，例如：</p>
+      <pre><code>Kubernetes
+Figma
+Claude
+张三丰</code></pre>
+      <p>这些词在两个阶段起作用：</p>
+      <ul>
+        <li><strong>识别时：</strong>识别模型选 Qwen3-ASR（"设置 › 识别模型"）时，识别阶段就能认对这些词，关闭整理也有效。</li>
+        <li><strong>整理时：</strong>用任何模型都会把这份列表交给 AI，读音相近的错词会被改成你的写法，比如把"森斯沃伊斯"改成 "SenseVoice"。这一步需要打开"整理文字"。</li>
+      </ul>
+
+      <h2 id="replacements">2. 用固定替换解决反复出现的错误</h2>
+      <p>某个词总是错成同一个样子，就加一条固定替换，例如"克劳德"总是换成 "Claude"。英文不区分大小写、只匹配完整单词。替换在本机进行，关闭整理也有效。</p>
+      <p>最快的加法：在菜单栏的"最近记录"里选中识别错的那条结果，点"加入词库…"。</p>
+
+      <h2 id="learn">3. 让它从你的修改里学习</h2>
+      <p>粘贴后，如果你在同一个输入框里把某个词改成了别的写法，Tidytalk 会发现，并在菜单栏的"发现 N 处改动"和"设置 › 词库"顶部列出来。点"加入词库"之前什么都不会加。</p>
+      <p>它只在粘贴后的一分半钟内比较，不保存任何内容。不需要的话，可以在词库页底部关掉。</p>
+
+      <h2 id="rules">4. 用自定义规则统一写法</h2>
+      <p>自定义规则管的是写法而不是拼写，一行一条，最多 20 条。例如：</p>
+      <ul>
+        <li>金额一律用阿拉伯数字</li>
+        <li>产品名写作 Tidytalk</li>
+        <li>"的地得"按规范使用</li>
+      </ul>
+      <p>AI 整理和语音改写都会遵守这些规则。规则只影响写法，不会让 AI 补充原文没有的内容。</p>
+
+      <h2 id="snippets">附加：快捷短语</h2>
+      <p>整句只说"我的邮箱"这样的短语，就能粘贴完整的邮箱地址、收货地址或常用回复。只有整段录音就是这个短语时才会替换，句子中间提到不会触发。</p>
+
+      <h2 id="which">该用哪一个？</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>问题</th><th>解决办法</th></tr></thead>
+          <tbody>
+            <tr><td>某个名字或术语每次错得不一样</td><td>常用词，最好配合 Qwen3-ASR</td></tr>
+            <tr><td>每次都错成同一个词</td><td>固定替换</td></tr>
+            <tr><td>粘贴后总要手动改几个词</td><td>让"自动学词"提示你加入</td></tr>
+            <tr><td>字都对，但写法不统一</td><td>自定义规则</td></tr>
+            <tr><td>同一段长文字要反复输入</td><td>快捷短语</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>经常中英文混着说？看看<a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说怎么识别得准</a>。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>认得你的词的语音输入</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 0.2.0。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#vocabulary">查看词库使用说明</a>
+      </div>
+    </aside>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/zh/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
+        <p>Tidytalk 以 MIT 许可证开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
+      </div>
+      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
+      <div><h2>对比</h2><ul><li><a href="/zh/compare/">语音输入工具对比</a></li><li><a href="/zh/guides/mac-voice-input-apps/">Mac 语音输入法推荐</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/alternatives/superwhisper/">Superwhisper 替代</a></li><li><a href="/zh/alternatives/typeless/">Typeless 替代</a></li></ul></div>
+      <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
+      <div><h2>教程</h2><ul><li><a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说</a></li><li><a href="/zh/guides/live-translated-captions/">实时翻译字幕</a></li><li><a href="/zh/guides/custom-vocabulary/">认对人名和术语</a></li></ul></div>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+        <li><a href="/guides/custom-vocabulary/" hreflang="en" lang="en">English</a></li></ul></div>
+    </div>
+  </footer>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "88c5b4942b344ed7a3a8023fb3a384a4"}'></script>
+</body>
+</html>

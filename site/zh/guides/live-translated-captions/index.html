@@ -1,0 +1,177 @@
+<!doctype html>
+<!-- 由 scripts/build_site.py 从 site-src/zh/guides-live-captions.html 生成，请修改源文件 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mac 看视频、开会实时翻译字幕，本机识别 | Tidytalk</title>
+  <meta name="description" content="看英文网课、YouTube 或开跨国视频会议时，在 Mac 上实时显示字幕和中文翻译。声音在本机识别，接本机模型时翻译也不联网，任何应用都能用。">
+  <link rel="canonical" href="https://tidytalk.zayen.dev/zh/guides/live-translated-captions/">
+  <link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/guides/live-translated-captions/">
+  <link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/guides/live-translated-captions/">
+  <link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/guides/live-translated-captions/">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tidytalk">
+  <meta property="og:title" content="Mac 看视频、开会实时翻译字幕，本机识别 | Tidytalk">
+  <meta property="og:description" content="看英文网课、YouTube 或开跨国视频会议时，在 Mac 上实时显示字幕和中文翻译。声音在本机识别，接本机模型时翻译也不联网，任何应用都能用。">
+  <meta property="og:url" content="https://tidytalk.zayen.dev/zh/guides/live-translated-captions/">
+  <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Tidytalk 图标和标语：按住说话，松开就是整理好的文字">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mac 看视频、开会实时翻译字幕，本机识别 | Tidytalk">
+  <meta name="twitter:description" content="看英文网课、YouTube 或开跨国视频会议时，在 Mac 上实时显示字幕和中文翻译。声音在本机识别，接本机模型时翻译也不联网，任何应用都能用。">
+  <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-zh.jpg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+  <link rel="apple-touch-icon" href="/assets/icon-180.png">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "在 Mac 上给任何视频和会议加实时翻译字幕",
+  "description": "看英文网课、YouTube 或开跨国视频会议时，在 Mac 上实时显示字幕和中文翻译。声音在本机识别，接本机模型时翻译也不联网，任何应用都能用。",
+  "inLanguage": "zh-CN",
+  "url": "https://tidytalk.zayen.dev/zh/guides/live-translated-captions/",
+  "mainEntityOfPage": "https://tidytalk.zayen.dev/zh/guides/live-translated-captions/",
+  "image": "https://tidytalk.zayen.dev/assets/og-zh.jpg",
+  "datePublished": "2026-10-19",
+  "dateModified": "2026-10-19",
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "about": {
+    "@type": "SoftwareApplication",
+    "name": "Tidytalk",
+    "operatingSystem": "macOS",
+    "url": "https://tidytalk.zayen.dev/zh/"
+  }
+}
+</script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": "https://tidytalk.zayen.dev/zh/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "实时翻译字幕",
+      "item": "https://tidytalk.zayen.dev/zh/guides/live-translated-captions/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <nav class="container nav" aria-label="主导航">
+      <a class="brand" href="/zh/" aria-label="Tidytalk 首页">
+        <img src="/assets/icon-180.png" alt="" width="28" height="28">
+        Tidytalk
+      </a>
+      <ul class="nav-links">
+        <li class="nav-section"><a href="/zh/docs/">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
+        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li><a href="/guides/live-translated-captions/" hreflang="en" lang="en">English</a></li>
+        <li><a class="button button-primary button-small" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li>
+      </ul>
+    </nav>
+  </header>
+  <nav class="breadcrumbs container" aria-label="Breadcrumb"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <span aria-current="page">实时翻译字幕</span></nav>
+<main id="main" class="page container">
+    <header class="page-head">
+      <h1>在 Mac 上给任何视频和会议加实时翻译字幕</h1>
+      <p class="lead">看外语网课听不太懂，开会总漏掉几句？Tidytalk 能为电脑正在播放的声音显示字幕，并在说话的同时逐句翻译。任何应用都能用，不需要装浏览器插件。</p>
+      <p class="updated">更新于 2026-10-19</p>
+    </header>
+
+    <div class="prose">
+      <figure><picture><img src="/assets/captions-zh.jpg" alt="Tidytalk 在视频上显示实时字幕，每句英文下面是中文译文" width="1000" height="883" loading="lazy" decoding="async"></picture></figure>
+
+      <h2 id="what-it-captions">能给什么加字幕</h2>
+      <p>电脑播放的任何声音：浏览器里的 YouTube、B 站，下载的视频、播客、网课，以及腾讯会议、飞书、Zoom、Teams 里其他人的发言。Tidytalk 只录电脑的声音，从不录麦克风，所以开会时你自己说的话不会出现在字幕里。</p>
+
+      <h2 id="setup">先设置一次</h2>
+      <ol>
+        <li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">安装 Tidytalk</a>，按引导完成设置。</li>
+        <li>要翻译的话，在"设置 › 配置 AI"里选一个 AI 服务。选 Ollama、LM Studio 或 Apple 智能，一切都在本机完成；选 DeepSeek、OpenAI 等云端服务，字幕文字会发给它。</li>
+        <li>在"设置 › 实时字幕"里打开<strong>翻译字幕</strong>，在<strong>翻译成</strong>里选语言：英文、简体或繁体中文、日文、韩文、法文、德文、西班牙文。</li>
+      </ol>
+
+      <h2 id="start">打开字幕</h2>
+      <ol>
+        <li>开始播放视频，或者进入会议。</li>
+        <li>按 <kbd>⌃⌥C</kbd>（Control + Option + C），或在菜单栏菜单的"实时字幕"里点"开始收听"。第一次使用时，系统会请你允许 Tidytalk 录制系统音频。</li>
+        <li>字幕条出现，一行一句，译文在原文下面。收听时菜单栏图标上有一个橙色圆点。</li>
+        <li>再按一次 <kbd>⌃⌥C</kbd> 停止，声音和文字会从内存中清除。</li>
+      </ol>
+
+      <h2 id="as-you-listen">边听边翻译</h2>
+      <p>打开<strong>边听边翻译</strong>（默认打开）时，还没说完的句子也会先翻译，并随着说话不断更新，不用等对方说完一整句。句子结束后，用完整的译文替换。在"设置 › 实时字幕"里关掉它，就只翻译说完的句子，调用 AI 的次数更少。本来就是目标语言的句子不会再翻译。</p>
+
+      <h2 id="source">只听某一个应用</h2>
+      <p>默认会收听除 Tidytalk 自己以外的所有声音。不想把通知声、音乐也转成字幕的话，在菜单栏菜单或"设置 › 实时字幕"的"收听"里选一个应用。</p>
+
+      <h2 id="languages">按视频的语言选识别模型</h2>
+      <ul>
+        <li>默认的 <strong>SenseVoice</strong> 能识别普通话（可夹英文）、英文、日文、韩文和粤语。</li>
+        <li>法语、德语等其他语言的视频，在"设置 › 识别模型"里换成 <strong>Qwen3-ASR</strong> 或 <strong>Whisper Turbo</strong>。</li>
+      </ul>
+
+      <h2 id="look">调整外观</h2>
+      <ul>
+        <li>字幕条可以拖到任何位置，下次会记住。</li>
+        <li>在"设置 › 实时字幕"里可以选深色或玻璃样式，以及文字大小。</li>
+        <li>没有声音 10 秒后自动隐藏，有声音时再出现。鼠标移上去会显示翻译、暂停和关闭按钮。</li>
+      </ul>
+
+      <h2 id="paste">把刚才那段话粘贴下来</h2>
+      <p>要记笔记的话，把光标放进输入框，按 <kbd>⌃⌥V</kbd>，Tidytalk 会把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）整理后粘贴进去。也可以把鼠标移到字幕里的某一句上，点"粘贴"，从这一句开始粘贴。</p>
+
+      <h2 id="privacy">隐私</h2>
+      <p>声音在你的 Mac 上识别，从不上传。用本机 AI 服务或 Apple 智能时，翻译也在本机完成，字幕可以完全离线使用。停止收听后什么都不会保存。</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>每一句都听得懂</h2>
+      <p>免费，支持 macOS 26 和 Apple 芯片的 Mac。当前版本 0.2.0。</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载 Mac 版</a>
+        <a class="button button-secondary" href="/zh/docs/#live-captions">查看字幕使用说明</a>
+      </div>
+    </aside>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/zh/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
+        <p>Tidytalk 以 MIT 许可证开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
+      </div>
+      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
+      <div><h2>对比</h2><ul><li><a href="/zh/compare/">语音输入工具对比</a></li><li><a href="/zh/guides/mac-voice-input-apps/">Mac 语音输入法推荐</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/alternatives/superwhisper/">Superwhisper 替代</a></li><li><a href="/zh/alternatives/typeless/">Typeless 替代</a></li></ul></div>
+      <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
+      <div><h2>教程</h2><ul><li><a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说</a></li><li><a href="/zh/guides/live-translated-captions/">实时翻译字幕</a></li><li><a href="/zh/guides/custom-vocabulary/">认对人名和术语</a></li></ul></div>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+        <li><a href="/guides/live-translated-captions/" hreflang="en" lang="en">English</a></li></ul></div>
+    </div>
+  </footer>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "88c5b4942b344ed7a3a8023fb3a384a4"}'></script>
+</body>
+</html>
