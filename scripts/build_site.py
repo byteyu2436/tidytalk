@@ -37,6 +37,8 @@ DOMAIN = "https://tidytalk.zayen.dev"
 REPO = "byteyu2436/tidytalk"
 GITHUB = f"https://github.com/{REPO}"
 ANALYTICS_TOKEN = "88c5b4942b344ed7a3a8023fb3a384a4"
+# 必应网站管理员工具的网站验证（tidytalk.zayen.dev），放在首页
+BING_VERIFICATION = "5141999B3D274F89A3147B442359C0A5"
 
 # 各语言的界面文字
 UI = {
@@ -211,6 +213,9 @@ def render(page, lang):
         '<link rel="apple-touch-icon" href="/assets/icon-180.png">',
         '<link rel="stylesheet" href="/assets/style.css">',
     ]
+
+    if page["path"] == "/":
+        head.append(f'<meta name="msvalidate.01" content="{BING_VERIFICATION}">')
 
     # 结构化数据：文章页加文章信息和面包屑；首页的软件信息写在正文里，常见问题从正文生成
     if page["type"] == "home" and (faq := faq_ld(page["body"])):
