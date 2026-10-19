@@ -1,95 +1,97 @@
 # Tidytalk
 
-**按住说话，松开就是整理好的文字。** 一款本地运行的 macOS 语音输入工具：语音在本机识别，接上 Ollama 后整理也在本机完成。
+**Hold to talk. Let go, and you get clean text.** Private voice input for macOS: speech is recognized on your Mac, and with Ollama, AI tidying stays local too.
 
-简体中文 | [English](README.en.md) | [官网](https://tidytalk.zayen.dev/zh/)
+English | [简体中文](README.zh-CN.md) | [Website](https://tidytalk.zayen.dev/)
 
 <p align="center">
-  <img src="docs/images/github-social-preview-zh.png" width="720" alt="Tidytalk：按住说话，松开就是整理好的文字">
+  <img src="docs/images/github-social-preview.png" width="720" alt="Tidytalk: hold to talk, let go, and you get clean text">
 </p>
 
-按住快捷键说一段话，松开后 Tidytalk 在本机识别语音，用 AI 去掉"嗯、那个、就是说"这类口头禅、修正口误和标点，再把文字粘贴到光标处。在任何能打字的地方都能用：微信、邮件、备忘录、代码编辑器。
+Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your speech on your Mac, uses AI to remove fillers like "um" and "you know" and fix slips and punctuation, then pastes the text at your cursor. It works anywhere you can type: chat apps, email, notes, code editors.
 
-| 你说的 | 输出 |
+| You say | You get |
 | --- | --- |
-| 嗯那个我想问一下就是这个 API 的那个 rate limit 呃是多少 | 我想问一下这个 API 的 rate limit 是多少？ |
-| 项目要延期到下周三，不对，是下周四 | 项目要延期到下周四。 |
+| Um so I wanted to ask, like, what's the uh rate limit for this API | I wanted to ask what the rate limit for this API is. |
+| Let's move the launch to Wednesday, no wait, Thursday | Let's move the launch to Thursday. |
 
-## 特点
+## Features
 
-- **数据不出这台 Mac**：语音识别用 [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) 在本机完成，录音从不上传；AI 整理可以接 Ollama、LM Studio 本机模型，文字也留在本机。支持中文（可夹英文）、英文、日文、韩文和粤语，自动判断语言。
-- **只整理，不改意思**：删掉口头禅和口误，补全标点，不总结、不补充。听起来像指令的话也只会被整理成文字。
-- **多种识别模型**：默认 SenseVoice，也可以换成更准、能认出词库里人名和术语的 Qwen3-ASR，或 Fun-ASR-Nano、Whisper、macOS 自带的识别，都在本机运行。
-- **本机模型或云端，随你选**：设置里可以直接选 Ollama、LM Studio、云端或 Apple 智能，本机模型和 Apple 智能不需要 API Key；也可以用 DeepSeek、OpenAI 等 OpenAI 兼容接口。不想用 AI，关掉整理就直接输出识别结果。
-- **说中文，出英文**：可以设置输出语言，整理时顺便翻译。
-- **实时字幕**：按 ⌃⌥C 收听电脑播放的声音（视频、网课、会议），在屏幕上显示字幕，也在本机识别；可以边听边翻译，按 ⌃⌥V 把刚才那段话整理后粘贴到光标处。
-- **转写文件和链接**：拖入音频、视频文件，或粘贴 YouTube、B 站等链接，转成带时间的文字，导出 TXT、SRT 字幕或 Markdown。
-- **不弄乱剪贴板**：粘贴后把剪贴板恢复成原来的内容，包括图片和文件。
-- **更多**：个人词库（粘贴后改过的词会提示加入）、固定替换、快捷短语、自定义规则、免按住录音、语音改写选中的文字、中英文排版规范。
+- **Your data stays on your Mac.** Speech is recognized locally with [SenseVoice](https://github.com/FunAudioLLM/SenseVoice), and recordings are never uploaded. With a local model in Ollama or LM Studio, AI tidying stays on your Mac too. It supports Chinese (with mixed-in English), English, Japanese, Korean, and Cantonese, and detects the language automatically.
+- **Cleans up, keeps your words.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
+- **Choose your speech model.** SenseVoice is the default. Switch to Qwen3-ASR for the best accuracy and recognition of your vocabulary, or to Fun-ASR-Nano, Whisper, or the speech recognition built into macOS. All of them run on your Mac.
+- **Local AI or cloud, your choice.** Pick Ollama, LM Studio, Cloud, or Apple Intelligence right in Settings; local models and Apple Intelligence need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
+- **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
+- **Live captions.** Press ⌃⌥C to caption whatever your Mac is playing, such as videos, lectures, or meetings, recognized on your Mac too. Translate as you listen, or press ⌃⌥V to tidy and paste what was just said at the cursor.
+- **Transcribe files and links.** Drop in an audio or video file, or paste a YouTube or Bilibili link, and get timestamped text to export as TXT, SRT subtitles, or Markdown.
+- **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
+- **And more:** personal vocabulary (words you correct after pasting are suggested for it), replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
 
-## 安装
+## Install
 
-需要 macOS 26 或更高版本、Apple 芯片的 Mac。
+Requires macOS 26 or later on a Mac with Apple silicon.
 
-1. 在 [Releases](https://github.com/byteyu2436/tidytalk/releases) 下载最新的 `Tidytalk-x.y.z.dmg`，把 Tidytalk 拖进"应用程序"文件夹。
-2. 安装包目前没有经过苹果公证，第一次打开会被系统拦下。打开"系统设置 › 隐私与安全性"，在页面底部点"仍要打开"；或者在终端执行：
+1. Download the latest `Tidytalk-x.y.z.dmg` from [Releases](https://github.com/byteyu2436/tidytalk/releases) and drag Tidytalk into Applications.
+2. The app isn't notarized by Apple yet, so macOS blocks it the first time. Open System Settings › Privacy & Security and click "Open Anyway" at the bottom, or run:
 
    ```bash
    xattr -dr com.apple.quarantine /Applications/Tidytalk.app
    ```
 
-3. 按引导授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型（约 240 MB，只需一次）。
+3. Follow the setup guide: allow microphone and accessibility access, set up an AI service (optional), and download the speech model (about 240 MB, one time).
 
 <p align="center">
-  <img src="docs/images/onboarding.png" width="640" alt="Tidytalk 首次启动引导">
+  <img src="docs/images/onboarding-en.png" width="640" alt="Tidytalk setup guide">
 </p>
 
-也可以[从源码编译](docs/development.md)。
+You can also [build from source](docs/development.md).
 
-## 使用
+## Usage
 
-1. 把光标放在任意输入框里。
-2. 按住 **Option + Command** 说话，屏幕底部会出现指示器。
-3. 松开按键，文字出现在光标处。
+1. Put your cursor in any text field.
+2. Hold **Option + Command** and speak. An indicator appears at the bottom of the screen.
+3. Let go. The text appears at the cursor.
 
-按 Esc 取消。快速双击快捷键可以免按住录音，再按一次结束。选中一段文字后按住**右侧 Option** 说出修改要求（例如"改得正式一点"），可以直接改写选中的文字。快捷键都可以在设置里更换。
+Press Esc to cancel. Double-tap the shortcut for hands-free recording, and press it again to finish. To rewrite text, select it, hold **Right Option**, and say what to change (for example, "make it more formal"). All shortcuts can be changed in Settings.
 
-按 **⌃⌥C**（Control + Option + C）打开实时字幕，收听电脑播放的声音；收听时按 **⌃⌥V** 粘贴刚才那段话，或者把鼠标移到字幕条上的某一句，点它旁边的"粘贴"，从那句粘贴到最新。
+Press **⌃⌥C** (Control + Option + C) to turn on live captions for your Mac's audio. While listening, press **⌃⌥V** to paste what was just said, or hover over a sentence in the captions and click Paste to paste from there onward.
 
-详细说明见[使用指南](docs/usage.md)。
+The interface is available in English and Simplified Chinese and follows your system language.
 
-## 隐私
+## Privacy
 
-录音和语音识别始终在本机完成，声音不会上传，实时字幕收听的电脑声音也一样。识别出的文字是否离开电脑，取决于你怎么设置 AI 整理：
+Recording and speech recognition always happen on your Mac, and your voice is never uploaded. The same goes for the computer audio that live captions listen to. Whether the recognized text leaves your Mac depends on how you set up tidying:
 
-| 设置 | 声音 | 文字 |
+| Setup | Your voice | Your text |
 | --- | --- | --- |
-| 本机模型（Ollama、LM Studio）或 Apple 智能 | 留在本机 | 留在本机 |
-| 关闭整理文字 | 留在本机 | 留在本机（直接输出识别结果） |
-| 云端 AI（DeepSeek、OpenAI 等） | 留在本机 | 发送给你选的 AI 服务 |
+| Local model (Ollama, LM Studio) or Apple Intelligence | Stays on your Mac | Stays on your Mac |
+| Tidy up text turned off | Stays on your Mac | Stays on your Mac (raw transcript) |
+| Cloud AI (DeepSeek, OpenAI, and others) | Stays on your Mac | Sent to the AI service you chose |
 
-- 不用注册账号，应用里没有统计和追踪。除了你配置的 AI 接口，只在首次下载语音模型和启动时检查更新（每天最多一次）时联网，检查更新可以关闭。
-- API Key 等设置保存在 `~/.tidytalk.json`，只有你自己能读写。
-- 最近记录和实时字幕的内容只保存在内存中，关掉字幕或退出即清空。打开字幕翻译时，字幕文字发送给你配置的 AI 服务（选本机模型则不联网）。
-- 代码完全开源，可以自己核实。
+- No account and no tracking in the app. Apart from the AI service you set up, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
+- Settings, including your API key, are stored in `~/.tidytalk.json`, readable only by you.
+- Recent results and live captions are kept in memory only and cleared when you turn captions off or quit. With caption translation on, caption text is sent to your AI service (or stays on your Mac with a local model).
+- The code is fully open source, so you can verify all of this yourself.
 
-## 文档
+## Documentation
 
-- [使用指南](docs/usage.md)：所有功能、整理强度与模式、输出语言、出错时的处理、卸载
-- [配置文件](docs/configuration.md)：`~/.tidytalk.json` 的全部字段
-- [开发](docs/development.md)：编译、打包发布、工作原理、国际化、代码结构
+The detailed docs are currently in Chinese:
 
-## 致谢
+- [Usage guide](docs/usage.md): every feature, cleanup strength and modes, output language, error handling, uninstalling
+- [Configuration](docs/configuration.md): all fields in `~/.tidytalk.json`
+- [Development](docs/development.md): building, releasing, how it works, localization, code layout
 
-- [SenseVoice](https://github.com/FunAudioLLM/SenseVoice)（通义实验室 FunAudioLLM）：语音识别模型 SenseVoice-Small
-- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)：在本机运行模型
+## Acknowledgements
 
-第三方组件的许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) by FunAudioLLM (Tongyi Lab): the SenseVoice-Small speech model
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx): runs the model on device
 
-## 支持这个项目
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party licenses.
 
-如果 Tidytalk 对你有用，欢迎在 GitHub 上点个 ⭐ Star，让更多人看到它。遇到问题或有想法，可以[提 Issue](https://github.com/byteyu2436/tidytalk/issues)。
+## Support the project
 
-## 许可证
+If Tidytalk is useful to you, a ⭐ star on GitHub helps more people find it. Found a bug or have an idea? [Open an issue](https://github.com/byteyu2436/tidytalk/issues).
+
+## License
 
 [MIT](LICENSE)
