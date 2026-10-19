@@ -42,7 +42,7 @@
   "url": "https://tidytalk.zayen.dev/zh/docs/",
   "mainEntityOfPage": "https://tidytalk.zayen.dev/zh/docs/",
   "image": "https://tidytalk.zayen.dev/assets/og-zh.jpg",
-  "datePublished": "2026-10-19",
+  "datePublished": "2026-10-16",
   "dateModified": "2026-10-19",
   "author": {
     "@type": "Person",
@@ -154,21 +154,21 @@
         <li>按住约 0.4 秒才开始录音，日常按 Option + Command + 某个键的快捷键不会误触发。</li>
         <li>按住期间按下其他键、点击鼠标或按 <kbd>Esc</kbd>，会取消本次录音。</li>
         <li>单次录音最长约 2 分钟，不足 0.5 秒的录音会被忽略。</li>
-        <li>快捷键可以在"设置 › 录音"里换成 Control、Option、Command、Fn（🌐）、右侧 Option 或右侧 Command。选 Fn 时，要在"系统设置 › 键盘"里把"按下 🌐 键时"设为"无操作"，否则会同时弹出表情或听写。</li>
+        <li>快捷键可以在"设置 › 说话输入"里换成 Control、Option、Command、Fn（🌐）、右侧 Option 或右侧 Command。选 Fn 时，要在"系统设置 › 键盘"里把"按下 🌐 键时"设为"无操作"，否则会同时弹出表情或听写。</li>
         <li>说话时指示器下方会显示实时文字，这只是预览，最终结果在松开后整段识别、整理再粘贴。</li>
         <li>当前没有可以输入的地方时（例如焦点在桌面或网页正文上），结果会放进剪贴板，而不是模拟粘贴。</li>
         <li>粘贴完成后，剪贴板会恢复成原来的内容，图片、文件和富文本也会完整恢复。</li>
       </ul>
 
       <h2 id="hands-free">免按住录音</h2>
-      <p>快速双击快捷键，开始录音后就可以松手，适合说较长的内容；再按一次快捷键结束，按 <kbd>Esc</kbd> 取消。录音期间打字、点击鼠标不会打断录音。可以在"设置 › 录音"里关闭。</p>
+      <p>快速双击快捷键，开始录音后就可以松手，适合说较长的内容；再按一次快捷键结束，按 <kbd>Esc</kbd> 取消。录音期间打字、点击鼠标不会打断录音。可以在"设置 › 说话输入"里关闭。</p>
 
       <h2 id="rewrite">语音改写选中的文字</h2>
       <p>先选中一段文字，按住<kbd>右侧 Option</kbd>说出修改要求，例如"改得正式一点""缩短到一句话""翻译成英文"，松开后选中的文字会被替换成改写结果。</p>
       <ul>
         <li>需要配置 AI；选中的文字和修改要求会发送给 AI 服务。</li>
         <li>没有选中文字时会提示先选中；改写失败时原文不会改动。</li>
-        <li>改写键可以在"设置 › 录音"里更换或关闭。</li>
+        <li>改写键可以在"设置 › 说话输入"里更换或关闭。</li>
       </ul>
 
       <h2 id="speech-models">识别模型</h2>
@@ -300,8 +300,8 @@
           <thead><tr><th>情况</th><th>原因和处理</th></tr></thead>
           <tbody>
             <tr><td>提示"整理失败，已粘贴原文"</td><td>AI 服务连不上、超时或返回异常。检查网络，在"设置 › 配置 AI"里点"测试连接"。</td></tr>
-            <tr><td>提示"没有听到内容"</td><td>没有识别到内容。在"设置 › 录音"里检查麦克风。</td></tr>
-            <tr><td>按快捷键没反应</td><td>缺少辅助功能权限，在"设置 › 权限"里授权。</td></tr>
+            <tr><td>提示"没有听到内容"</td><td>没有识别到内容。在"设置 › 说话输入"里检查麦克风。</td></tr>
+            <tr><td>按快捷键没反应</td><td>缺少辅助功能权限，在"设置 › 通用 › 权限"里授权。</td></tr>
             <tr><td>打开时提示无法验证开发者</td><td>安装包还没有公证，在"系统设置 › 隐私与安全性"里点"仍要打开"。</td></tr>
           </tbody>
         </table>
@@ -336,7 +336,7 @@ tccutil reset All app.tidytalk.Tidytalk</code></pre>
         <a class="brand" href="/zh/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
         <p>Tidytalk 以 MIT 许可证开源。语音识别使用 <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。</p>
       </div>
-      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/compare/">对比</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
+      <div><h2>产品</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li><li><a href="/zh/docs/">使用指南</a></li><li><a href="/zh/compare/">对比</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/changelog/">更新日志</a></li></ul></div>
       <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
       <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
         <li><a href="/docs/" hreflang="en" lang="en">English</a></li></ul></div>

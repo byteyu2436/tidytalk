@@ -6,73 +6,71 @@ title: Tidytalk：本地运行的 Mac 语音输入，自动整理口语
 description: Tidytalk 是免费开源的 Mac 语音输入工具。语音在本机识别，接上 Ollama 本地模型后整理也在本机完成，数据不出电脑。按住说话，松开就得到去掉口头禅、修正口误的文字。
 -->
     <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Tidytalk",
-    "alternateName": "Tidytalk 语音输入",
-    "description": "本地运行的 macOS 语音输入工具：按住快捷键说话，语音在本机识别，AI 去掉口头禅、修正口误和标点（可用 Ollama、LM Studio 本机模型，也可用你选的云端服务），松开后把文字粘贴到光标处。也能为电脑播放的声音显示实时字幕，并可逐句翻译。",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "macOS 26 或更高版本（Apple 芯片）",
-    "url": "https://tidytalk.zayen.dev/zh/",
-    "downloadUrl": "https://github.com/byteyu2436/tidytalk/releases/latest",
-    "image": "https://tidytalk.zayen.dev/assets/icon-512.png",
-    "screenshot": "https://tidytalk.zayen.dev/assets/onboarding-light.jpg",
-    "inLanguage": ["zh-CN", "en"],
-    "isAccessibleForFree": true,
-    "license": "https://opensource.org/licenses/MIT",
-    "codeRepository": "https://github.com/byteyu2436/tidytalk",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
-    "author": { "@type": "Person", "name": "zayen", "url": "https://github.com/byteyu2436" }
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Tidytalk",
+  "alternateName": "Tidytalk 语音输入",
+  "description": "免费开源的 macOS 语音输入工具：按住快捷键说一整段话，语音在本机识别，AI 去掉口头禅、修正口误并补全标点（可用 Ollama、LM Studio、Apple 智能在本机完成，也可用你选的云端服务），松开后把文字粘贴到任何应用的光标处。还能为电脑播放的声音显示实时字幕，以及转写音频和视频文件。",
+  "operatingSystem": "macOS 26 或更高版本（Apple 芯片）",
+  "url": "https://tidytalk.zayen.dev/zh/",
+  "applicationCategory": "UtilitiesApplication",
+  "softwareVersion": "{{version}}",
+  "downloadUrl": "https://github.com/byteyu2436/tidytalk/releases/latest",
+  "image": "https://tidytalk.zayen.dev/assets/icon-512.png",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "sameAs": [
+    "https://github.com/byteyu2436/tidytalk"
+  ],
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "releaseNotes": "https://tidytalk.zayen.dev/zh/changelog/",
+  "featureList": [
+    "按住说话，在任何应用里输入",
+    "本机语音识别：SenseVoice、Qwen3-ASR、Fun-ASR-Nano、Whisper Turbo 或系统自带识别",
+    "用 Ollama、LM Studio、Apple 智能或 OpenAI 兼容接口去掉口头禅、修正口误、补全标点",
+    "说话时翻译成 8 种语言",
+    "为电脑播放的声音显示实时字幕，可以边听边翻译",
+    "转写音频、视频文件和 YouTube、B 站链接，导出 TXT、SRT 或 Markdown",
+    "个人词库、替换规则和常用短语",
+    "用本机模型可以完全离线"
+  ],
+  "screenshot": [
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/onboarding-light.jpg",
+      "caption": "首次设置引导"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/transcribe-light.jpg",
+      "caption": "转写录音，带时间戳"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/models-light.jpg",
+      "caption": "选择语音识别模型"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/ai-ollama-light.jpg",
+      "caption": "用 Ollama 本机模型整理文字"
+    }
+  ],
+  "inLanguage": [
+    "zh-CN",
+    "en"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "CNY"
   }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Tidytalk 收费吗？",
-        "acceptedAnswer": { "@type": "Answer", "text": "Tidytalk 免费开源，使用 MIT 许可证。如果整理文字时用 DeepSeek、OpenAI 等云端 AI，需要你自己的 API Key，费用由服务商收取；改用 Ollama、LM Studio 等本机模型，或者关闭整理，就完全不花钱。" }
-      },
-      {
-        "@type": "Question",
-        "name": "需要联网吗？",
-        "acceptedAnswer": { "@type": "Answer", "text": "第一次启动要联网下载约 240 MB 的语音识别模型，之后语音识别完全离线。用云端 AI 整理文字时需要联网；用本机模型或关闭整理时，整个应用都可以离线使用。" }
-      },
-      {
-        "@type": "Question",
-        "name": "支持哪些语言？",
-        "acceptedAnswer": { "@type": "Answer", "text": "说话时自动判断语言，支持中文普通话（可以夹杂英文单词）、英文、日文、韩文和粤语。整理后还可以翻译成英文、简体中文、繁体中文、日文、韩文、法文、德文或西班牙文。界面支持简体中文和英文。" }
-      },
-      {
-        "@type": "Question",
-        "name": "我的声音和文字会被上传吗？",
-        "acceptedAnswer": { "@type": "Answer", "text": "声音不会。录音和语音识别都在你的 Mac 上完成。开启整理文字时，识别出的文字会发送给你自己配置的 AI 服务；用本机模型或关闭整理，文字也不会离开电脑。" }
-      },
-      {
-        "@type": "Question",
-        "name": "能给视频和会议加字幕吗？",
-        "acceptedAnswer": { "@type": "Answer", "text": "可以。按 ⌃⌥C（Control + Option + C），Tidytalk 会为电脑正在播放的声音（视频、网课、会议）显示实时字幕，声音同样在本机识别。可以用你配置的 AI 服务逐句翻译，也可以按 ⌃⌥V 把刚才那段话整理后粘贴到光标处。" }
-      },
-      {
-        "@type": "Question",
-        "name": "和 macOS 自带的听写有什么不同？",
-        "acceptedAnswer": { "@type": "Answer", "text": "系统听写会边说边把话逐字打出来。Tidytalk 是段落式的：等你说完一整段，去掉\"嗯、那个\"这类口头禅和口误，补好标点，再一次性输出，适合写消息、邮件和文档。" }
-      },
-      {
-        "@type": "Question",
-        "name": "支持 Windows 或 Intel 芯片的 Mac 吗？",
-        "acceptedAnswer": { "@type": "Answer", "text": "目前只支持 macOS 26 或更高版本、Apple 芯片（M 系列）的 Mac。" }
-      },
-      {
-        "@type": "Question",
-        "name": "第一次打开时提示无法验证开发者怎么办？",
-        "acceptedAnswer": { "@type": "Answer", "text": "安装包目前没有经过苹果公证。打开\"系统设置 › 隐私与安全性\"，在页面底部点\"仍要打开\"；或者在终端执行 xattr -dr com.apple.quarantine /Applications/Tidytalk.app，之后就能直接打开。" }
-      }
-    ]
-  }
+}
   </script>
   <main id="main">
     <section class="hero-clean container" aria-labelledby="hero-title">
@@ -242,7 +240,7 @@ description: Tidytalk 是免费开源的 Mac 语音输入工具。语音在本�
           </details>
           <details>
             <summary>支持哪些语言？</summary>
-            <p>说话时自动判断语言，支持中文普通话（可以夹杂英文单词）、英文、日文、韩文和粤语。整理后还可以翻译成英文、简体中文、繁体中文、日文、韩文、法文、德文或西班牙文。界面支持简体中文和英文。</p>
+            <p>默认的 SenseVoice 模型会自动判断语言，支持中文普通话（可以夹杂英文单词）、英文、日文、韩文和粤语。其他语言可以在"设置 › 识别模型"里换成 Qwen3-ASR（52 种语言）或 Whisper Turbo（约 99 种语言）。整理后还可以翻译成英文、简体中文、繁体中文、日文、韩文、法文、德文或西班牙文。界面支持简体中文和英文。</p>
           </details>
           <details>
             <summary>我的声音和文字会被上传吗？</summary>
@@ -251,6 +249,14 @@ description: Tidytalk 是免费开源的 Mac 语音输入工具。语音在本�
           <details>
             <summary>能给视频和会议加字幕吗？</summary>
             <p>可以。按 <kbd>⌃⌥C</kbd>（Control + Option + C），Tidytalk 会为电脑正在播放的声音（视频、网课、会议）显示实时字幕，声音同样在本机识别。可以用你配置的 AI 服务逐句翻译，也可以按 <kbd>⌃⌥V</kbd> 把刚才那段话整理后粘贴到光标处。</p>
+          </details>
+          <details>
+            <summary>Mac 上有免费开源的 Wispr Flow 替代吗？</summary>
+            <p>有，Tidytalk 就是。和 Wispr Flow 一样，按住快捷键说话，松开后通顺、带标点的文字出现在任何应用的光标处。不同的是：语音在你的 Mac 上识别，不用注册、不用订阅、没有每周字数限制，代码以 MIT 协议开源。<a href="/zh/alternatives/wispr-flow/">看看两者的详细对比</a>。</p>
+          </details>
+          <details>
+            <summary>怎么在 Mac 上转写会议录音，又不上传到云端？</summary>
+            <p>在 Tidytalk 菜单里选"转写文件或链接"，把音频或视频文件拖进去，最长 3 小时。文件在你的 Mac 上识别，按段落分好并带时间戳，可以导出 TXT、SRT 或 Markdown。YouTube 和 B 站链接也能转写。<a href="/zh/use-cases/transcribe/">了解转写功能</a>。</p>
           </details>
           <details>
             <summary>和 macOS 自带的听写有什么不同？</summary>

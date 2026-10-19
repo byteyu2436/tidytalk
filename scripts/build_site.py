@@ -14,7 +14,10 @@
 
 这个脚本给每页套上统一的页头、导航、页脚和 SEO 标签（规范链接、中英文互链、
 Open Graph、结构化数据），并重新生成 sitemap.xml。更新日志页的内容来自
-GitHub Releases，取不到时使用 site-src/releases.json 里的缓存。
+GitHub Releases，取不到时使用 site-src/releases.json 里的缓存。正文里的 {{version}} 换成
+最新版本号。
+
+还会生成给 AI 读的 llms.txt（来自 site-src/llms.txt）和 llms-full.txt（英文页面的纯文本合集）。
 
 用法：python3 scripts/build_site.py
 """
@@ -54,7 +57,8 @@ UI = {
         "footer_use_cases": "Use cases",
         "footer_project": "Project",
         "footer_links_product": [("Download", f"{GITHUB}/releases/latest"), ("User guide", "/docs/"),
-                                 ("Compare", "/compare/"), ("Changelog", "/changelog/")],
+                                 ("Compare", "/compare/"), ("Wispr Flow alternative", "/alternatives/wispr-flow/"),
+                                 ("Changelog", "/changelog/")],
         "footer_links_use_cases": [("For developers", "/use-cases/developers/"),
                                    ("Dictate and translate", "/use-cases/translation/"),
                                    ("Private and offline", "/use-cases/offline/"),
@@ -83,7 +87,8 @@ UI = {
         "footer_use_cases": "使用场景",
         "footer_project": "项目",
         "footer_links_product": [("下载", f"{GITHUB}/releases/latest"), ("使用指南", "/zh/docs/"),
-                                 ("对比", "/zh/compare/"), ("更新日志", "/zh/changelog/")],
+                                 ("对比", "/zh/compare/"), ("Wispr Flow 替代", "/zh/alternatives/wispr-flow/"),
+                                 ("更新日志", "/zh/changelog/")],
         "footer_links_use_cases": [("程序员", "/zh/use-cases/developers/"),
                                    ("说中文出英文", "/zh/use-cases/translation/"),
                                    ("完全离线", "/zh/use-cases/offline/"),
@@ -130,6 +135,16 @@ def last_modified(path):
     return out or datetime.date.today().isoformat()
 
 
+def first_published(path):
+    """页面源文件第一次提交的日期；还没提交的为空。"""
+    try:
+        out = subprocess.run(["git", "log", "--diff-filter=A", "--follow", "--format=%cs", "--", path], cwd=ROOT,
+                             capture_output=True, text=True).stdout.split()
+    except OSError:
+        out = []
+    return out[-1] if out else ""
+
+
 def esc(text):
     return html.escape(text, quote=True)
 
@@ -137,6 +152,22 @@ def esc(text):
 def json_ld(data):
     return ('<script type="application/ld+json">\n'
             + json.dumps(data, ensure_ascii=False, indent=2) + "\n</script>")
+
+
+def plain_text(fragment):
+    text = html.unescape(re.sub(r"<[^>]+>", "", fragment)).replace("\u00a0", " ")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def faq_ld(body):
+    """首页的 FAQPage 结构化数据，直接取页面上的常见问题，保证两者一致。"""
+    section = re.search(r'<section[^>]*id="faq".*?</section>', body, re.S)
+    if not section:
+        return None
+    questions = [{"@type": "Question", "name": plain_text(q),
+                  "acceptedAnswer": {"@type": "Answer", "text": plain_text(a)}}
+                 for q, a in re.findall(r"<summary>(.*?)</summary>(.*?)</details>", section.group(0), re.S)]
+    return {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": questions}
 
 
 def render(page, lang):
@@ -181,7 +212,9 @@ def render(page, lang):
         '<link rel="stylesheet" href="/assets/style.css">',
     ]
 
-    # 结构化数据：文章页加文章信息和面包屑，首页的软件信息写在正文里
+    # 结构化数据：文章页加文章信息和面包屑；首页的软件信息写在正文里，常见问题从正文生成
+    if page["type"] == "home" and (faq := faq_ld(page["body"])):
+        head.append(json_ld(faq))
     if page["type"] != "home":
         modified = page["modified"]
         if page["type"] == "article":
@@ -353,9 +386,52 @@ def changelog_body(lang, releases):
   </main>"""
 
 
+# ---------- 给 AI 读的纯文本 ----------
+
+def html_to_text(body):
+    """把正文的 HTML 转成接近 Markdown 的纯文本：保留标题、段落、列表和表格，去掉图片和脚本。"""
+    text = re.sub(r"<(script|svg|picture|figure|aside|nav)\b.*?</\1>", "", body, flags=re.S)
+    text = re.sub(r"<h1[^>]*>(.*?)</h1>", lambda m: f"\n# {m.group(1)}\n", text, flags=re.S)
+    text = re.sub(r"<h2[^>]*>(.*?)</h2>", lambda m: f"\n## {m.group(1)}\n", text, flags=re.S)
+    text = re.sub(r"<h3[^>]*>(.*?)</h3>", lambda m: f"\n### {m.group(1)}\n", text, flags=re.S)
+    text = re.sub(r"<li[^>]*>", "\n- ", text)
+    text = re.sub(r"<summary[^>]*>(.*?)</summary>", lambda m: f"\n**{m.group(1)}**\n", text, flags=re.S)
+    text = re.sub(r"</t[dh]>\s*<t[dh][^>]*>", " | ", text)
+    text = re.sub(r"<(p|tr|div|section|header|ol|ul|table|details)\b[^>]*>", "\n", text)
+    text = re.sub(r"<br\s*/?>", "\n", text)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = html.unescape(text).replace("\u00a0", " ")
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines))
+    # 列表项里的内容另起了一行：标题去掉列表符号，其他内容接回列表符号后面
+    text = re.sub(r"^-\n+(#{1,6} )", r"\1", text, flags=re.M)
+    text = re.sub(r"^-\n+(?=\S)", "- ", text, flags=re.M)
+    return text.strip()
+
+
+def write_llms(pages, version):
+    source = os.path.join(SRC, "llms.txt")
+    with open(os.path.join(OUT, "llms.txt"), "w", encoding="utf-8") as f:
+        f.write(open(source, encoding="utf-8").read().replace("{{version}}", version))
+    # 英文页面的正文合集：首页、使用指南、对比、替代、使用场景
+    order = ["/", "/docs/", "/alternatives/wispr-flow/", "/compare/", "/use-cases/transcribe/",
+             "/use-cases/offline/", "/use-cases/developers/", "/use-cases/translation/"]
+    by_path = {p["path"]: p for p in pages}
+    parts = [f"# Tidytalk – full text of the website\n\nVersion {version}. Source: {DOMAIN}/llms.txt"]
+    for path in order:
+        if path in by_path:
+            page = by_path[path]
+            parts.append(f"---\n\nURL: {DOMAIN + path}\n\n{html_to_text(page['body'])}")
+    with open(os.path.join(OUT, "llms-full.txt"), "w", encoding="utf-8") as f:
+        f.write("\n\n".join(parts) + "\n")
+    print("生成 site/llms.txt 和 site/llms-full.txt")
+
+
 # ---------- 主流程 ----------
 
 def main():
+    releases = fetch_releases()
+    version = releases[0]["tag"].lstrip("v") if releases else ""
     pages = []
     for lang in ("en", "zh"):
         folder = os.path.join(SRC, lang)
@@ -364,12 +440,12 @@ def main():
                 page = read_page(os.path.join(folder, name))
                 page["lang"] = lang
                 page["modified"] = last_modified(page["source"])
+                page.setdefault("published", first_published(page["source"]) or page["modified"])
+                page["body"] = page["body"].replace("{{version}}", version)
                 pages.append(page)
 
-    releases = None
     for page in pages:
         if page["type"] == "changelog":
-            releases = releases or fetch_releases()
             page["body"] = changelog_body(page["lang"], releases)
             if releases:
                 page["modified"] = releases[0]["date"]
@@ -396,6 +472,7 @@ def main():
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                 'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
     print("生成 site/sitemap.xml，共", len(pages), "页")
+    write_llms(pages, version)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tidytalk – Private, On-Device Voice Input for Mac</title>
-  <meta name="description" content="Free, open-source voice input for Mac. Speech is recognized on device, and with Ollama even AI cleanup stays local. Hold a shortcut, speak, and get clean text.">
+  <meta name="description" content="Free, open-source voice input for Mac. Hold a shortcut and speak; speech is recognized on device, and with Ollama even AI cleanup stays local.">
   <link rel="canonical" href="https://tidytalk.zayen.dev/">
   <link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/">
   <link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/">
@@ -16,7 +16,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tidytalk">
   <meta property="og:title" content="Tidytalk – Private, On-Device Voice Input for Mac">
-  <meta property="og:description" content="Free, open-source voice input for Mac. Speech is recognized on device, and with Ollama even AI cleanup stays local. Hold a shortcut, speak, and get clean text.">
+  <meta property="og:description" content="Free, open-source voice input for Mac. Hold a shortcut and speak; speech is recognized on device, and with Ollama even AI cleanup stays local.">
   <meta property="og:url" content="https://tidytalk.zayen.dev/">
   <meta property="og:image" content="https://tidytalk.zayen.dev/assets/og-en.jpg">
   <meta property="og:image:width" content="1200">
@@ -26,12 +26,100 @@
   <meta property="og:locale:alternate" content="zh_CN">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Tidytalk – Private, On-Device Voice Input for Mac">
-  <meta name="twitter:description" content="Free, open-source voice input for Mac. Speech is recognized on device, and with Ollama even AI cleanup stays local. Hold a shortcut, speak, and get clean text.">
+  <meta name="twitter:description" content="Free, open-source voice input for Mac. Hold a shortcut and speak; speech is recognized on device, and with Ollama even AI cleanup stays local.">
   <meta name="twitter:image" content="https://tidytalk.zayen.dev/assets/og-en.jpg">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
   <link rel="apple-touch-icon" href="/assets/icon-180.png">
   <link rel="stylesheet" href="/assets/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Tidytalk free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Tidytalk is free and open source under the MIT License. If you tidy text with a cloud AI service such as DeepSeek or OpenAI, you use your own API key and the provider bills you. With a local model in Ollama or LM Studio, or with tidying off, it costs nothing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it need an internet connection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Speech recognition needs it only once, to download the speech model (about 240 MB) on first launch. Tidying with a cloud AI service needs a connection; with a local model or with tidying off, the whole app works offline."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which languages does it support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With the default SenseVoice model it detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. For other languages, switch to Qwen3-ASR (52 languages) or Whisper Turbo (about 99) in Settings › Speech Model. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my voice or text uploaded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your voice never is. Recording and speech recognition happen on your Mac. With Tidy up text on, the recognized text is sent to the AI service you set up; with a local model or with tidying off, text never leaves your Mac either."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it caption videos and meetings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Press ⌃⌥C (Control + Option + C) and Tidytalk shows live captions for whatever your Mac is playing, such as a video, a lecture, or a meeting. The audio is recognized on your Mac. You can translate each sentence with your AI service, and press ⌃⌥V to tidy and paste what was just said."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a free, open-source alternative to Wispr Flow for Mac?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Tidytalk. Like Wispr Flow, you hold a shortcut, speak, and get clean, punctuated text at your cursor in any app. Unlike Wispr Flow, speech is recognized on your Mac, there's no account, subscription, or weekly word limit, and the code is open source under the MIT License. See how the two compare."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I transcribe a meeting recording on Mac without uploading it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Choose Transcribe File or Link from the Tidytalk menu and drop in the audio or video file, up to 3 hours long. It's recognized on your Mac and split into paragraphs with timestamps, and you can export it as TXT, SRT, or Markdown. YouTube and Bilibili links work too. Learn more about transcribing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is it different from macOS Dictation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dictation types your words as you speak. Tidytalk waits until you finish a whole paragraph, removes fillers and slips, adds punctuation, and then inserts the result in one go, which suits messages, email, and documents."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it run on Windows or Intel Macs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Tidytalk requires macOS 26 or later on a Mac with Apple silicon."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "macOS says it can't verify the developer. What should I do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The app isn't notarized by Apple yet. Open System Settings › Privacy & Security and click \"Open Anyway\" at the bottom. Or run xattr -dr com.apple.quarantine /Applications/Tidytalk.app in Terminal, and it will open normally from then on."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -51,72 +139,70 @@
   </header>
   
 <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Tidytalk",
-    "description": "Private voice input for macOS. Hold a shortcut and speak; speech is recognized on your Mac, AI removes filler words and fixes slips (locally with Ollama or LM Studio, or with a cloud service you choose), and the text is pasted at your cursor. It can also show live captions, with optional translation, for audio playing on your Mac.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "macOS 26 or later (Apple silicon)",
-    "url": "https://tidytalk.zayen.dev/",
-    "downloadUrl": "https://github.com/byteyu2436/tidytalk/releases/latest",
-    "image": "https://tidytalk.zayen.dev/assets/icon-512.png",
-    "screenshot": "https://tidytalk.zayen.dev/assets/onboarding-en-light.jpg",
-    "inLanguage": ["en", "zh-CN"],
-    "isAccessibleForFree": true,
-    "license": "https://opensource.org/licenses/MIT",
-    "codeRepository": "https://github.com/byteyu2436/tidytalk",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "author": { "@type": "Person", "name": "zayen", "url": "https://github.com/byteyu2436" }
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Tidytalk",
+  "description": "Free, open-source voice input for macOS. Hold a shortcut and speak a whole paragraph; speech is recognized on your Mac, AI removes filler words and fixes slips (locally with Ollama, LM Studio, or Apple Intelligence, or with a cloud service you choose), and the clean text is pasted at your cursor in any app. It also shows live captions for audio playing on your Mac and transcribes audio and video files.",
+  "operatingSystem": "macOS 26 or later (Apple silicon)",
+  "url": "https://tidytalk.zayen.dev/",
+  "applicationCategory": "UtilitiesApplication",
+  "softwareVersion": "0.2.0",
+  "downloadUrl": "https://github.com/byteyu2436/tidytalk/releases/latest",
+  "image": "https://tidytalk.zayen.dev/assets/icon-512.png",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "sameAs": [
+    "https://github.com/byteyu2436/tidytalk"
+  ],
+  "author": {
+    "@type": "Person",
+    "name": "zayen",
+    "url": "https://github.com/byteyu2436"
+  },
+  "releaseNotes": "https://tidytalk.zayen.dev/changelog/",
+  "featureList": [
+    "Hold-to-talk dictation into any app",
+    "On-device speech recognition with SenseVoice, Qwen3-ASR, Fun-ASR-Nano, Whisper Turbo, or Apple's built-in recognition",
+    "AI cleanup of filler words, slips, and punctuation with Ollama, LM Studio, Apple Intelligence, or an OpenAI-compatible API",
+    "Translate as you dictate into 8 languages",
+    "Live captions for audio playing on the Mac, with translation as you listen",
+    "Transcribe audio and video files and YouTube or Bilibili links, export TXT, SRT, or Markdown",
+    "Personal vocabulary, replacements, and snippets",
+    "Works fully offline with a local model"
+  ],
+  "screenshot": [
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/onboarding-en-light.jpg",
+      "caption": "First-run setup"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/transcribe-en-light.jpg",
+      "caption": "Transcribing a recording with timestamps"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/models-en-light.jpg",
+      "caption": "Choosing a speech model"
+    },
+    {
+      "@type": "ImageObject",
+      "url": "https://tidytalk.zayen.dev/assets/ai-ollama-en-light.jpg",
+      "caption": "Tidying text with a local model in Ollama"
+    }
+  ],
+  "inLanguage": [
+    "en",
+    "zh-CN"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
   }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is Tidytalk free?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tidytalk is free and open source under the MIT License. If you tidy text with a cloud AI service such as DeepSeek or OpenAI, you use your own API key and the provider bills you. With a local model in Ollama or LM Studio, or with tidying off, it costs nothing." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does it need an internet connection?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Speech recognition needs it only once, to download the speech model (about 240 MB) on first launch. Tidying with a cloud AI service needs a connection; with a local model or with tidying off, the whole app works offline." }
-      },
-      {
-        "@type": "Question",
-        "name": "Which languages does it support?",
-        "acceptedAnswer": { "@type": "Answer", "text": "It detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is my voice or text uploaded?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Your voice never is. Recording and speech recognition happen on your Mac. With Tidy up text on, the recognized text is sent to the AI service you set up; with a local model or with tidying off, text never leaves your Mac either." }
-      },
-      {
-        "@type": "Question",
-        "name": "Can it caption videos and meetings?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press ⌃⌥C (Control + Option + C) and Tidytalk shows live captions for whatever your Mac is playing, such as a video, a lecture, or a meeting. The audio is recognized on your Mac. You can translate each sentence with your AI service, and press ⌃⌥V to tidy and paste what was just said." }
-      },
-      {
-        "@type": "Question",
-        "name": "How is it different from macOS Dictation?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Dictation types your words as you speak. Tidytalk waits until you finish a whole paragraph, removes fillers and slips, adds punctuation, and then inserts the result in one go, which suits messages, email, and documents." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does it run on Windows or Intel Macs?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. Tidytalk requires macOS 26 or later on a Mac with Apple silicon." }
-      },
-      {
-        "@type": "Question",
-        "name": "macOS says it can't verify the developer. What should I do?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The app isn't notarized by Apple yet. Open System Settings › Privacy & Security and click \"Open Anyway\" at the bottom. Or run xattr -dr com.apple.quarantine /Applications/Tidytalk.app in Terminal, and it will open normally from then on." }
-      }
-    ]
-  }
+}
   </script>
   <main id="main">
     <section class="hero-clean container" aria-labelledby="hero-title">
@@ -286,7 +372,7 @@
           </details>
           <details>
             <summary>Which languages does it support?</summary>
-            <p>It detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese.</p>
+            <p>With the default SenseVoice model it detects the spoken language automatically and supports Mandarin Chinese (including mixed-in English), English, Japanese, Korean, and Cantonese. For other languages, switch to Qwen3-ASR (52 languages) or Whisper Turbo (about 99) in Settings › Speech Model. Text can also be translated into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish. The interface is available in English and Simplified Chinese.</p>
           </details>
           <details>
             <summary>Is my voice or text uploaded?</summary>
@@ -295,6 +381,14 @@
           <details>
             <summary>Can it caption videos and meetings?</summary>
             <p>Yes. Press <kbd>⌃⌥C</kbd> (Control + Option + C) and Tidytalk shows live captions for whatever your Mac is playing, such as a video, a lecture, or a meeting. The audio is recognized on your Mac. You can translate each sentence with your AI service, and press <kbd>⌃⌥V</kbd> to tidy and paste what was just said.</p>
+          </details>
+          <details>
+            <summary>Is there a free, open-source alternative to Wispr Flow for Mac?</summary>
+            <p>Yes, Tidytalk. Like Wispr Flow, you hold a shortcut, speak, and get clean, punctuated text at your cursor in any app. Unlike Wispr Flow, speech is recognized on your Mac, there's no account, subscription, or weekly word limit, and the code is open source under the MIT License. <a href="/alternatives/wispr-flow/">See how the two compare</a>.</p>
+          </details>
+          <details>
+            <summary>How do I transcribe a meeting recording on Mac without uploading it?</summary>
+            <p>Choose Transcribe File or Link from the Tidytalk menu and drop in the audio or video file, up to 3 hours long. It's recognized on your Mac and split into paragraphs with timestamps, and you can export it as TXT, SRT, or Markdown. YouTube and Bilibili links work too. <a href="/use-cases/transcribe/">Learn more about transcribing</a>.</p>
           </details>
           <details>
             <summary>How is it different from macOS Dictation?</summary>
@@ -331,7 +425,7 @@
         <a class="brand" href="/"><img src="/assets/icon-180.png" alt="" width="28" height="28">Tidytalk</a>
         <p>Tidytalk is open source under the MIT License. Speech recognition uses <a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> and <a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>.</p>
       </div>
-      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/compare/">Compare</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
+      <div><h2>Product</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li><li><a href="/docs/">User guide</a></li><li><a href="/compare/">Compare</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/changelog/">Changelog</a></li></ul></div>
       <div><h2>Use cases</h2><ul><li><a href="/use-cases/developers/">For developers</a></li><li><a href="/use-cases/translation/">Dictate and translate</a></li><li><a href="/use-cases/offline/">Private and offline</a></li><li><a href="/use-cases/transcribe/">Transcribe recordings</a></li></ul></div>
       <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
         <li><a href="/zh/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li></ul></div>

@@ -1,0 +1,83 @@
+<!--
+path: /alternatives/wispr-flow/
+alternate: /zh/alternatives/wispr-flow/
+type: article
+breadcrumb: Wispr Flow alternative
+title: Open-Source Wispr Flow Alternative for Mac | Tidytalk
+headline: A free, open-source Wispr Flow alternative for Mac
+description: A free, open-source Wispr Flow alternative for Mac. Speech is recognized on device, AI cleanup can stay local, and clean text lands at your cursor.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>A free, open-source Wispr Flow alternative for Mac</h1>
+      <p class="lead">Like Wispr Flow, Tidytalk turns what you say into clean, punctuated text at your cursor in any app. Unlike Wispr Flow, your voice is recognized on your Mac, there's no subscription, and the code is open source.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <p>Tidytalk is our project, so we've kept this page factual. Wispr Flow details come from its official pricing and help pages, checked in October 2026. Products change, so check their sites before you decide.</p>
+
+      <h2 id="same">What works the same</h2>
+      <ul>
+        <li>Hold a shortcut, speak naturally, and let go. The text appears wherever your cursor is: email, chat, notes, a code editor.</li>
+        <li>Filler words and slips are removed and punctuation is added, so you don't have to edit afterward.</li>
+        <li>You can teach it names, products, and jargon it keeps getting wrong.</li>
+        <li>You can speak one language and get text in another.</li>
+      </ul>
+
+      <h2 id="different">What's different</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Tidytalk</th><th>Wispr Flow</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Price</th><td>Free, no word limits</td><td>Free up to 2,000 words a week on desktop; Pro $15/month, or $12/month billed yearly</td></tr>
+            <tr><th scope="row">Where your voice is recognized</th><td>On your Mac (SenseVoice, Qwen3-ASR, Whisper, or Apple's built-in recognition)</td><td>In the cloud</td></tr>
+            <tr><th scope="row">AI cleanup</th><td>Your choice: Ollama, LM Studio, or Apple Intelligence on your Mac, or a cloud API with your own key</td><td>Built in, in the cloud</td></tr>
+            <tr><th scope="row">Works fully offline</th><td>Yes, with a local model or with cleanup off</td><td>No</td></tr>
+            <tr><th scope="row">Account</th><td>None</td><td>Required</td></tr>
+            <tr><th scope="row">Platforms</th><td>Mac (macOS 26+, Apple silicon)</td><td>Mac, Windows, iOS, Android</td></tr>
+            <tr><th scope="row">Open source</th><td>Yes, MIT License</td><td>No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Tidytalk also does a few things beyond dictation: live captions for audio your Mac is playing, with translation as you listen, and transcription of audio and video files or YouTube and Bilibili links.</p>
+
+      <h2 id="when-wispr">When Wispr Flow is the better choice</h2>
+      <ul>
+        <li>You want the same dictation on Windows or your phone.</li>
+        <li>You'd rather not set anything up: no model download, no AI service to choose.</li>
+        <li>You use an Intel Mac or a macOS version older than 26.</li>
+      </ul>
+
+      <h2 id="when-tidytalk">When Tidytalk is the better choice</h2>
+      <ul>
+        <li>You don't want your voice to leave your Mac, or you need dictation that works offline.</li>
+        <li>You dictate a lot and don't want a weekly word limit or a subscription.</li>
+        <li>You speak Chinese mixed with English: Tidytalk keeps the English terms and adds Chinese–English spacing.</li>
+        <li>You want to read the code or change it yourself.</li>
+      </ul>
+
+      <h2 id="switch">Switching from Wispr Flow</h2>
+      <ol>
+        <li><a href="https://github.com/byteyu2436/tidytalk/releases/latest">Download Tidytalk</a>, drag it into Applications, and follow the setup guide to allow the microphone and accessibility and download the speech model.</li>
+        <li>Pick your shortcut in Settings › Dictation. If you're used to holding Fn, choose Fn (🌐), then set "Press 🌐 key to" to "Do Nothing" in System Settings › Keyboard.</li>
+        <li>Add the names and terms from your Wispr Flow dictionary to Settings › Vocabulary. With Qwen3-ASR as the speech model, they're recognized correctly from the start.</li>
+        <li>Choose an AI service in Settings › Set Up AI: Ollama or LM Studio to keep everything on your Mac, Apple Intelligence if your Mac supports it, or a cloud API such as DeepSeek or OpenAI.</li>
+      </ol>
+
+      <h2 id="sources">Sources</h2>
+      <ul>
+        <li><a href="https://wisprflow.ai/pricing">Wispr Flow pricing</a> and <a href="https://docs.wisprflow.ai/articles/4709791908-understanding-privacy-mode-and-cloud-sync">Understanding Privacy Mode and Cloud Sync</a></li>
+        <li>For Superwhisper and macOS Dictation too, see <a href="/compare/">the full comparison</a>.</li>
+      </ul>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Try the open-source alternative</h2>
+      <p>Free for macOS 26 on Apple silicon. Version {{version}}.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/docs/">Read the user guide</a>
+      </div>
+    </aside>
+  </main>

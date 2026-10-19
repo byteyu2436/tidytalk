@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://tidytalk.zayen.dev/alternatives/wispr-flow/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/alternatives/wispr-flow/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/alternatives/wispr-flow/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/alternatives/wispr-flow/"/>
+  </url>
+  <url>
     <loc>https://tidytalk.zayen.dev/changelog/</loc>
     <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/changelog/"/>
@@ -55,6 +62,13 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/translation/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/translation/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/alternatives/wispr-flow/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/alternatives/wispr-flow/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/alternatives/wispr-flow/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/alternatives/wispr-flow/"/>
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/changelog/</loc>
