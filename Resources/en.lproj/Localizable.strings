@@ -748,7 +748,7 @@
 "纯文本（.txt）" = "Plain Text (.txt)";
 "字幕（.srt）" = "Subtitles (.srt)";
 "启用" = "Turn On";
-"最准确，支持 52 种语言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。" = "Most accurate, 52 languages, and recognizes names and terms from your vocabulary. Slower: about 4 seconds for 20 seconds of speech.";
+"最准确，支持 30 种语言和 22 种中文方言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。" = "Most accurate, 30 languages and 22 Chinese dialects, and recognizes names and terms from your vocabulary. Slower: about 4 seconds for 20 seconds of speech.";
 "中文、英文、日文，准确度接近 Qwen3-ASR，速度稍快。词库对它帮助不大。" = "Chinese, English, and Japanese. Nearly as accurate as Qwen3-ASR and a bit faster. Your vocabulary helps it little.";
 
 /* 界面整理 */

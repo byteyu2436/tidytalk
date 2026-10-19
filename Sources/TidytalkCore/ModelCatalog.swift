@@ -124,7 +124,7 @@ public enum SpeechModel: String, CaseIterable, Sendable {
     public var summary: String {
         switch self {
         case .senseVoice: String(localized: "速度快，中文、英文、日文、韩文、粤语，中英文混说效果好。")
-        case .qwen3ASR: String(localized: "最准确，支持 52 种语言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。")
+        case .qwen3ASR: String(localized: "最准确，支持 30 种语言和 22 种中文方言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。")
         case .funASRNano: String(localized: "中文、英文、日文，准确度接近 Qwen3-ASR，速度稍快。词库对它帮助不大。")
         case .whisperTurbo: String(localized: "支持约 99 种语言，适合小语种。中文会漏字，中文请用其他模型。")
         case .apple: String(localized: "macOS 自带，不占下载空间。按系统语言识别，中英文混说效果一般。")
