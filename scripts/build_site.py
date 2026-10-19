@@ -57,7 +57,8 @@ UI = {
                                  ("Compare", "/compare/"), ("Changelog", "/changelog/")],
         "footer_links_use_cases": [("For developers", "/use-cases/developers/"),
                                    ("Dictate and translate", "/use-cases/translation/"),
-                                   ("Private and offline", "/use-cases/offline/")],
+                                   ("Private and offline", "/use-cases/offline/"),
+                                   ("Transcribe recordings", "/use-cases/transcribe/")],
         "footer_links_project": [("GitHub", GITHUB), ("Report an issue", f"{GITHUB}/issues"),
                                  ("MIT License", f"{GITHUB}/blob/main/LICENSE")],
         "footer_note": 'Tidytalk is open source under the MIT License. Speech recognition uses '
@@ -85,7 +86,8 @@ UI = {
                                  ("对比", "/zh/compare/"), ("更新日志", "/zh/changelog/")],
         "footer_links_use_cases": [("程序员", "/zh/use-cases/developers/"),
                                    ("说中文出英文", "/zh/use-cases/translation/"),
-                                   ("完全离线", "/zh/use-cases/offline/")],
+                                   ("完全离线", "/zh/use-cases/offline/"),
+                                   ("转写录音和视频", "/zh/use-cases/transcribe/")],
         "footer_links_project": [("GitHub", GITHUB), ("反馈问题", f"{GITHUB}/issues"),
                                  ("MIT 许可证", f"{GITHUB}/blob/main/LICENSE")],
         "footer_note": 'Tidytalk 以 MIT 许可证开源。语音识别使用 '

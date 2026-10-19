@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v0.2.0",
+    "name": "Tidytalk 0.2.0",
+    "date": "2026-10-19",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.0",
+    "body": "- 更多识别模型：在\"设置 › 识别模型\"里可以换成 Qwen3-ASR（最准，能直接认出词库里的人名和术语）、Fun-ASR-Nano、Whisper Turbo，或 macOS 自带的识别。默认仍是 SenseVoice，所有模型都在本机运行。\n- Apple 智能：支持的 Mac 上可以在\"配置 AI\"里选 Apple 智能整理和翻译，不需要 API Key，文字不出电脑。\n- 转写文件和链接：菜单里选\"转写文件或链接…\"，拖入音频、视频文件或粘贴 YouTube、B 站链接，得到带时间的文字，可导出 TXT、SRT 字幕或 Markdown。\n- 自动学词：粘贴后手动改过的词，会提示你一键加入词库，确认后才加入。\n- 实时字幕边听边翻译：不用等一句话说完，译文跟着原文出来。从某一句粘贴改为悬停后点\"粘贴\"按钮，点句子或拖动字幕条不会误粘贴。\n- 界面整理：菜单栏菜单按用途分组，设置合并为 6 页。\n\n安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"，或在终端执行 `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`。\n\n- More speech models: in Settings › Speech Model, switch to Qwen3-ASR (most accurate, and it recognizes names and terms from your vocabulary), Fun-ASR-Nano, Whisper Turbo, or the speech recognition built into macOS. SenseVoice is still the default, and every model runs on your Mac.\n- Apple Intelligence: on Macs that support it, choose Apple Intelligence in Set Up AI to tidy and translate with no API key, keeping your text on your Mac.\n- Transcribe files and links: choose \"Transcribe File or Link…\" in the menu, drop in an audio or video file or paste a YouTube or Bilibili link, and get timestamped text to export as TXT, SRT subtitles, or Markdown.\n- Words you correct: after pasting, words you change by hand are suggested for your vocabulary, and nothing is added until you confirm.\n- Live captions translate as you listen, without waiting for the sentence to end. Pasting from a sentence now uses a Paste button that appears on hover, so clicking or dragging the caption bar never pastes by accident.\n- A tidier interface: the menu bar menu is grouped by purpose, and Settings now has six tabs.\n\nInstall: requires macOS 26 or later on a Mac with Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`.\n\nSHA-256 (Tidytalk-0.2.0.dmg): `d2340d26a8c8dd6f950e0403dbde665e1aa3be28364ca0995be20981de19289b`\n"
+  },
+  {
     "tag": "v0.1.3",
     "name": "Tidytalk 0.1.3",
     "date": "2026-10-16",

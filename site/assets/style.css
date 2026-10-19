@@ -1135,6 +1135,12 @@ a.card .more {
   margin: 28px 0 0;
 }
 
+/* 功能版块里的"了解更多"链接跟着正文左对齐 */
+.feature-split .section-foot {
+  text-align: left;
+  margin-top: 20px;
+}
+
 /* 对比表：行标题可以换行，每列保留最小宽度，窄屏时整张表横向滚动 */
 .prose th[scope="row"] {
   white-space: normal;
@@ -1442,9 +1448,15 @@ a.card .more {
 
 @media (min-width: 760px) {
   .use-links {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     border-top: 0;
-    gap: 32px;
+    gap: 0 32px;
+  }
+}
+
+@media (min-width: 1000px) {
+  .use-links {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

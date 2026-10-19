@@ -1,0 +1,72 @@
+<!--
+path: /use-cases/transcribe/
+alternate: /zh/use-cases/transcribe/
+type: article
+breadcrumb: Transcribe recordings
+title: Transcribe Meeting Recordings and Videos on Mac, Offline | Tidytalk
+headline: Transcribe meeting recordings and videos on your Mac
+description: Turn meeting recordings, lectures, and videos into timestamped text on your Mac. Tidytalk transcribes files and YouTube or Bilibili links locally and exports TXT, SRT, or Markdown.
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>Turn recordings and videos into text, on your Mac</h1>
+      <p class="lead">Meeting recordings, lectures, interviews, and videos become timestamped text you can copy or export. The audio is recognized on your Mac and never uploaded.</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <figure><picture><source srcset="/assets/transcribe-en-dark.jpg" media="(prefers-color-scheme: dark)"><img src="/assets/transcribe-en-light.jpg" alt="Tidytalk transcribing a weekly product meeting recording, with a timestamp for each sentence" width="1000" height="930" loading="lazy" decoding="async"></picture></figure>
+
+      <h2 id="how">How to transcribe a file</h2>
+      <ol>
+        <li>Click the Tidytalk icon in the menu bar and choose "Transcribe File or Link…".</li>
+        <li>Drop an audio or video file into the window, or click "Choose File…". MP3, M4A, WAV, MP4, MOV and other common formats work, up to 3 hours long.</li>
+        <li>Tidytalk splits the recording at pauses and recognizes it sentence by sentence. Each sentence shows when it was said.</li>
+        <li>Click "Copy All", or "Export" to save it as plain text, SRT subtitles, or Markdown.</li>
+      </ol>
+
+      <h2 id="links">Transcribe a video link</h2>
+      <p>Paste a link to a single video from YouTube, Bilibili, or another site, and click "Transcribe". The first time, Tidytalk downloads <a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a>, an open-source download tool (about 35&nbsp;MB), from its official GitHub release and checks it against the published checksum. After that, only the video's audio is downloaded, and it's deleted as soon as the transcript is done.</p>
+      <p>Use links only for content you have the right to use. Videos that need you to sign in, playlists, and live streams aren't supported.</p>
+
+      <h2 id="models">Which speech model to use</h2>
+      <p>File transcription uses the model you choose in Settings › Speech Model. All of them run on your Mac.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Model</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td>SenseVoice (default)</td><td>Fast transcripts in Chinese, English, Japanese, Korean, or Cantonese, including mixed Chinese and English.</td></tr>
+            <tr><td>Qwen3-ASR</td><td>The most accurate results and the best punctuation, in 52 languages. It also recognizes names and terms from your vocabulary.</td></tr>
+            <tr><td>Whisper Turbo</td><td>Less common languages; it covers about 99. Use another model for Chinese.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="formats">Export formats</h2>
+      <ul>
+        <li><strong>Plain text (.txt):</strong> paragraphs split at longer pauses, ready for notes or an AI summary.</li>
+        <li><strong>Subtitles (.srt):</strong> one cue per sentence with start and end times, for video editors and players.</li>
+        <li><strong>Markdown (.md):</strong> the title and each sentence with its timestamp, for docs and wikis.</li>
+      </ul>
+
+      <h2 id="tips">Tips and limits</h2>
+      <ul>
+        <li>Clear audio with one person speaking at a time gives the best results. Background music and people talking over each other lower accuracy.</li>
+        <li>Tidytalk doesn't label who is speaking.</li>
+        <li>Your replacements and Chinese–English spacing are applied to the transcript, just like dictation.</li>
+        <li>For a meeting that's happening right now, use <a href="/docs/#live-captions">live captions</a> instead: press <kbd>⌃⌥C</kbd> to caption what your Mac is playing as it plays.</li>
+      </ul>
+
+      <h2 id="privacy">Privacy</h2>
+      <p>Recognition happens on your Mac, so recordings are never uploaded. Transcripts stay in the window until you copy or export them, and nothing is saved anywhere else. For links, the only network traffic is downloading yt-dlp once and the video's audio.</p>
+    </div>
+
+    <aside class="page-cta">
+      <h2>Transcribe your next recording</h2>
+      <p>Free and open source for macOS 26 on Apple silicon.</p>
+      <div class="actions">
+        <a class="button button-primary" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download for Mac</a>
+        <a class="button button-secondary" href="/docs/#transcribe">Read the guide</a>
+      </div>
+    </aside>
+  </main>
