@@ -5,7 +5,7 @@ type: article
 breadcrumb: User guide
 title: Tidytalk User Guide – Voice Dictation on Mac, Step by Step
 headline: Tidytalk User Guide
-description: How to install and use Tidytalk on your Mac: hold-to-talk dictation, voice rewrite, live captions, cleanup modes, translation, local AI models, and troubleshooting.
+description: How to install and use Tidytalk on your Mac: hold-to-talk dictation, speech models, live captions, file transcription, cleanup modes, translation, local AI, and troubleshooting.
 -->
   <main id="main" class="page container">
     <header class="page-head">
@@ -22,7 +22,9 @@ description: How to install and use Tidytalk on your Mac: hold-to-talk dictation
           <li><a href="#hold-to-talk">Hold to talk</a></li>
           <li><a href="#hands-free">Hands-free recording</a></li>
           <li><a href="#rewrite">Rewrite selected text</a></li>
+          <li><a href="#speech-models">Speech models</a></li>
           <li><a href="#live-captions">Live captions</a></li>
+          <li><a href="#transcribe">Transcribe files and links</a></li>
           <li><a href="#tidying">How tidying works</a></li>
           <li><a href="#strength-and-mode">Cleanup strength and mode</a></li>
           <li><a href="#output-language">Output language</a></li>
@@ -81,14 +83,33 @@ description: How to install and use Tidytalk on your Mac: hold-to-talk dictation
         <li>Change or turn off the rewrite shortcut in Settings › Recording.</li>
       </ul>
 
+      <h2 id="speech-models">Speech models</h2>
+      <p>SenseVoice is the default: small (about 240&nbsp;MB), fast, and great with mixed Chinese and English. In Settings › Speech Model you can switch to another model. All of them run on your Mac.</p>
+      <ul>
+        <li><strong>Qwen3-ASR</strong> (about 1&nbsp;GB): the most accurate, 52 languages, and it recognizes names and terms from your vocabulary. About 4 seconds for 20 seconds of speech.</li>
+        <li><strong>Fun-ASR-Nano</strong> (about 1&nbsp;GB): Chinese, English, and Japanese, nearly as accurate as Qwen3-ASR and a bit faster.</li>
+        <li><strong>Whisper Turbo</strong> (about 1&nbsp;GB): about 99 languages, good for less common ones. It drops characters in Chinese.</li>
+        <li><strong>Apple Speech</strong>: built into macOS, nothing to download. It recognizes your system language and is weaker on mixed Chinese and English.</li>
+      </ul>
+      <p>Click "Download &amp; Use" and keep working: the current model is used until the download finishes. Dictation, live captions, and file transcription all use the model you choose.</p>
+
       <h2 id="live-captions">Live captions</h2>
       <p>Tidytalk can caption whatever your Mac is playing, such as a video, a lecture, or a video call. It records only the computer's audio, never the microphone, and recognizes it on your Mac.</p>
       <ul>
-        <li><strong>Turn it on or off:</strong> press <kbd>⌃⌥C</kbd> (Control + Option + C), or choose Live Captions in the menu bar menu. The first time, macOS asks to allow Tidytalk to record system audio. While listening, the menu bar icon shows an orange dot. Turning captions off clears the audio and text from memory.</li>
-        <li><strong>The caption bar:</strong> one sentence per line, with earlier sentences dimmed. Drag it anywhere and it remembers the spot. It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons; close stops listening. Choose a dark or glass style and a text size in Settings › Captions.</li>
-        <li><strong>What it listens to:</strong> all audio except Tidytalk's own sounds, or a single app you pick under Listen To in the menu or in Settings › Captions.</li>
-        <li><strong>Translation:</strong> turn on Translate Captions and each finished sentence is translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With Ollama or LM Studio, nothing goes online; with a cloud service, caption text is sent to it.</li>
-        <li><strong>Paste what was just said:</strong> while listening, put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also click a sentence in the captions to paste from there onward. If captions are off, <kbd>⌃⌥V</kbd> only shows a reminder and never starts recording.</li>
+        <li><strong>Turn it on or off:</strong> press <kbd>⌃⌥C</kbd> (Control + Option + C), or choose Start Listening under Live Captions in the menu bar menu. The first time, macOS asks to allow Tidytalk to record system audio. While listening, the menu bar icon shows an orange dot. Turning captions off clears the audio and text from memory.</li>
+        <li><strong>The caption bar:</strong> one sentence per line, with earlier sentences dimmed. Drag it anywhere and it remembers the spot. It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons; close stops listening. Clicking a sentence does nothing, so you can drag freely. Choose a dark or glass style and a text size in Settings › Live Captions.</li>
+        <li><strong>What it listens to:</strong> all audio except Tidytalk's own sounds, or a single app you pick under Listen To in the menu or in Settings › Live Captions.</li>
+        <li><strong>Translation:</strong> turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.</li>
+        <li><strong>Paste what was just said:</strong> while listening, put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. If captions are off, <kbd>⌃⌥V</kbd> only shows a reminder and never starts recording.</li>
+      </ul>
+
+      <h2 id="transcribe">Transcribe files and links</h2>
+      <p>Choose "Transcribe File or Link…" in the menu bar menu.</p>
+      <ul>
+        <li>Drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) into the window, or click "Choose File…".</li>
+        <li>Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35&nbsp;MB) from its official GitHub release and verifies it. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.</li>
+        <li>The text is split at pauses with timestamps. Copy it all, or export plain text (.txt), subtitles (.srt), or Markdown.</li>
+        <li>It uses the speech model from Settings › Speech Model and runs on your Mac.</li>
       </ul>
 
       <h2 id="tidying">How tidying works</h2>
@@ -152,13 +173,17 @@ description: How to install and use Tidytalk on your Mac: hold-to-talk dictation
         <li>Click "Test Connection".</li>
       </ol>
       <p>Results depend on the model size. Small models follow "tidy, don't answer" and custom rules less reliably than cloud models, so a model around 7B or larger is recommended. See <a href="/use-cases/offline/">Private and offline dictation</a> for details.</p>
+      <h3>Apple Intelligence</h3>
+      <p>On a Mac that supports Apple Intelligence, choose <strong>Apple Intelligence</strong> in Settings › Set Up AI to tidy and translate with the model built into macOS. No API key is needed, and your text never leaves your Mac. Turn on Apple Intelligence in System Settings first; if this Mac doesn't support it or it's off, the option is dimmed and says why.</p>
 
       <h2 id="vocabulary">Vocabulary</h2>
       <p>All of these are in Settings › Vocabulary.</p>
       <h3>Common words</h3>
-      <p>List names, products, and terms you use, one per line. These are the words speech recognition gets wrong most often. They're added to the AI prompt so similar-sounding mistakes are corrected to your spelling. Requires "Tidy up text".</p>
+      <p>List names, products, and terms you use, one per line. These are the words speech recognition gets wrong most often. With Qwen3-ASR as the speech model, they're recognized correctly from the start. They're also added to the AI prompt so similar-sounding mistakes are corrected to your spelling, which requires "Tidy up text".</p>
       <h3>Replacements</h3>
       <p>Always replace one spelling with another, for example "cloud" with "Claude". English matching ignores case and only matches whole words. Replacements run on your Mac, even with tidying off. From "Recent" in the menu bar, choose a result and "Add to Vocabulary…" to add a misheard word directly.</p>
+      <h3>Words you correct</h3>
+      <p>If you change a word in the same text field after pasting, such as "cloud" to "Claude", Tidytalk lists it under "Edits Found" in the menu bar and at the top of Settings › Vocabulary. Nothing is added until you click "Add to Vocabulary". It only compares within about a minute and a half of pasting and saves nothing. Turn it off at the bottom of the Vocabulary page.</p>
       <h3>Snippets</h3>
       <p>Say only a phrase such as "my email" to insert a full email address or a canned reply. The snippet is used only when the whole recording is that phrase, never when it appears inside a sentence.</p>
       <h3>Custom rules</h3>
@@ -205,7 +230,7 @@ rm -f ~/.tidytalk.json
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>These remove the speech model (about 240&nbsp;MB), your settings including your API key, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
+      <p>These remove the speech models (SenseVoice is about 240&nbsp;MB, other models about 1&nbsp;GB each) and yt-dlp, your settings including your API key, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
     </div>
 
     <aside class="page-cta">
