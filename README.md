@@ -5,7 +5,7 @@
 简体中文 | [English](README.en.md) | [官网](https://tidytalk.zayen.dev/zh/)
 
 <p align="center">
-  <img src="docs/images/onboarding.png" width="640" alt="Tidytalk 首次启动引导">
+  <img src="docs/images/github-social-preview-zh.png" width="720" alt="Tidytalk：按住说话，松开就是整理好的文字">
 </p>
 
 按住快捷键说一段话，松开后 Tidytalk 在本机识别语音，用 AI 去掉"嗯、那个、就是说"这类口头禅、修正口误和标点，再把文字粘贴到光标处。在任何能打字的地方都能用：微信、邮件、备忘录、代码编辑器。
@@ -39,6 +39,10 @@
    ```
 
 3. 按引导授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型（约 240 MB，只需一次）。
+
+<p align="center">
+  <img src="docs/images/onboarding.png" width="640" alt="Tidytalk 首次启动引导">
+</p>
 
 也可以[从源码编译](docs/development.md)。
 

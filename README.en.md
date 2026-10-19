@@ -5,7 +5,7 @@
 [简体中文](README.md) | English | [Website](https://tidytalk.zayen.dev/)
 
 <p align="center">
-  <img src="docs/images/onboarding-en.png" width="640" alt="Tidytalk setup guide">
+  <img src="docs/images/github-social-preview.png" width="720" alt="Tidytalk: hold to talk, let go, and you get clean text">
 </p>
 
 Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your speech on your Mac, uses AI to remove fillers like "um" and "you know" and fix slips and punctuation, then pastes the text at your cursor. It works anywhere you can type: chat apps, email, notes, code editors.
@@ -39,6 +39,10 @@ Requires macOS 26 or later on a Mac with Apple silicon.
    ```
 
 3. Follow the setup guide: allow microphone and accessibility access, set up an AI service (optional), and download the speech model (about 240 MB, one time).
+
+<p align="center">
+  <img src="docs/images/onboarding-en.png" width="640" alt="Tidytalk setup guide">
+</p>
 
 You can also [build from source](docs/development.md).
 
