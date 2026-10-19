@@ -57,8 +57,19 @@ final class VoiceActivityDetector: @unchecked Sendable {
         return FileManager.default.fileExists(atPath: source.path) ? source : nil
     }
 
+    /// 一句话：在整段音频里的起点（样本序号）和音频。
+    struct Segment {
+        let start: Int
+        let samples: [Float]
+    }
+
     /// 送入 16 kHz 单声道音频，返回这期间结束的句子。
     func accept(_ samples: [Float]) -> [[Float]] {
+        acceptSegments(samples).map(\.samples)
+    }
+
+    /// 和 `accept` 一样，同时给出每句话的起点，用于文件转写的时间戳。
+    func acceptSegments(_ samples: [Float]) -> [Segment] {
         remainder.append(contentsOf: samples)
         let usable = remainder.count / Self.windowSize * Self.windowSize
         if usable > 0 {
@@ -77,6 +88,10 @@ final class VoiceActivityDetector: @unchecked Sendable {
 
     /// 把还没结束的那句话也当作结束，返回剩下的句子。
     func flush() -> [[Float]] {
+        flushSegments().map(\.samples)
+    }
+
+    func flushSegments() -> [Segment] {
         SherpaOnnxVoiceActivityDetectorFlush(detector)
         remainder.removeAll()
         return popSegments()
@@ -87,13 +102,14 @@ final class VoiceActivityDetector: @unchecked Sendable {
         remainder.removeAll()
     }
 
-    private func popSegments() -> [[Float]] {
-        var segments: [[Float]] = []
+    private func popSegments() -> [Segment] {
+        var segments: [Segment] = []
         while SherpaOnnxVoiceActivityDetectorEmpty(detector) == 0 {
             if let segment = SherpaOnnxVoiceActivityDetectorFront(detector) {
                 let n = Int(segment.pointee.n)
                 if n > 0, let samples = segment.pointee.samples {
-                    segments.append(Array(UnsafeBufferPointer(start: samples, count: n)))
+                    segments.append(Segment(start: Int(segment.pointee.start),
+                                            samples: Array(UnsafeBufferPointer(start: samples, count: n))))
                 }
                 SherpaOnnxDestroySpeechSegment(segment)
             }

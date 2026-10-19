@@ -12,11 +12,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     var onOpenSettings: (() -> Void)?
     /// 用另一种整理模式或输出语言重新整理一条最近记录。
     var onReprocess: ((HistoryEntry, CleanupStyle, OutputLanguage) -> Void)?
-    var onOpenOnboarding: (() -> Void)?
     var onToggleListening: (() -> Void)?
     var onListenSourceChanged: (() -> Void)?
     var onSetCaptionTranslation: ((Bool) -> Void)?
     var onPasteRecentCaptions: (() -> Void)?
+    var onOpenTranscriber: (() -> Void)?
 
     init(model: AppModel) {
         self.model = model
@@ -75,39 +75,29 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return image
     }
 
+    /// 菜单按用途分组，每组带系统样式的小标题：说话输入、实时字幕，最后是记录和设置。
     func menuNeedsUpdate(_ menu: NSMenu) {
         model.refreshPermissions()
         model.configStore.reload()
         menu.removeAllItems()
+        let config = model.configStore.config
 
         let status = NSMenuItem(title: model.readinessDescription, action: nil, keyEquivalent: "")
         status.isEnabled = false
         menu.addItem(status)
-        menu.addItem(.separator())
 
-        let cleanup = NSMenuItem(title: String(localized: "整理文字"), action: #selector(toggleCleanup), keyEquivalent: "")
-        cleanup.target = self
+        // 说话输入
+        menu.addItem(.separator())
+        menu.addItem(.sectionHeader(title: String(localized: "说话输入")))
+        let cleanup = item(String(localized: "整理文字"), #selector(toggleCleanup))
         cleanup.state = model.cleanupEnabled ? .on : .off
         menu.addItem(cleanup)
+        menu.addItem(languageItem(current: config.outputLanguage))
 
-        // 输出语言：翻译依赖 AI 整理，关闭整理时不可选
-        let current = model.configStore.config.outputLanguage
-        let languageMenu = NSMenu()
-        for language in OutputLanguage.allCases {
-            let entry = NSMenuItem(title: language.title, action: #selector(selectLanguage(_:)), keyEquivalent: "")
-            entry.target = self
-            entry.representedObject = language.rawValue
-            entry.state = language == current ? .on : .off
-            entry.isEnabled = model.cleanupEnabled
-            languageMenu.addItem(entry)
-            if language == .original { languageMenu.addItem(.separator()) }
-        }
-        let languageItem = NSMenuItem(title: String(localized: "输出语言：\(current.title)"), action: nil, keyEquivalent: "")
-        languageItem.submenu = languageMenu
-        menu.addItem(languageItem)
-
+        // 实时字幕
         menu.addItem(.separator())
-        let listen = item(model.isListening ? String(localized: "停止实时字幕") : String(localized: "实时字幕"),
+        menu.addItem(.sectionHeader(title: String(localized: "实时字幕")))
+        let listen = item(model.isListening ? String(localized: "停止收听") : String(localized: "开始收听"),
                           #selector(toggleListening), key: "c")
         listen.keyEquivalentModifierMask = [.control, .option]
         menu.addItem(listen)
@@ -116,25 +106,41 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         // 菜单会自动启用有响应方法的项，没在收听时去掉方法才会变灰
         if !model.isListening { pasteRecent.action = nil }
         menu.addItem(pasteRecent)
-        let config = model.configStore.config
-        let translate = item(String(localized: "翻译字幕：\(config.captionLanguage.title)"), #selector(toggleCaptionTranslation))
+        let translate = item(Typography.format(String(localized: "翻译成\(config.captionLanguage.title)")),
+                             #selector(toggleCaptionTranslation))
         translate.state = config.captionTranslate ? .on : .off
         menu.addItem(translate)
         menu.addItem(sourceItem())
 
-        if model.configStore.config.history {
-            menu.addItem(.separator())
-            menu.addItem(historyItem())
-        }
+        // 转写、记录和词库建议
+        menu.addItem(.separator())
+        menu.addItem(item(String(localized: "转写文件或链接…"), #selector(openTranscriber)))
+        if config.history { menu.addItem(historyItem()) }
+        if !model.correctionSuggestions.isEmpty { menu.addItem(correctionsItem()) }
 
         menu.addItem(.separator())
         menu.addItem(item(String(localized: "设置…"), #selector(openSettings), key: ","))
-        menu.addItem(item(String(localized: "设置引导…"), #selector(openOnboarding)))
         if UpdateChecker.isConfigured {
             menu.addItem(item(String(localized: "检查更新…"), #selector(checkForUpdates)))
         }
         menu.addItem(.separator())
         menu.addItem(item(String(localized: "退出 Tidytalk"), #selector(quit), key: "q"))
+    }
+
+    /// 输出语言：翻译依赖 AI 整理，关闭整理时不可选。
+    private func languageItem(current: OutputLanguage) -> NSMenuItem {
+        let languageMenu = NSMenu()
+        for language in OutputLanguage.allCases {
+            let entry = item(language.title, #selector(selectLanguage(_:)))
+            entry.representedObject = language.rawValue
+            entry.state = language == current ? .on : .off
+            if !model.cleanupEnabled { entry.action = nil }
+            languageMenu.addItem(entry)
+            if language == .original { languageMenu.addItem(.separator()) }
+        }
+        let languageItem = NSMenuItem(title: String(localized: "输出语言：\(current.title)"), action: nil, keyEquivalent: "")
+        languageItem.submenu = languageMenu
+        return languageItem
     }
 
     private func item(_ title: String, _ action: Selector, key: String = "") -> NSMenuItem {
@@ -189,6 +195,52 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private static let historyMenuLimit = 10
 
+    /// "发现的改动"子菜单：粘贴后手动改掉的词，确认后加入词库。
+    private func correctionsItem() -> NSMenuItem {
+        let suggestions = model.correctionSuggestions
+        let item = NSMenuItem(title: String(localized: "发现 \(suggestions.count) 处改动"), action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        for correction in suggestions {
+            let entry = NSMenuItem(title: "\(correction.from) → \(correction.to)", action: nil, keyEquivalent: "")
+            let actions = NSMenu()
+            let accept = NSMenuItem(title: String(localized: "加入词库"), action: #selector(acceptCorrection(_:)), keyEquivalent: "")
+            accept.target = self
+            accept.representedObject = correction.id
+            actions.addItem(accept)
+            let dismiss = NSMenuItem(title: String(localized: "忽略"), action: #selector(dismissCorrection(_:)), keyEquivalent: "")
+            dismiss.target = self
+            dismiss.representedObject = correction.id
+            actions.addItem(dismiss)
+            entry.submenu = actions
+            submenu.addItem(entry)
+        }
+        submenu.addItem(.separator())
+        let all = NSMenuItem(title: String(localized: "全部加入词库"), action: #selector(acceptAllCorrections), keyEquivalent: "")
+        all.target = self
+        submenu.addItem(all)
+        let note = NSMenuItem(title: String(localized: "以后识别出左边的写法时，改成右边的"), action: nil, keyEquivalent: "")
+        note.isEnabled = false
+        submenu.addItem(note)
+        item.submenu = submenu
+        return item
+    }
+
+    @objc private func acceptCorrection(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String,
+              let correction = model.correctionSuggestions.first(where: { $0.id == id }) else { return }
+        model.acceptCorrection(correction)
+    }
+
+    @objc private func dismissCorrection(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String,
+              let correction = model.correctionSuggestions.first(where: { $0.id == id }) else { return }
+        model.dismissCorrection(correction)
+    }
+
+    @objc private func acceptAllCorrections() {
+        for correction in model.correctionSuggestions { model.acceptCorrection(correction) }
+    }
+
     /// "收听来源"子菜单：全部声音，或者现在正在发声的某个应用。
     private func sourceItem() -> NSMenuItem {
         let current = model.configStore.config.listenSource
@@ -231,6 +283,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     @objc private func toggleListening() { onToggleListening?() }
+    @objc private func openTranscriber() { onOpenTranscriber?() }
     /// 菜单关闭后焦点回到原来的输入框，再粘贴进去。
     @objc private func pasteRecentCaptions() {
         Task {
@@ -359,6 +412,5 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         model.configStore.update { $0.outputLanguage = language }
     }
     @objc private func openSettings() { onOpenSettings?() }
-    @objc private func openOnboarding() { onOpenOnboarding?() }
     @objc private func quit() { NSApp.terminate(nil) }
 }

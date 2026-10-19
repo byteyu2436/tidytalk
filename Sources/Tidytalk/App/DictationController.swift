@@ -11,9 +11,17 @@ final class DictationController {
     private let indicator: IndicatorPanel
     private let recorder = AudioRecorder()
     private let hotkeys = HotkeyMonitor()
+    private let corrections = CorrectionWatcher()
 
-    private var recognizer: SpeechRecognizer?
-    private var recognizerTask: Task<SpeechRecognizer?, Never>?
+    /// 识别器和它对应的模型、热词；切换模型或修改词库后重新加载。
+    private struct RecognizerKey: Equatable {
+        let model: SpeechModel
+        let hotwords: [String]
+    }
+    private var recognizer: (any SpeechTranscribing)?
+    private var recognizerKey: RecognizerKey?
+    private var recognizerTask: Task<(any SpeechTranscribing)?, Never>?
+    private var loadingKey: RecognizerKey?
     private var isProcessing = false
     /// 当前这次录音的用途：说话输入，或语音改写选中的文字。
     private var purpose: HotkeyMonitor.Purpose = .dictation
@@ -36,7 +44,17 @@ final class DictationController {
             hotkeys.recordingEndedExternally(purpose)
             finishRecording()
         }
-        model.models.onReady = { [weak self] in self?.loadRecognizer() }
+        for manager in model.modelManagers.values {
+            manager.onReady = { [weak self] in self?.loadRecognizer() }
+        }
+        observeRecognizerChoice()
+        corrections.onCorrections = { [weak self] found in
+            guard let self else { return }
+            let fresh = model.suggestCorrections(found)
+            // 正在说话或处理时不打扰
+            guard let first = fresh.first, model.phase == .idle else { return }
+            showMessage(String(localized: "发现改动：\(first.from) → \(first.to)，可在菜单里加入词库"))
+        }
     }
 
     func start() {
@@ -56,24 +74,53 @@ final class DictationController {
 
     // MARK: - 识别器
 
+    private var currentKey: RecognizerKey {
+        let config = model.configStore.config
+        let hotwords = config.speechModel.supportsHotwords ? Vocabulary.normalize(config.vocabulary) : []
+        return RecognizerKey(model: config.speechModel, hotwords: hotwords)
+    }
+
+    /// 选中的模型下载好后在后台加载；已经加载了同一个模型和热词时什么都不做。
     private func loadRecognizer() {
-        guard recognizer == nil, recognizerTask == nil, model.models.isReady else { return }
+        let key = currentKey
+        guard model.models.isReady, recognizerKey != key, loadingKey != key else { return }
         let directory = model.models.directory
-        recognizerTask = Task.detached(priority: .userInitiated) {
-            try? SpeechRecognizer(modelDirectory: directory)
+        loadingKey = key
+        let task = Task.detached(priority: .userInitiated) {
+            try? SpeechRecognizers.load(key.model, directory: directory, hotwords: key.hotwords)
         }
+        recognizerTask = task
         Task {
-            let loaded = await recognizerTask?.value
+            let loaded = await task.value
+            // 加载期间又换了模型，这次的结果作废
+            guard loadingKey == key else { return }
             recognizer = loaded
+            recognizerKey = loaded == nil ? nil : key
             recognizerTask = nil
+            loadingKey = nil
         }
     }
 
-    /// 实时字幕也用这个识别器，两边共用一份模型。
-    func readyRecognizer() async -> SpeechRecognizer? {
-        if let recognizer { return recognizer }
-        if recognizerTask == nil { loadRecognizer() }
-        return await recognizerTask?.value
+    /// 切换识别模型或修改词库（热词）后，提前在后台加载，下次说话时不用等。
+    private func observeRecognizerChoice() {
+        withObservationTracking {
+            _ = model.configStore.config.speechModel
+            _ = model.configStore.config.vocabulary
+        } onChange: { [weak self] in
+            Task { @MainActor in
+                self?.loadRecognizer()
+                self?.observeRecognizerChoice()
+            }
+        }
+    }
+
+    /// 实时字幕、文件转写也用这个识别器，共用一份模型。
+    func readyRecognizer() async -> (any SpeechTranscribing)? {
+        let key = currentKey
+        if recognizerKey == key, let recognizer { return recognizer }
+        loadRecognizer()
+        guard loadingKey == key, let task = recognizerTask else { return nil }
+        return await task.value
     }
 
     // MARK: - 按键动作
@@ -345,6 +392,9 @@ final class DictationController {
             return false
         }
         await PasteService.paste(text)
+        if kind == .dictation, model.configStore.config.learnCorrections {
+            corrections.watch(pasted: text)
+        }
         return true
     }
 

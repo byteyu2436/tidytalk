@@ -21,6 +21,7 @@ public struct AIPreset: Identifiable, Sendable {
 
     public func applied(to config: AIConfig) -> AIConfig {
         var config = config
+        config.service = .openAICompatible
         config.baseURL = baseURL
         config.model = model
         config.timeout = timeout
@@ -28,23 +29,37 @@ public struct AIPreset: Identifiable, Sendable {
     }
 }
 
-/// 设置界面里给用户选的三类 AI 服务。
+/// 设置界面里给用户选的四类 AI 服务。
 public enum AIProvider: String, CaseIterable, Sendable {
     case ollama, lmStudio, cloud
+    /// 系统自带的 Apple 智能，这台 Mac 支持时才能选。
+    case apple
 
-    /// 切换到这一类时填入的预设；云端默认用 DeepSeek，用户可以再改成其他兼容接口。
-    public var preset: AIPreset {
+    /// 切换到这一类时填入的预设；云端默认用 DeepSeek，用户可以再改成其他兼容接口。Apple 智能没有预设。
+    public var preset: AIPreset? {
         let id = switch self {
         case .ollama: "ollama"
         case .lmStudio: "lmstudio"
         case .cloud: "deepseek"
+        case .apple: ""
         }
-        return AIPreset.all.first { $0.id == id }!
+        return AIPreset.all.first { $0.id == id }
+    }
+
+    /// 切换到这一类服务。切到 Apple 智能时保留原来的接口地址等，切回来不用重新填写。
+    public func applied(to config: AIConfig) -> AIConfig {
+        guard let preset else {
+            var config = config
+            config.service = .apple
+            return config
+        }
+        return preset.applied(to: config)
     }
 
     /// 根据接口地址判断当前属于哪一类：本机的 11434 端口是 Ollama，1234 是 LM Studio，
     /// 不在本机的都算云端。本机的其他端口（例如自己跑的 llama.cpp）不属于任何一类，返回 nil。
     public static func detect(_ config: AIConfig) -> AIProvider? {
+        if config.service == .apple { return .apple }
         guard config.isLocal else { return .cloud }
         switch config.chatCompletionsURL?.port {
         case 11434: return .ollama

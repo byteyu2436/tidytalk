@@ -3,9 +3,10 @@ import Foundation
 import Observation
 import TidytalkCore
 
-/// 管理语音识别模型的下载、校验和本地状态。
+/// 管理一个语音识别模型的下载、校验和本地状态。
 ///
 /// 下载支持断点续传（未完成的数据保存在 `*.part` 文件中），一个下载源失败时自动换下一个。
+/// Apple 系统识别没有文件，由系统下载和管理。
 @MainActor
 @Observable
 final class ModelManager {
@@ -17,14 +18,36 @@ final class ModelManager {
         case failed(String)
     }
 
-    let spec: ModelSpec
+    let speechModel: SpeechModel
+    let spec: ModelSpec?
     private(set) var status: Status = .missing
     @ObservationIgnored private var task: Task<Void, Never>?
     @ObservationIgnored var onReady: (() -> Void)?
+    /// 下载完成后执行一次，用于"选中还没下载的模型时，下载好再切换过去"。
+    @ObservationIgnored var useWhenReady: (() -> Void)?
 
-    init(spec: ModelSpec = .senseVoice) {
-        self.spec = spec
-        status = isInstalled ? .ready : .missing
+    init(model: SpeechModel = .senseVoice) {
+        speechModel = model
+        spec = model.spec
+        if spec != nil {
+            status = isInstalled ? .ready : .missing
+        } else {
+            Task { [weak self] in
+                if await AppleSpeech.isInstalled() { self?.status = .ready }
+            }
+        }
+    }
+
+    /// 需要下载的大小；Apple 系统识别由系统下载，为 nil。
+    var totalSize: Int64? { spec?.totalSize }
+
+    /// 下载过的文件可以删除，腾出空间；Apple 系统识别由系统管理。
+    var canDelete: Bool { spec != nil && !isBusy && status != .missing }
+
+    func delete() {
+        guard spec != nil, task == nil else { return }
+        try? FileManager.default.removeItem(at: directory)
+        status = .missing
     }
 
     var isReady: Bool { status == .ready }
@@ -35,7 +58,10 @@ final class ModelManager {
         }
     }
 
-    var directory: URL { Self.directory(for: spec) }
+    /// 模型文件所在的目录；Apple 系统识别没有目录，返回一个不存在的路径。
+    var directory: URL {
+        spec.map(Self.directory(for:)) ?? URL.applicationSupportDirectory.appending(path: "Tidytalk/Models/apple")
+    }
 
     nonisolated static func directory(for spec: ModelSpec) -> URL {
         URL.applicationSupportDirectory
@@ -45,7 +71,8 @@ final class ModelManager {
 
     /// 启动时只核对文件大小，完整性在下载完成时已经用 SHA-256 校验过。
     private var isInstalled: Bool {
-        spec.files.allSatisfy { size(of: directory.appending(path: $0.name)) == $0.size }
+        guard let spec else { return false }
+        return spec.files.allSatisfy { size(of: directory.appending(path: $0.name)) == $0.size }
     }
 
     func download() {
@@ -62,13 +89,17 @@ final class ModelManager {
 
     /// 删除已下载的文件后重新下载。
     func redownload() {
-        guard task == nil else { return }
+        guard task == nil, spec != nil else { return }
         try? FileManager.default.removeItem(at: directory)
         status = .missing
         download()
     }
 
     private func runDownload() async {
+        guard let spec else {
+            await runAppleInstall()
+            return
+        }
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             var completedBytes: Int64 = 0
@@ -80,9 +111,12 @@ final class ModelManager {
                     continue
                 }
                 try? FileManager.default.removeItem(at: destination)
+                // 有的文件放在子目录里（例如 tokenizer/vocab.json）
+                try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(),
+                                                        withIntermediateDirectories: true)
                 let part = directory.appending(path: file.name + ".part")
 
-                try await downloadFromAnySource(file, to: part, completedBefore: completedBytes)
+                try await downloadFromAnySource(file, of: spec, to: part, completedBefore: completedBytes)
 
                 status = .verifying
                 let digest = try await Self.sha256(of: part)
@@ -96,6 +130,8 @@ final class ModelManager {
 
             status = .ready
             onReady?()
+            useWhenReady?()
+            useWhenReady = nil
         } catch is CancellationError {
             status = .failed(String(localized: "下载已暂停"))
         } catch {
@@ -103,7 +139,29 @@ final class ModelManager {
         }
     }
 
-    private func downloadFromAnySource(_ file: ModelSpec.File, to part: URL, completedBefore: Int64) async throws {
+    /// Apple 系统识别：请系统下载当前语言的识别模型。
+    private func runAppleInstall() async {
+        status = .downloading(fraction: 0, source: "Apple")
+        do {
+            try await AppleSpeech.install { [weak self] fraction in
+                Task { @MainActor in
+                    guard let self, case .downloading = self.status else { return }
+                    self.status = .downloading(fraction: fraction, source: "Apple")
+                }
+            }
+            status = .ready
+            onReady?()
+            useWhenReady?()
+            useWhenReady = nil
+        } catch is CancellationError {
+            status = .failed(String(localized: "下载已暂停"))
+        } catch {
+            status = .failed(error.localizedDescription)
+        }
+    }
+
+    private func downloadFromAnySource(_ file: ModelSpec.File, of spec: ModelSpec, to part: URL,
+                                       completedBefore: Int64) async throws {
         var lastError: Error = DownloadError.noSource
         for source in spec.sources {
             try Task.checkCancellation()

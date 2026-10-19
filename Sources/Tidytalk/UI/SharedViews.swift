@@ -9,6 +9,7 @@ struct AIConfigEditor: View {
     @ViewState private var modelName = ""
     @ViewState private var timeout = AIConfig.default.timeout
     @ViewState private var testState: TestState = .idle
+    @ViewState private var service: AIService = .openAICompatible
 
     enum TestState: Equatable {
         case idle, saved, testing, success, failure(String)
@@ -22,6 +23,7 @@ struct AIConfigEditor: View {
         ai.apiKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         ai.model = modelName.trimmingCharacters(in: .whitespacesAndNewlines)
         ai.timeout = min(300, max(3, timeout))
+        ai.service = service
         return ai
     }
 
@@ -32,8 +34,37 @@ struct AIConfigEditor: View {
             ProviderPicker(selection: AIProvider.detect(draft)) { provider in
                 // 再点一次当前这一类不重置，避免把自己改过的云端地址换回 DeepSeek
                 guard provider != AIProvider.detect(draft) else { return }
-                apply(provider.preset)
+                apply(provider)
             }
+            if service == .apple {
+                appleIntelligenceNote
+            } else {
+                endpointFields
+            }
+
+            HStack {
+                Button("保存", action: save)
+                    .disabled(!isDirty)
+                Button("测试连接", action: test)
+                    .disabled(testState == .testing || !draft.isConfigured)
+                Spacer()
+            }
+
+            status
+                .font(.callout)
+        }
+        .onAppear(perform: loadDraft)
+    }
+
+    /// Apple 智能不需要填写接口，只说明它在哪里运行。
+    private var appleIntelligenceNote: some View {
+        Text("使用这台 Mac 自带的 Apple 智能，不需要 API Key，文字不会离开这台 Mac。")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var endpointFields: some View {
             Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
                 GridRow {
                     Text("接口地址").gridColumnAlignment(.trailing)
@@ -60,21 +91,6 @@ struct AIConfigEditor: View {
             .labelsHidden()
             .textFieldStyle(.roundedBorder)
             .multilineTextAlignment(.leading)
-
-            HStack {
-                Button("保存", action: save)
-                    .disabled(!isDirty)
-                Button("测试连接", action: test)
-                    .disabled(testState == .testing || !draft.isConfigured)
-                Spacer()
-                Button("打开配置文件") { store.openInEditor() }
-                    .buttonStyle(.link)
-            }
-
-            status
-                .font(.callout)
-        }
-        .onAppear(perform: loadDraft)
     }
 
     @ViewBuilder
@@ -111,14 +127,16 @@ struct AIConfigEditor: View {
         apiKey = ai.apiKey
         modelName = ai.model
         timeout = ai.timeout
+        service = ai.service
     }
 
-    /// 套用预设只改接口地址、模型名和超时，保存前可以再修改。
-    private func apply(_ preset: AIPreset) {
-        let ai = preset.applied(to: draft)
+    /// 切换服务只改接口地址、模型名和超时，保存前可以再修改；切到 Apple 智能时保留原来填的内容。
+    private func apply(_ provider: AIProvider) {
+        let ai = provider.applied(to: draft)
         baseURL = ai.baseURL
         modelName = ai.model
         timeout = ai.timeout
+        service = ai.service
         testState = .idle
     }
 
@@ -155,35 +173,71 @@ struct AIConfigEditor: View {
     }
 }
 
-/// AI 服务的三种选择：Ollama、LM Studio（都在本机运行）和云端接口，带各自的图标。
+/// AI 服务的四种选择：Ollama、LM Studio（都在本机运行）、云端接口和 Apple 智能，带各自的图标，两行两列。
+/// Apple 智能只在这台 Mac 支持并已打开时才能选，否则变灰并写明原因。
 struct ProviderPicker: View {
     let selection: AIProvider?
     let choose: (AIProvider) -> Void
+    @ViewState private var appleUnavailable = AppleIntelligence.unavailableReason
 
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(AIProvider.allCases, id: \.self) { provider in
-                Button { choose(provider) } label: {
-                    HStack(spacing: 8) {
-                        Image(nsImage: Self.icon(provider))
-                            .resizable()
-                            .interpolation(.high)
-                            .frame(width: 26, height: 26)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(Self.title(provider)).font(.callout.weight(.semibold))
-                            Text(Self.detail(provider)).font(.caption).foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
-                    .contentShape(RoundedRectangle(cornerRadius: 9))
-                }
-                .buttonStyle(ProviderButtonStyle(isSelected: provider == selection))
-                .accessibilityAddTraits(provider == selection ? .isSelected : [])
+        Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+            GridRow {
+                card(.ollama)
+                card(.lmStudio)
             }
+            GridRow {
+                card(.cloud)
+                card(.apple)
+            }
+        }
+        .task {
+            // 用户可能刚在系统设置里打开 Apple 智能
+            while !Task.isCancelled {
+                let reason = AppleIntelligence.unavailableReason
+                if reason != appleUnavailable { appleUnavailable = reason }
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
+    }
+
+    private func card(_ provider: AIProvider) -> some View {
+        let disabled = provider == .apple && appleUnavailable != nil && selection != .apple
+        return Button { choose(provider) } label: {
+            HStack(spacing: 8) {
+                Self.iconView(provider)
+                    .frame(width: 26, height: 26)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(Self.title(provider)).font(.callout.weight(.semibold))
+                    Text(provider == .apple ? (appleUnavailable ?? Self.detail(provider)) : Self.detail(provider))
+                        .font(.caption).foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .contentShape(RoundedRectangle(cornerRadius: 9))
+        }
+        .buttonStyle(ProviderButtonStyle(isSelected: provider == selection))
+        .disabled(disabled)
+        .opacity(disabled ? 0.55 : 1)
+        .help(provider == .apple ? (appleUnavailable ?? "") : "")
+        .accessibilityAddTraits(provider == selection ? .isSelected : [])
+    }
+
+    @ViewBuilder
+    static func iconView(_ provider: AIProvider) -> some View {
+        if provider == .apple {
+            // 和系统里 Apple 智能的图标一致
+            Image(systemName: "apple.intelligence")
+                .symbolRenderingMode(.multicolor)
+                .font(.system(size: 20))
+        } else {
+            Image(nsImage: icon(provider))
+                .resizable()
+                .interpolation(.high)
         }
     }
 
@@ -192,6 +246,7 @@ struct ProviderPicker: View {
         case .ollama: "Ollama"
         case .lmStudio: "LM Studio"
         case .cloud: String(localized: "云端")
+        case .apple: String(localized: "Apple 智能")
         }
     }
 
@@ -199,6 +254,7 @@ struct ProviderPicker: View {
         switch provider {
         case .ollama, .lmStudio: String(localized: "本机运行")
         case .cloud: String(localized: "DeepSeek 等")
+        case .apple: String(localized: "系统自带")
         }
     }
 
@@ -207,7 +263,7 @@ struct ProviderPicker: View {
         let name = switch provider {
         case .ollama: "ollama"
         case .lmStudio: "lmstudio"
-        case .cloud: "cloud"
+        case .cloud, .apple: "cloud"
         }
         if let url = Bundle.main.url(forResource: name, withExtension: "png", subdirectory: "ProviderIcons"),
            let image = NSImage(contentsOf: url) {
@@ -266,7 +322,108 @@ struct ModelDownloadView: View {
     }
 
     private var sizeText: String {
-        ByteCountFormatter.string(fromByteCount: manager.spec.totalSize, countStyle: .file)
+        ByteCountFormatter.string(fromByteCount: manager.totalSize ?? 0, countStyle: .file)
+    }
+}
+
+/// 设置里的识别模型列表：每个模型可以下载、使用、删除。
+struct SpeechModelList: View {
+    let model: AppModel
+
+    var body: some View {
+        ForEach(SpeechModel.allCases, id: \.self) { speechModel in
+            SpeechModelRow(model: model, speechModel: speechModel)
+        }
+    }
+}
+
+private struct SpeechModelRow: View {
+    let model: AppModel
+    let speechModel: SpeechModel
+
+    private var manager: ModelManager { model.modelManagers[speechModel]! }
+    private var isSelected: Bool { model.configStore.config.speechModel == speechModel }
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(isSelected ? Color.accentColor : .secondary)
+                .font(.title3)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(speechModel.title).fontWeight(.medium)
+                    Text(sizeText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if speechModel == .senseVoice {
+                        Text("默认")
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                    }
+                }
+                Text(speechModel.summary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if case .failed(let message) = manager.status {
+                    Text(message).font(.caption).foregroundStyle(.orange)
+                }
+            }
+            Spacer(minLength: 8)
+            action
+        }
+        .padding(.vertical, 2)
+    }
+
+    private var sizeText: String {
+        guard let size = manager.totalSize else { return String(localized: "系统自带") }
+        return ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+    }
+
+    @ViewBuilder
+    private var action: some View {
+        switch manager.status {
+        case .ready:
+            HStack(spacing: 6) {
+                if isSelected {
+                    Text("使用中").foregroundStyle(.secondary)
+                } else {
+                    Button("使用") { model.useSpeechModel(speechModel) }
+                    if manager.canDelete {
+                        Button {
+                            manager.delete()
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                        .buttonStyle(.borderless)
+                        .help(String(localized: "删除下载的文件"))
+                    }
+                }
+            }
+        case .missing:
+            // Apple 系统识别的模型由系统下载，按钮叫"启用"
+            Button(speechModel == .apple ? String(localized: "启用")
+                   : isSelected ? String(localized: "下载") : String(localized: "下载并使用")) {
+                model.useSpeechModel(speechModel)
+            }
+        case .downloading(let fraction, _):
+            HStack(spacing: 6) {
+                ProgressView(value: fraction).frame(width: 70)
+                Text("\(Int(fraction * 100))%").monospacedDigit().foregroundStyle(.secondary)
+                if manager.spec != nil {
+                    Button("暂停") { manager.cancel() }
+                }
+            }
+        case .verifying:
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.small)
+                Text("校验中…").foregroundStyle(.secondary)
+            }
+        case .failed:
+            Button("继续下载") { model.useSpeechModel(speechModel) }
+        }
     }
 }
 

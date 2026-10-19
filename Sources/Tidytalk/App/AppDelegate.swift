@@ -15,6 +15,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var pasteHotKey: GlobalHotKey?
     private var onboardingWindow: NSWindow?
     private var settingsWindow: NSWindow?
+    private var transcribeWindow: NSWindow?
+    private var transcriber: TranscribeController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = makeMainMenu()
@@ -26,8 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         statusItem.onListenSourceChanged = { [weak self] in self?.listener.restartIfRunning() }
         statusItem.onSetCaptionTranslation = { [weak self] in self?.listener.setTranslation($0) }
         statusItem.onPasteRecentCaptions = { [weak self] in self?.listener.pasteRecent() }
+        statusItem.onOpenTranscriber = { [weak self] in self?.showTranscriber() }
         statusItem.onOpenSettings = { [weak self] in self?.showSettings() }
-        statusItem.onOpenOnboarding = { [weak self] in self?.showOnboarding() }
         statusItem.onReprocess = { [weak self] entry, style, language in
             self?.controller.reprocess(entry, style: style, language: language)
         }
@@ -57,7 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let closing = notification.object as? NSWindow
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            let stillOpen = [self.onboardingWindow, self.settingsWindow].contains {
+            let stillOpen = [self.onboardingWindow, self.settingsWindow, self.transcribeWindow].contains {
                 $0 != nil && $0 !== closing && $0!.isVisible
             }
             if !stillOpen { NSApp.setActivationPolicy(.accessory) }
@@ -145,9 +147,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         present(onboardingWindow)
     }
 
+    /// 转写文件或链接，和说话输入、实时字幕共用识别模型。
+    private func showTranscriber() {
+        if transcribeWindow == nil {
+            transcriber = TranscribeController(model: model) { [weak self] in await self?.controller.readyRecognizer() }
+            let window = TranscribeWindow.make(controller: transcriber)
+            window.delegate = self
+            transcribeWindow = window
+        }
+        present(transcribeWindow)
+    }
+
     private func showSettings() {
         if settingsWindow == nil {
             let window = SettingsWindow.make(model: model,
+                                             onOpenOnboarding: { [weak self] in self?.showOnboarding() },
                                              onToggleListening: { [weak self] in self?.listener.toggle() },
                                              onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
                                              onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) })

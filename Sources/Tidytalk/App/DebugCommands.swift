@@ -66,7 +66,8 @@ enum DebugCommands {
             run {
                 do {
                     let samples = try loadAudio(url)
-                    let recognizer = try SpeechRecognizer(modelDirectory: ModelManager.directory(for: .senseVoice))
+                    let recognizer = try SpeechRecognizer(model: .senseVoice,
+                                                          directory: ModelManager.directory(for: .senseVoice))
                     let engine = LivePreviewEngine(recognizer: recognizer)
                     let step = Int(0.6 * Double(AudioMath.sampleRate))
                     var end = step
@@ -103,13 +104,18 @@ enum DebugCommands {
     }
 
     private static func transcribe(_ url: URL, cleanup: Bool) async {
-        let directory = ModelManager.directory(for: .senseVoice)
+        // 开发用：`--model qwen3_asr` 等指定识别模型，默认 SenseVoice
+        let speechModel = value(of: "--model").flatMap(SpeechModel.init(rawValue:)) ?? .senseVoice
+        let directory = speechModel.spec.map(ModelManager.directory(for:)) ?? URL(fileURLWithPath: "/")
         do {
             let samples = try loadAudio(url)
             print("音频时长：\(String(format: "%.1f", Double(samples.count) / Double(AudioMath.sampleRate))) 秒")
 
             var start = Date()
-            let recognizer = try SpeechRecognizer(modelDirectory: directory)
+            // 开发用：`--hotwords 词1,词2` 作为热词
+            let hotwords = value(of: "--hotwords")?.components(separatedBy: ",") ?? []
+            let recognizer = try SpeechRecognizers.load(speechModel, directory: directory, hotwords: hotwords)
+            print("模型：\(speechModel.title)")
             print("模型加载：\(String(format: "%.2f", Date().timeIntervalSince(start))) 秒")
 
             start = Date()
@@ -269,8 +275,11 @@ enum SnapshotCommand {
 @MainActor
 enum DownloadCommand {
     static func runIfRequested() -> Bool {
-        guard CommandLine.arguments.contains("--download-model") else { return false }
-        let manager = ModelManager()
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--download-model") else { return false }
+        // 开发用：`--download-model qwen3_asr` 下载指定的模型，默认 SenseVoice
+        let speechModel = index + 1 < args.count ? SpeechModel(rawValue: args[index + 1]) ?? .senseVoice : .senseVoice
+        let manager = ModelManager(model: speechModel)
         manager.download()
         var lastPrinted = ""
         while true {
@@ -647,9 +656,12 @@ enum ListenTestCommand {
         } }
 
         // 第二阶段：完整链路
-        nonisolated(unsafe) var loaded: SpeechRecognizer?
+        nonisolated(unsafe) var loaded: (any SpeechTranscribing)?
         let controller = ListenController(model: model) {
-            if loaded == nil { loaded = try? SpeechRecognizer(modelDirectory: model.models.directory) }
+            if loaded == nil {
+                loaded = try? SpeechRecognizers.load(model.configStore.config.speechModel,
+                                                     directory: model.models.directory, hotwords: [])
+            }
             return loaded
         }
         controller.onError = { note("error \($0)") }
@@ -662,6 +674,7 @@ enum ListenTestCommand {
         while Date() < end {
             RunLoop.main.run(until: Date().addingTimeInterval(0.1))
             let text = model.captions.sentences.map { $0.text + ($0.translation.map { " [\($0)]" } ?? "") }.joined(separator: " | ") + " ~ " + model.captions.partial
+                + (model.captions.partialTranslation.isEmpty ? "" : " [\(model.captions.partialTranslation)]")
             if text != last {
                 note(text)
                 last = text
@@ -771,6 +784,7 @@ enum CaptionCaptureCommand {
         if let id = model.captions.commit("Does anyone have questions before we start?") { model.captions.markTranslating(id) }
         shot("bilingual-translating")
         model.captions.partial = "Okay, let's move on to"
+        model.captions.partialTranslation = "好的，我们接下来看看"
         panel.showsControls = true
         shot("bilingual-partial")
         panel.showsControls = false
@@ -782,8 +796,15 @@ enum CaptionCaptureCommand {
         panel.debugHover(nil)
         var clicks: [String] = []
         panel.onPasteFrom = { id in clicks.append(id.map { model.captions.passage(from: $0) } ?? "partial:" + model.captions.passage(from: nil)) }
-        panel.debugClick(.sentence(ids[1]))
-        panel.debugClick(.partial)
+        // 点句子本身不粘贴；停在句子上后点"粘贴"按钮才粘贴
+        panel.debugClick(.sentence(ids[1]), onButton: false)
+        panel.debugHover(.sentence(ids[1]))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.5))
+        panel.debugClick(.sentence(ids[1]), onButton: true)
+        panel.debugHover(.partial)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.5))
+        panel.debugClick(.partial, onButton: true)
+        panel.debugHover(nil)
         try? clicks.joined(separator: "\n").write(to: dir.appending(path: "clicks.txt"), atomically: true, encoding: .utf8)
         model.configStore.update { $0.captionTranslate = false }
 
@@ -922,6 +943,120 @@ enum SiteCaptionCaptureCommand {
             NSBezierPath(roundedRect: NSRect(x: bounds.midX - 150, y: -40, width: 300, height: bounds.height * 0.44),
                          xRadius: 120, yRadius: 120).fill()
         }
+    }
+}
+/// 开发用：走和转写窗口相同的流程转写一个文件或链接，把进度和 SRT 结果写入文件。
+/// 识别模型读取配置文件的 speech_model，可以配合 `--config <临时配置>` 指定。
+///
+///     open -n Tidytalk.app --args --transcribe-test <文件或链接> <输出文件> [--config <配置文件>]
+@MainActor
+enum TranscribeTestCommand {
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--transcribe-test"), index + 2 < args.count else { return false }
+        let input = args[index + 1], output = args[index + 2]
+        var log: [String] = []
+        let started = Date()
+        func note(_ line: String) {
+            log.append(String(format: "%7.2f ", Date().timeIntervalSince(started)) + line)
+            try? (log.joined(separator: "\n") + "\n").write(toFile: output, atomically: true, encoding: .utf8)
+        }
+        _ = NSApplication.shared
+        let model = AppModel()
+        let speechModel = model.configStore.config.speechModel
+        note("model=\(speechModel.rawValue) ready=\(model.models.isReady)")
+        nonisolated(unsafe) var loaded: (any SpeechTranscribing)?
+        let controller = TranscribeController(model: model) {
+            if loaded == nil {
+                let start = Date()
+                loaded = try? SpeechRecognizers.load(speechModel, directory: model.models.directory,
+                                                     hotwords: model.configStore.config.vocabulary)
+                note("load \(loaded == nil ? "failed" : "ok") in \(String(format: "%.2f", Date().timeIntervalSince(start)))s")
+            }
+            return loaded
+        }
+        if !input.hasPrefix("http") {
+            // 先单独解码和切句一次，检查采样率和切出的句子
+            let url = URL(fileURLWithPath: input)
+            let done = DispatchSemaphore(value: 0)
+            nonisolated(unsafe) var info = ""
+            Task.detached {
+                do {
+                    let samples = try await AudioFileDecoder.load(url) { _ in }
+                    let pieces = try FileTranscriber.split(samples)
+                    info = "decoded \(samples.count) samples = \(Double(samples.count) / 16000)s rms=\(AudioMath.rms(samples)); pieces: "
+                        + pieces.map { String(format: "%.2f+%.2f", $0.start, Double($0.samples.count) / 16000) }.joined(separator: " ")
+                } catch {
+                    info = "decode error \(error)"
+                }
+                done.signal()
+            }
+            while done.wait(timeout: .now()) == .timedOut { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
+            note(info)
+        }
+        if input.hasPrefix("http") {
+            controller.transcribe(link: input)
+        } else {
+            controller.transcribe(file: URL(fileURLWithPath: input))
+        }
+        var last = ""
+        let deadline = Date().addingTimeInterval(900)
+        repeat {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+            let stage = "\(controller.stage)"
+            if stage != last {
+                note(stage)
+                last = stage
+            }
+        } while controller.stage.isBusy && Date() < deadline
+        note("title=\(controller.title)")
+        note("\n" + TranscriptExport.render(controller.segments, as: .srt))
+        return true
+    }
+}
+/// 开发用：打开真实的转写窗口截图：空白状态，以及转写一个文件之后的结果。
+///
+///     open -n Tidytalk.app --args --transcribe-capture <输出目录> <音频文件> [--config <配置文件>]
+@MainActor
+enum TranscribeCaptureCommand {
+    private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
+
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--transcribe-capture"), index + 2 < args.count,
+              let symbol = dlsym(dlopen(nil, RTLD_NOW), "CGWindowListCreateImage")
+        else { return false }
+        let capture = unsafeBitCast(symbol, to: CreateImage.self)
+        let dir = URL(fileURLWithPath: args[index + 1])
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        _ = NSApplication.shared
+        NSApp.setActivationPolicy(.regular)
+        let model = AppModel()
+        nonisolated(unsafe) var loaded: (any SpeechTranscribing)?
+        let controller = TranscribeController(model: model) {
+            if loaded == nil {
+                loaded = try? SpeechRecognizers.load(model.configStore.config.speechModel,
+                                                     directory: model.models.directory, hotwords: [])
+            }
+            return loaded
+        }
+        let window = TranscribeWindow.make(controller: controller)
+        window.makeKeyAndOrderFront(nil)
+        func shot(_ name: String) {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.8))
+            if let image = capture(.null, 1 << 3, UInt32(window.windowNumber), 0)?.takeRetainedValue() {
+                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                    .write(to: dir.appending(path: "\(name).png"))
+            }
+        }
+        shot("transcribe-empty")
+        controller.transcribe(file: URL(fileURLWithPath: args[index + 2]))
+        let deadline = Date().addingTimeInterval(120)
+        repeat {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+        } while controller.stage != .finished && Date() < deadline
+        shot("transcribe-result")
+        return true
     }
 }
 #endif

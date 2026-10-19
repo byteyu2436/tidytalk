@@ -1,2 +1,3 @@
 "NSMicrophoneUsageDescription" = "Tidytalk 需要使用麦克风录下你说的话。音频只在本机识别，不会离开你的电脑。";
 "NSAudioCaptureUsageDescription" = "Tidytalk 需要收听电脑播放的声音来显示实时字幕。音频只在本机识别，不会离开你的电脑。";
+"NSSpeechRecognitionUsageDescription" = "选择\"Apple 系统识别\"作为识别模型时，Tidytalk 会使用 macOS 自带的语音识别，在本机完成。";

@@ -115,4 +115,21 @@ import Testing
         #expect(captions.passage(from: second) == "Two. Three. four")
         #expect(captions.passage(from: nil) == "four")
     }
+
+    @Test func liveTranslationCarriesOverToTheFinishedSentence() {
+        var captions = CaptionTranscript()
+        captions.partial = "Good morning every"
+        captions.partialTranslation = "大家早上"
+        let id = captions.commit("Good morning everyone.")!
+        // 说完后先用边听边翻的译文顶着，正在说的这句清空
+        #expect(captions.sentence(id)?.translation == "大家早上")
+        #expect(captions.partialTranslation.isEmpty && captions.partial.isEmpty)
+        captions.partial = "Then"
+        captions.partialTranslation = "然后"
+        captions.partial = ""
+        #expect(captions.partialTranslation.isEmpty)
+        let messages = CaptionTranslation.messages(for: "Then we", language: .simplifiedChinese, partial: true)
+        #expect(messages.first?.content.contains("还没说完") == true)
+        #expect(AppConfig().captionLiveTranslate)
+    }
 }

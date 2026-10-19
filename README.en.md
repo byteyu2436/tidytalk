@@ -19,11 +19,13 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 
 - **Your data stays on your Mac.** Speech is recognized locally with [SenseVoice](https://github.com/FunAudioLLM/SenseVoice), and recordings are never uploaded. With a local model in Ollama or LM Studio, AI tidying stays on your Mac too. It supports Chinese (with mixed-in English), English, Japanese, Korean, and Cantonese, and detects the language automatically.
 - **Cleans up, keeps your words.** It removes fillers and slips and adds punctuation. It never summarizes or adds content, and text that sounds like a command is tidied, not followed.
-- **Local AI or cloud, your choice.** Pick Ollama, LM Studio, or Cloud right in Settings; local models need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
+- **Choose your speech model.** SenseVoice is the default. Switch to Qwen3-ASR for the best accuracy and recognition of your vocabulary, or to Fun-ASR-Nano, Whisper, or the speech recognition built into macOS. All of them run on your Mac.
+- **Local AI or cloud, your choice.** Pick Ollama, LM Studio, Cloud, or Apple Intelligence right in Settings; local models and Apple Intelligence need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
 - **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
-- **Live captions.** Press ⌃⌥C to caption whatever your Mac is playing, such as videos, lectures, or meetings, recognized on your Mac too. Translate each sentence, or press ⌃⌥V to tidy and paste what was just said at the cursor.
+- **Live captions.** Press ⌃⌥C to caption whatever your Mac is playing, such as videos, lectures, or meetings, recognized on your Mac too. Translate as you listen, or press ⌃⌥V to tidy and paste what was just said at the cursor.
+- **Transcribe files and links.** Drop in an audio or video file, or paste a YouTube or Bilibili link, and get timestamped text to export as TXT, SRT subtitles, or Markdown.
 - **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
-- **And more:** personal vocabulary, replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
+- **And more:** personal vocabulary (words you correct after pasting are suggested for it), replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
 
 ## Install
 
@@ -48,7 +50,7 @@ You can also [build from source](docs/development.md).
 
 Press Esc to cancel. Double-tap the shortcut for hands-free recording, and press it again to finish. To rewrite text, select it, hold **Right Option**, and say what to change (for example, "make it more formal"). All shortcuts can be changed in Settings.
 
-Press **⌃⌥C** (Control + Option + C) to turn on live captions for your Mac's audio. While listening, press **⌃⌥V** to paste what was just said, or click a sentence in the captions to paste from there onward.
+Press **⌃⌥C** (Control + Option + C) to turn on live captions for your Mac's audio. While listening, press **⌃⌥V** to paste what was just said, or hover over a sentence in the captions and click Paste to paste from there onward.
 
 The interface is available in English and Simplified Chinese and follows your system language.
 
@@ -58,7 +60,7 @@ Recording and speech recognition always happen on your Mac, and your voice is ne
 
 | Setup | Your voice | Your text |
 | --- | --- | --- |
-| Local model (Ollama, LM Studio) | Stays on your Mac | Stays on your Mac |
+| Local model (Ollama, LM Studio) or Apple Intelligence | Stays on your Mac | Stays on your Mac |
 | Tidy up text turned off | Stays on your Mac | Stays on your Mac (raw transcript) |
 | Cloud AI (DeepSeek, OpenAI, and others) | Stays on your Mac | Sent to the AI service you chose |
 

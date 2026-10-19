@@ -35,7 +35,9 @@
   "caption_auto_hide": true,
   "caption_translate": false,
   "caption_language": "zh-Hans",
-  "caption_style": "dark"
+  "caption_style": "dark",
+  "speech_model": "sense_voice",
+  "learn_corrections": true
 }
 ```
 
@@ -47,6 +49,7 @@
 | `ai.model` | 模型名，建议使用非推理模型，响应更快 |
 | `ai.temperature` | 设为 `null` 则不发送，适用于不允许修改该参数的模型 |
 | `ai.timeout` | 请求超时（秒），超时后粘贴识别原文 |
+| `ai.service` | `openai`（OpenAI 兼容接口，默认）或 `apple`（使用系统自带的 Apple 智能，这时接口地址、Key、模型不用填） |
 | `typography` | 中英文排版规范 |
 | `vocabulary` | 个人词库的常用词 |
 | `replacements` | 固定替换表，错误写法 → 正确写法 |
@@ -69,3 +72,5 @@
 | `caption_translate` | 在字幕原文下面显示译文（使用 `ai` 里的服务） |
 | `caption_language` | 字幕翻译成的语言，取值同 `output_language`，但不能是 `original`；默认跟随系统语言 |
 | `caption_style` | 字幕条样式：`dark`（深色）或 `glass`（玻璃） |
+| `speech_model` | 识别模型：`sense_voice`（默认）、`qwen3_asr`、`fun_asr_nano`、`whisper_turbo` 或 `apple`（系统自带）；没下载的模型要先在"设置 › 识别模型"里下载 |
+| `learn_corrections` | 粘贴后发现你手动改了某个词时，提示加入词库 |

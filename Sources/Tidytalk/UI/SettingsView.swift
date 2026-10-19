@@ -7,20 +7,22 @@ enum SettingsWindow {
     static let width: CGFloat = 560
 
     @MainActor
-    static func make(model: AppModel, onToggleListening: @escaping () -> Void = {},
+    static func make(model: AppModel, onOpenOnboarding: @escaping () -> Void = {},
+                     onToggleListening: @escaping () -> Void = {},
                      onListenSourceChanged: @escaping () -> Void = {},
                      onSetCaptionTranslation: @escaping (Bool) -> Void = { _ in }) -> NSWindow {
         let tabs = SettingsTabViewController()
         tabs.tabStyle = .toolbar
         // 每页高度按内容设定，切换时窗口跟着伸缩，和系统设置的偏好窗口一样
-        tabs.addTabViewItem(item(String(localized: "通用"), symbol: "gearshape", height: 420, GeneralSettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "录音"), symbol: "mic", height: 500, RecordingSettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "配置 AI"), symbol: "sparkles", height: 510, AISettings(model: model)))
+        tabs.addTabViewItem(item(String(localized: "通用"), symbol: "gearshape", height: 690,
+                                 GeneralSettings(model: model, onOpenOnboarding: onOpenOnboarding)))
+        tabs.addTabViewItem(item(String(localized: "说话输入"), symbol: "mic", height: 530, RecordingSettings(model: model)))
+        tabs.addTabViewItem(item(String(localized: "识别模型"), symbol: "waveform", height: 410, ModelSettings(model: model)))
+        tabs.addTabViewItem(item(String(localized: "配置 AI"), symbol: "sparkles", height: 640, AISettings(model: model)))
         tabs.addTabViewItem(item(String(localized: "词库"), symbol: "character.book.closed", height: 640, VocabularySettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "字幕"), symbol: "captions.bubble", height: 734,
+        tabs.addTabViewItem(item(String(localized: "实时字幕"), symbol: "captions.bubble", height: 610,
                                  ListenSettings(model: model, onToggle: onToggleListening, onSourceChanged: onListenSourceChanged,
                                                 onSetTranslation: onSetCaptionTranslation)))
-        tabs.addTabViewItem(item(String(localized: "权限"), symbol: "hand.raised", height: 360, PermissionSettings(model: model)))
 
         let window = FocusFriendlyWindow(contentViewController: tabs)
         window.styleMask = [.titled, .closable]
@@ -43,9 +45,10 @@ enum SettingsWindow {
     }
 }
 
-/// 通用：启动与更新、排版、历史记录。
+/// 通用：启动与更新、权限、历史记录，以及设置引导和配置文件。
 struct GeneralSettings: View {
     let model: AppModel
+    var onOpenOnboarding: () -> Void = {}
     @ViewState private var loginStatus = LoginItem.status
     @ViewState private var loginError: String?
 
@@ -88,18 +91,7 @@ struct GeneralSettings: View {
                 Text("启动与更新")
             }
 
-            Section {
-                Toggle("中英文排版规范", isOn: Binding(
-                    get: { config.typography },
-                    set: { value in model.configStore.update { $0.typography = value } }
-                ))
-            } header: {
-                Text("排版")
-            } footer: {
-                Text("在中文与英文、数字之间加空格，统一使用全角标点。")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            permissions
 
             Section {
                 Toggle("记住最近的结果", isOn: Binding(
@@ -109,7 +101,7 @@ struct GeneralSettings: View {
                         if !value { model.clearHistory() }
                     }
                 ))
-                if config.history {
+                if config.history, !model.history.isEmpty {
                     HStack {
                         Text("已记住 \(model.history.count) 条").foregroundStyle(.secondary)
                         Spacer()
@@ -124,20 +116,73 @@ struct GeneralSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Section("其他") {
+                LabeledContent("设置引导") {
+                    Button("打开", action: onOpenOnboarding)
+                }
+                LabeledContent("配置文件") {
+                    Button("在编辑器中打开") { model.configStore.openInEditor() }
+                }
+            }
         }
         .formStyle(.grouped)
         .task {
-            // 用户在系统设置里允许登录项后自动刷新
+            // 用户在系统设置里允许登录项、授权后自动刷新
             while !Task.isCancelled {
                 let status = LoginItem.status
                 if status != loginStatus { loginStatus = status }
+                model.refreshPermissions()
                 try? await Task.sleep(for: .seconds(1))
             }
         }
     }
+
+    /// 权限：麦克风、辅助功能、录制系统音频，以及唯一一处隐私说明。
+    private var permissions: some View {
+        Section {
+            PermissionRow(title: String(localized: "麦克风"), detail: String(localized: "用于录音"),
+                          granted: model.microphoneGranted, actionTitle: String(localized: "授权")) {
+                if Permissions.microphone == .notDetermined {
+                    Task {
+                        _ = await Permissions.requestMicrophone()
+                        model.refreshPermissions()
+                    }
+                } else {
+                    Permissions.openMicrophoneSettings()
+                }
+            }
+            PermissionRow(title: String(localized: "辅助功能"),
+                          detail: Typography.format(String(localized: "用于监听\(config.hotkey.shortName)键和粘贴文字")),
+                          granted: model.accessibilityGranted, actionTitle: String(localized: "授权")) {
+                Permissions.promptAccessibility()
+                Permissions.openAccessibilitySettings()
+            }
+            if !model.accessibilityGranted {
+                AccessibilityHelp(model: model)
+            }
+            // macOS 不提供查询这项授权的接口，只给出入口
+            HStack(alignment: .firstTextBaseline) {
+                Image(systemName: "speaker.wave.2")
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("录制系统音频")
+                    Text("用于实时字幕，第一次收听时 macOS 会询问").font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("打开系统设置") { Permissions.openSystemAudioSettings() }
+            }
+        } header: {
+            Text("权限")
+        } footer: {
+            Text("声音只在这台 Mac 上识别，不会上传。开启整理文字或字幕翻译后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
 }
 
-/// 录音：快捷键、麦克风、语音识别模型。
+/// 说话输入：快捷键、麦克风，以及输出文字的排版。
 struct RecordingSettings: View {
     let model: AppModel
     @ViewState private var microphones: [AudioInputDevice] = []
@@ -221,9 +266,20 @@ struct RecordingSettings: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("语音识别模型") {
-                ModelDownloadView(manager: model.models)
+            // 排版在本地完成，和 AI 整理无关，关闭整理时也生效
+            Section {
+                Toggle("中英文排版规范", isOn: Binding(
+                    get: { config.typography },
+                    set: { value in model.configStore.update { $0.typography = value } }
+                ))
+            } header: {
+                Text("排版")
+            } footer: {
+                Text("在中文与英文、数字之间加空格，统一使用全角标点。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
+
         }
         .formStyle(.grouped)
         .task {
@@ -264,15 +320,16 @@ struct AISettings: View {
                     get: { model.cleanupEnabled },
                     set: { model.cleanupEnabled = $0 }
                 ))
-                AIConfigEditor(model: model)
-                    .disabled(!model.cleanupEnabled)
-            } header: {
-                Text("接口")
             } footer: {
                 Text("用 AI 去掉口头禅，修正口误和标点。关闭后直接输出识别结果。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Section("AI 服务") {
+                AIConfigEditor(model: model)
+            }
+            .disabled(!model.cleanupEnabled && !config.captionTranslate)
 
             Section {
                 Picker("整理强度", selection: Binding(
@@ -305,56 +362,12 @@ struct AISettings: View {
                     .foregroundStyle(.secondary)
             }
             .disabled(!model.cleanupEnabled)
+
         }
         .formStyle(.grouped)
     }
 }
 
-/// 权限：麦克风、辅助功能授权，以及隐私说明。
-struct PermissionSettings: View {
-    let model: AppModel
-
-    var body: some View {
-        Form {
-            Section("授权") {
-                PermissionRow(title: String(localized: "麦克风"), detail: String(localized: "用于录音"),
-                              granted: model.microphoneGranted, actionTitle: String(localized: "授权")) {
-                    if Permissions.microphone == .notDetermined {
-                        Task {
-                            _ = await Permissions.requestMicrophone()
-                            model.refreshPermissions()
-                        }
-                    } else {
-                        Permissions.openMicrophoneSettings()
-                    }
-                }
-                PermissionRow(title: String(localized: "辅助功能"),
-                              detail: Typography.format(String(localized: "用于监听\(model.configStore.config.hotkey.shortName)键和粘贴文字")),
-                              granted: model.accessibilityGranted, actionTitle: String(localized: "授权")) {
-                    Permissions.promptAccessibility()
-                    Permissions.openAccessibilitySettings()
-                }
-                if !model.accessibilityGranted {
-                    AccessibilityHelp(model: model)
-                }
-            }
-
-            Section("隐私") {
-                Text("声音只在这台 Mac 上识别。开启整理文字后，文字会发送给你配置的 AI 服务。最近记录只保存在内存中，退出后清空。")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .formStyle(.grouped)
-        .task {
-            // 用户在系统设置里授权后自动刷新
-            while !Task.isCancelled {
-                model.refreshPermissions()
-                try? await Task.sleep(for: .seconds(1))
-            }
-        }
-    }
-}
 
 /// 实时字幕：收听电脑播放的声音（视频、会议），在屏幕上显示字幕。
 struct ListenSettings: View {
@@ -369,13 +382,11 @@ struct ListenSettings: View {
     var body: some View {
         Form {
             Section {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(model.isListening ? String(localized: "正在收听") : String(localized: "实时字幕"))
-                        Text("快捷键 ⌃⌥C").font(.caption).foregroundStyle(.secondary)
-                    }
-                    Spacer()
+                LabeledContent {
                     Button(model.isListening ? String(localized: "停止收听") : String(localized: "开始收听")) { onToggle() }
+                } label: {
+                    Text(model.isListening ? String(localized: "正在收听") : String(localized: "收听电脑声音"))
+                    Text(verbatim: "⌃⌥C")
                 }
                 Picker("收听来源", selection: Binding(
                     get: { config.listenSource },
@@ -390,18 +401,11 @@ struct ListenSettings: View {
                         Text(app.name).tag(app.bundleID)
                     }
                 }
-            } footer: {
-                Text("只收听某个应用时，其他声音不会出现在字幕里。列表里是正在播放声音的应用。")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section {
                 LabeledContent("粘贴刚才那段", value: "⌃⌥V")
             } header: {
-                Text("粘贴")
+                Text("收听")
             } footer: {
-                Text("收听时按 ⌃⌥V，把最近一段话（从上一次停顿开始，最多 30 秒）整理后粘贴到光标处。也可以点字幕条上的某一句，从那句粘贴到最新。")
+                Text("只收听某个应用时，其他声音不会出现在字幕里。收听时按 ⌃⌥V，或点字幕条上某一句旁边的\"粘贴\"，可以把听到的话整理后粘贴到光标处。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -439,32 +443,20 @@ struct ListenSettings: View {
                     ForEach(OutputLanguage.allCases.filter(\.isTranslation), id: \.self) { Text($0.title).tag($0) }
                 }
                 .disabled(!config.captionTranslate)
+                Toggle("边听边翻译", isOn: Binding(
+                    get: { config.captionLiveTranslate },
+                    set: { value in model.configStore.update { $0.captionLiveTranslate = value } }
+                ))
+                .disabled(!config.captionTranslate)
             } header: {
                 Text("翻译")
             } footer: {
-                Group {
-                    if !config.ai.isConfigured {
-                        Text("需要先在\"配置 AI\"里选好服务。")
-                    } else if config.ai.isLocal {
-                        Text("每句说完后由本机的 AI 翻译，不联网。")
-                    } else {
-                        Text("每句说完后由你配置的 AI 服务翻译，字幕文字会发送给该服务。选 Ollama 或 LM Studio 可以不联网。")
-                    }
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            }
-
-            Section {
-                HStack {
-                    Text("声音只在这台 Mac 上识别，不会上传。第一次收听时，macOS 会询问是否允许录制系统音频。")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Button("打开系统设置") { Permissions.openSystemAudioSettings() }
-                }
-            } header: {
-                Text("隐私")
+                Text(!config.ai.isConfigured ? String(localized: "需要先在\"配置 AI\"里选好服务。")
+                     : config.captionLiveTranslate
+                     ? String(localized: "用\"配置 AI\"里的服务翻译，译文显示在原文下面。边听边翻译时，正在说的这句也会先翻出来，随说话内容更新，会多调用几次 AI 服务。")
+                     : String(localized: "每句说完后，用\"配置 AI\"里的服务翻译，译文显示在原文下面。"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -483,5 +475,23 @@ struct ListenSettings: View {
         let current = config.listenSource
         guard !current.isEmpty, !apps.contains(where: { $0.bundleID == current }) else { return apps }
         return [AudioSourceApp(bundleID: current, name: AudioProcesses.name(of: current))] + apps
+    }
+}
+
+/// 识别模型：默认 SenseVoice，也可以换成其他模型。
+struct ModelSettings: View {
+    let model: AppModel
+
+    var body: some View {
+        Form {
+            Section {
+                SpeechModelList(model: model)
+            } footer: {
+                Text("所有模型都在这台 Mac 上运行，声音不会上传。还没下载的模型，下载完成后自动换用，期间继续用当前的模型。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
     }
 }

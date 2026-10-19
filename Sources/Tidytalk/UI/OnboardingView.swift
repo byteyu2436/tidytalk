@@ -148,20 +148,30 @@ struct OnboardingView: View {
             }
 
         case .ai:
-            Text("文字会发送给你配置的 AI 服务，去掉\"嗯、那个\"并修正口误。可以跳过，直接输出识别结果。")
+            Text("去掉\"嗯、那个\"，修正口误和标点。选 Ollama、LM Studio 或 Apple 智能时不联网。可以跳过，直接输出识别结果。")
                 .foregroundStyle(.secondary)
+            HStack {
+                Toggle("整理文字", isOn: Binding(
+                    get: { model.cleanupEnabled },
+                    set: { model.cleanupEnabled = $0 }
+                ))
+                Spacer()
+                // 云端服务需要 Key，链接放在显眼的位置
+                if AIProvider.detect(model.configStore.config.ai) == .cloud {
+                    Link("没有 API Key？获取 DeepSeek API Key", destination: URL(string: "https://platform.deepseek.com/api_keys")!)
+                        .font(.callout)
+                }
+            }
             AIConfigEditor(model: model)
-            Toggle("整理文字", isOn: Binding(
-                get: { model.cleanupEnabled },
-                set: { model.cleanupEnabled = $0 }
-            ))
-            Link("获取 DeepSeek API Key", destination: URL(string: "https://platform.deepseek.com/api_keys")!)
-                .font(.callout)
+                .disabled(!model.cleanupEnabled)
 
         case .model:
             Text("在这台 Mac 上识别语音，支持中文、英文、日文、韩文和粤语，自动判断语言。")
                 .foregroundStyle(.secondary)
             ModelDownloadView(manager: model.models)
+            Text("以后可以在\"设置 › 识别模型\"里换用其他模型。")
+                .font(.callout)
+                .foregroundStyle(.secondary)
         }
     }
 

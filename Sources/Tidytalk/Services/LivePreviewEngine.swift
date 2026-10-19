@@ -9,11 +9,11 @@ actor LivePreviewEngine {
     /// 未定稿的部分超过这个长度时，在停顿处把前面的部分定稿。
     static let windowSeconds: Double = 18
 
-    private let recognizer: SpeechRecognizer
+    private let recognizer: any SpeechTranscribing
     private var committedText = ""
     private var committedSamples = 0
 
-    init(recognizer: SpeechRecognizer) {
+    init(recognizer: any SpeechTranscribing) {
         self.recognizer = recognizer
     }
 
@@ -27,13 +27,13 @@ actor LivePreviewEngine {
             let ranges = AudioMath.chunkRanges(window, maxSeconds: Self.windowSeconds * 0.7)
             for range in ranges.dropLast() {
                 let text = await recognizer.transcribe(Array(window[range]))
-                committedText = SpeechRecognizer.join([committedText, text])
+                committedText = Transcript.join([committedText, text])
             }
             let consumed = ranges.dropLast().last?.upperBound ?? 0
             committedSamples += consumed
             window = Array(window[consumed...])
         }
         let current = await recognizer.transcribe(window)
-        return SpeechRecognizer.join([committedText, current])
+        return Transcript.join([committedText, current])
     }
 }

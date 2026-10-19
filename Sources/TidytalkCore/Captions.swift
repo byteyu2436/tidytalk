@@ -69,7 +69,12 @@ public struct CaptionSentence: Equatable, Sendable, Identifiable {
 /// 只保留最近的一段，旧的句子从前面丢掉；界面只显示最后几行。
 public struct CaptionTranscript: Equatable, Sendable {
     public private(set) var sentences: [CaptionSentence] = []
-    public var partial = ""
+    /// 正在说的这句（识别中）。清空时它的译文也一起清空。
+    public var partial = "" {
+        didSet { if partial.isEmpty { partialTranslation = "" } }
+    }
+    /// 正在说的这句的译文：边听边翻译，随原文更新。这句说完后先留作这句的译文，等整句的正式译文回来再替换。
+    public var partialTranslation = ""
     /// 最多保留的字数：够"粘贴刚才那段"取 30 秒的话，屏幕上只显示最后几行。
     public let limit: Int
     private var nextID = 0
@@ -83,11 +88,13 @@ public struct CaptionTranscript: Equatable, Sendable {
     /// 一句话说完，识别出最终结果。返回这句的编号，空句子返回 nil。
     @discardableResult
     public mutating func commit(_ sentence: String, start: Date = Date(), end: Date = Date()) -> Int? {
+        let provisional = partialTranslation
         partial = ""
         let text = sentence.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return nil }
         nextID += 1
-        sentences.append(CaptionSentence(id: nextID, text: text, start: start, end: end))
+        sentences.append(CaptionSentence(id: nextID, text: text, start: start, end: end,
+                                         translation: provisional.isEmpty ? nil : provisional))
         while sentences.count > 1, sentences.dropFirst().reduce(0, { $0 + $1.text.count }) >= limit {
             sentences.removeFirst()
         }
@@ -116,6 +123,7 @@ public struct CaptionTranscript: Equatable, Sendable {
     public mutating func clear() {
         sentences.removeAll()
         partial = ""
+        partialTranslation = ""
     }
 
     /// 只显示原文时的整段文字。
@@ -158,9 +166,13 @@ public enum CaptionTranslation {
         """
     }
 
+    /// - Parameter partial: 这句话还没说完（边听边翻译），只翻译已经说出的部分。
     public static func messages(for sentence: String, context: [String] = [], language: OutputLanguage,
-                                vocabulary: [String] = []) -> [TranscriptCleanup.Message] {
+                                vocabulary: [String] = [], partial: Bool = false) -> [TranscriptCleanup.Message] {
         var system = systemPrompt(language)
+        if partial {
+            system += "\n7. 这句话还没说完：只翻译已经说出的部分，不要补全或猜测后面的内容。"
+        }
         let terms = Array(Vocabulary.normalize(vocabulary).prefix(Vocabulary.promptLimit))
         if !terms.isEmpty {
             system += "\n\n用户词库（人名、产品名、专业术语的正确写法）：\n" + terms.joined(separator: "、")

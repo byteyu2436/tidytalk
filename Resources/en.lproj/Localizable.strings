@@ -194,13 +194,11 @@
 "点击下方按钮，在系统设置中打开 Tidytalk 的开关。" = "Click the button below, then turn on Tidytalk in System Settings.";
 
 /* OnboardingView.swift:151 */
-"文字会发送给你配置的 AI 服务，去掉\"嗯、那个\"并修正口误。可以跳过，直接输出识别结果。" = "Text is sent to the AI service you choose to remove fillers like \"um\" and fix slips. You can skip this and get the raw transcript.";
 
 /* OnboardingView.swift:154 */
 "整理文字" = "Tidy up text";
 
 /* OnboardingView.swift:158 */
-"获取 DeepSeek API Key" = "Get a DeepSeek API Key";
 
 /* OnboardingView.swift:162 */
 "在这台 Mac 上识别语音，支持中文、英文、日文、韩文和粤语，自动判断语言。" = "Recognizes speech on this Mac. Supports Chinese, English, Japanese, Korean, and Cantonese, and detects the language automatically.";
@@ -329,13 +327,11 @@
 "未连接时使用系统默认麦克风。" = "Uses the system default when it isn't connected.";
 
 /* SettingsView.swift:219 */
-"语音识别模型" = "Speech Model";
 
 /* SettingsView.swift:250 */
 "整理后翻译成 %@。" = " Then translated into %@.";
 
 /* SettingsView.swift:265 */
-"接口" = "Service";
 
 /* SettingsView.swift:267 */
 "用 AI 去掉口头禅，修正口误和标点。关闭后直接输出识别结果。" = "AI removes filler words and fixes slips and punctuation. When off, you get the raw transcript.";
@@ -365,10 +361,8 @@
 "用于监听%@键和粘贴文字" = "Used to detect the %@ key and paste text";
 
 /* SettingsView.swift:337 */
-"隐私" = "Privacy";
 
 /* SettingsView.swift:338 */
-"声音只在这台 Mac 上识别。开启整理文字后，文字会发送给你配置的 AI 服务。最近记录只保存在内存中，退出后清空。" = "Your voice is recognized on this Mac. With Tidy up text on, the text is sent to the AI service you set up. Recent results stay in memory and are cleared when you quit.";
 
 /* SharedViews.swift:34 */
 "接口地址" = "Endpoint";
@@ -395,7 +389,6 @@
 "测试连接" = "Test Connection";
 
 /* SharedViews.swift:71 */
-"打开配置文件" = "Open Config File";
 
 /* SharedViews.swift:90 */
 "有未保存的修改" = "Unsaved changes";
@@ -461,7 +454,6 @@
 "输出语言：%@" = "Output Language: %@";
 
 /* StatusItemController.swift:86 */
-"设置引导…" = "Setup Guide…";
 
 /* StatusItemController.swift:88 */
 "检查更新…" = "Check for Updates…";
@@ -666,14 +658,10 @@
 "开始收听" = "Start Listening";
 "停止收听" = "Stop Listening";
 "字幕" = "Captions";
-"快捷键 ⌃⌥C" = "Shortcut ⌃⌥C";
 "收听来源" = "Listen To";
 "全部声音" = "All Audio";
-"只收听某个应用时，其他声音不会出现在字幕里。列表里是正在播放声音的应用。" = "Pick an app to caption only its audio. The list shows apps that are playing sound.";
 "文字大小" = "Text Size";
 "没有声音 10 秒后隐藏" = "Hide after 10 seconds of silence";
-"声音只在这台 Mac 上识别，不会上传。第一次收听时，macOS 会询问是否允许录制系统音频。" = "Audio is recognized on this Mac and never uploaded. The first time you listen, macOS asks to allow system audio recording.";
-"停止实时字幕" = "Stop Live Captions";
 "实时字幕" = "Live Captions";
 "没有应用在播放声音" = "No apps are playing sound";
 "收听来源：%@" = "Listen To: %@";
@@ -688,18 +676,102 @@
 "翻译成" = "Translate To";
 "翻译" = "Translation";
 "需要先在\"配置 AI\"里选好服务。" = "Choose a service in Set Up AI first.";
-"每句说完后由本机的 AI 翻译，不联网。" = "Each sentence is translated by the AI on this Mac, with no internet needed.";
-"每句说完后由你配置的 AI 服务翻译，字幕文字会发送给该服务。选 Ollama 或 LM Studio 可以不联网。" = "Each sentence is translated by your AI service, so caption text is sent to it. Choose Ollama or LM Studio to stay offline.";
-"翻译字幕：%@" = "Translate Captions: %@";
 
 /* 粘贴刚才那段 */
 "先按 ⌃⌥C 打开实时字幕" = "Press ⌃⌥C to turn on Live Captions first";
 "还没有可以粘贴的内容" = "Nothing to paste yet";
-"点按粘贴这句及之后的内容" = "Click to paste from this sentence onward";
 "粘贴刚才那段" = "Paste What Was Just Said";
-"收听时按 ⌃⌥V，把最近一段话（从上一次停顿开始，最多 30 秒）整理后粘贴到光标处。也可以点字幕条上的某一句，从那句粘贴到最新。" = "While listening, press ⌃⌥V to tidy and paste the latest passage (since the last pause, up to 30 seconds) at the cursor. You can also click a sentence in the captions to paste from there onward.";
 
 /* 字幕样式 */
 "样式" = "Style";
 "深色" = "Dark";
 "玻璃" = "Glass";
+
+/* 识别模型、Apple 智能、自动学词、转写文件 */
+"发现改动：%@ → %@，可在菜单里加入词库" = "Found an edit: %1$@ → %2$@. Add it to your vocabulary from the menu.";
+"请输入以 http:// 或 https:// 开头的链接" = "Enter a link starting with http:// or https://";
+"转写结果" = "Transcript";
+"Apple 智能响应超时" = "Apple Intelligence timed out";
+"这台 Mac 不支持 Apple 智能" = "This Mac doesn't support Apple Intelligence";
+"请先在系统设置里打开 Apple 智能" = "Turn on Apple Intelligence in System Settings first";
+"Apple 智能还没准备好，请稍后再试" = "Apple Intelligence isn't ready yet. Try again later";
+"Apple 智能暂时不可用" = "Apple Intelligence is unavailable right now";
+"Apple 系统识别不支持当前的系统语言" = "Apple speech recognition doesn't support your system language";
+"这个文件里没有声音" = "This file has no audio";
+"无法读取这个文件的音频，换成 MP3、M4A、WAV、MP4 或 MOV 试试" = "Couldn't read the audio in this file. Try MP3, M4A, WAV, MP4, or MOV";
+"文件太长了，一次最多转写 3 小时" = "This file is too long. Up to 3 hours can be transcribed at a time";
+"下载的 yt-dlp 校验失败，请重试" = "The downloaded yt-dlp failed verification. Try again";
+"无法下载这个链接" = "Couldn't download this link";
+"这个链接的音频格式暂不支持" = "This link's audio format isn't supported yet";
+"识别模型" = "Speech Model";
+"所有模型都在这台 Mac 上运行，声音不会上传。还没下载的模型，下载完成后自动换用，期间继续用当前的模型。" = "All models run on this Mac and your audio is never uploaded. A model you haven't downloaded is used once its download finishes; until then the current model keeps working.";
+"使用这台 Mac 自带的 Apple 智能，不需要 API Key，文字不会离开这台 Mac。" = "Uses Apple Intelligence built into this Mac. No API key needed, and your text never leaves your Mac.";
+"Apple 智能" = "Apple Intelligence";
+"系统自带" = "Built in";
+"默认" = "Default";
+"使用中" = "In Use";
+"使用" = "Use";
+"删除下载的文件" = "Delete downloaded files";
+"下载并使用" = "Download & Use";
+"校验中…" = "Verifying…";
+"转写文件或链接…" = "Transcribe File or Link…";
+"发现 %lld 处改动" = "%lld Edits Found";
+"忽略" = "Ignore";
+"全部加入词库" = "Add All to Vocabulary";
+"以后识别出左边的写法时，改成右边的" = "Future transcripts change the left spelling to the right";
+"把音频或视频文件拖到这里" = "Drop an audio or video file here";
+"MP3、M4A、WAV、MP4、MOV 等，最长 3 小时" = "MP3, M4A, WAV, MP4, MOV and more, up to 3 hours";
+"选择文件…" = "Choose File…";
+"或者粘贴视频链接（YouTube、B 站等）" = "Or paste a video link (YouTube, Bilibili, and more)";
+"转写" = "Transcribe";
+"只下载链接里的音频，转写完就删除。仅限你有权使用的内容。" = "Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.";
+"第一次转写链接时，会先从 GitHub 下载开源的下载工具 yt-dlp（约 35 MB）。仅限你有权使用的内容。" = "The first time you transcribe a link, Tidytalk downloads the open-source tool yt-dlp (about 35 MB) from GitHub. Use only content you have the right to use.";
+"停止" = "Stop";
+"拷贝全文" = "Copy All";
+"导出" = "Export";
+"新的转写" = "New Transcription";
+"在这台 Mac 上识别，使用%@模型。" = "Recognized on this Mac with %@.";
+"正在下载 yt-dlp…" = "Downloading yt-dlp…";
+"正在下载音频 %lld%%" = "Downloading audio %lld%%";
+"正在读取音频…" = "Reading audio…";
+"正在识别 %@/%@" = "Recognizing %1$@/%2$@";
+"重试" = "Try Again";
+"转写文件或链接" = "Transcribe File or Link";
+"发现的改动" = "Edits Found";
+"这些是粘贴后你手动改掉的词。加入词库后，以后识别出左边的写法时会改成右边的。" = "These are words you changed by hand after pasting. Once added, future transcripts change the left spelling to the right.";
+"发现我改过的词时提示加入词库" = "Suggest words I correct for my vocabulary";
+"粘贴后，如果你在同一个输入框里把某个词改成了别的写法，会在菜单栏和这里列出来，确认后才加入。" = "If you change a word in the same text field after pasting, it's listed in the menu bar and here. Nothing is added until you confirm.";
+"Apple 系统识别" = "Apple Speech";
+"速度快，中文、英文、日文、韩文、粤语，中英文混说效果好。" = "Fast. Chinese, English, Japanese, Korean, and Cantonese, great with mixed Chinese and English.";
+"支持约 99 种语言，适合小语种。中文会漏字，中文请用其他模型。" = "About 99 languages, good for less common ones. It drops characters in Chinese, so use another model for Chinese.";
+"macOS 自带，不占下载空间。按系统语言识别，中英文混说效果一般。" = "Built into macOS, nothing to download. Recognizes your system language; weaker on mixed Chinese and English.";
+"纯文本（.txt）" = "Plain Text (.txt)";
+"字幕（.srt）" = "Subtitles (.srt)";
+"启用" = "Turn On";
+"最准确，支持 52 种语言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。" = "Most accurate, 52 languages, and recognizes names and terms from your vocabulary. Slower: about 4 seconds for 20 seconds of speech.";
+"中文、英文、日文，准确度接近 Qwen3-ASR，速度稍快。词库对它帮助不大。" = "Chinese, English, and Japanese. Nearly as accurate as Qwen3-ASR and a bit faster. Your vocabulary helps it little.";
+
+/* 界面整理 */
+"去掉\"嗯、那个\"，修正口误和标点。选 Ollama、LM Studio 或 Apple 智能时不联网。可以跳过，直接输出识别结果。" = "Removes \"um\" and \"like\" and fixes slips and punctuation. Ollama, LM Studio, and Apple Intelligence stay offline. You can skip this and get the raw transcript.";
+"没有 API Key？获取 DeepSeek API Key" = "No API key? Get a DeepSeek API key";
+"以后可以在\"设置 › 识别模型\"里换用其他模型。" = "You can switch to another model later in Settings › Speech Model.";
+"说话输入" = "Dictation";
+"其他" = "More";
+"设置引导" = "Setup Guide";
+"打开" = "Open";
+"配置文件" = "Configuration File";
+"在编辑器中打开" = "Open in Editor";
+"录制系统音频" = "System Audio Recording";
+"用于实时字幕，第一次收听时 macOS 会询问" = "For live captions. macOS asks the first time you listen";
+"声音只在这台 Mac 上识别，不会上传。开启整理文字或字幕翻译后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。" = "Audio is recognized on this Mac and never uploaded. With tidying or caption translation on, text is sent to your AI service; local models and Apple Intelligence stay offline.";
+"AI 服务" = "AI Service";
+"收听电脑声音" = "Listen to Computer Audio";
+"收听" = "Listening";
+"每句说完后，用\"配置 AI\"里的服务翻译，译文显示在原文下面。" = "Each sentence is translated with your Set Up AI service and shown under the original.";
+"翻译成%@" = "Translate to %@";
+
+/* 边听边翻译 */
+"边听边翻译" = "Translate as You Listen";
+"用\"配置 AI\"里的服务翻译，译文显示在原文下面。边听边翻译时，正在说的这句也会先翻出来，随说话内容更新，会多调用几次 AI 服务。" = "Translated with your Set Up AI service and shown under the original. With live translation, the sentence being spoken is translated too and updates as it goes, which calls the AI service a few more times.";
+"只收听某个应用时，其他声音不会出现在字幕里。收听时按 ⌃⌥V，或点字幕条上某一句旁边的\"粘贴\"，可以把听到的话整理后粘贴到光标处。" = "Pick an app to caption only its audio. While listening, press ⌃⌥V, or click Paste next to a sentence in the captions, to tidy and paste what was said at the cursor.";
+"从这句开始粘贴到最新" = "Paste from this sentence onward";

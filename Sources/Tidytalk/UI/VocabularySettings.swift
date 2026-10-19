@@ -48,6 +48,26 @@ struct VocabularySettings: View {
 
     var body: some View {
         Form {
+            if !model.correctionSuggestions.isEmpty {
+                Section {
+                    ForEach(model.correctionSuggestions) { correction in
+                        HStack {
+                            Text(verbatim: "\(correction.from) → \(correction.to)")
+                            Spacer()
+                            Button("忽略") { model.dismissCorrection(correction) }
+                            Button("加入词库") { accept(correction) }
+                                .buttonStyle(.borderedProminent)
+                        }
+                    }
+                } header: {
+                    Text("发现的改动")
+                } footer: {
+                    Text("这些是粘贴后你手动改掉的词。加入词库后，以后识别出左边的写法时会改成右边的。")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section {
                 TextEditor(text: $termsText)
                     .font(.body)
@@ -152,6 +172,17 @@ struct VocabularySettings: View {
             }
 
             Section {
+                Toggle("发现我改过的词时提示加入词库", isOn: Binding(
+                    get: { store.config.learnCorrections },
+                    set: { value in store.update { $0.learnCorrections = value } }
+                ))
+            } footer: {
+                Text("粘贴后，如果你在同一个输入框里把某个词改成了别的写法，会在菜单栏和这里列出来，确认后才加入。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
                 HStack {
                     if saved && !isDirty {
                         Label("已保存", systemImage: "checkmark").foregroundStyle(.secondary)
@@ -169,6 +200,17 @@ struct VocabularySettings: View {
         }
         .formStyle(.grouped)
         .onAppear(perform: load)
+    }
+
+    /// 加入词库：把这条改动写进替换表和常用词，正在编辑、还没保存的内容一起保存。
+    private func accept(_ correction: WordCorrection) {
+        rows.removeAll { $0.from.trimmingCharacters(in: .whitespaces) == correction.from }
+        rows.append(ReplacementRow(from: correction.from, to: correction.to))
+        if !draftTerms.contains(where: { $0.caseInsensitiveCompare(correction.to) == .orderedSame }) {
+            termsText += (termsText.isEmpty || termsText.hasSuffix("\n") ? "" : "\n") + correction.to
+        }
+        save()
+        model.dismissCorrection(correction)
     }
 
     private func load() {

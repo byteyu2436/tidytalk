@@ -1,6 +1,14 @@
 import Foundation
 
-/// 文本整理使用的 OpenAI 兼容接口配置。
+/// AI 服务的种类。
+public enum AIService: String, Sendable {
+    /// OpenAI 兼容的接口：Ollama、LM Studio、DeepSeek、OpenAI 等。
+    case openAICompatible = "openai"
+    /// 系统自带的 Apple 智能（Foundation Models），在这台 Mac 上运行。
+    case apple
+}
+
+/// 文本整理使用的 AI 服务配置。
 public struct AIConfig: Equatable, Sendable {
     /// 例如 https://api.deepseek.com/v1、https://api.openai.com/v1
     public var baseURL: String
@@ -10,13 +18,17 @@ public struct AIConfig: Equatable, Sendable {
     public var temperature: Double?
     /// 请求超时（秒），超时后直接粘贴原文。
     public var timeout: Double
+    /// 使用哪一种服务：OpenAI 兼容接口，或者系统自带的 Apple 智能（这时接口地址等字段不用）。
+    public var service: AIService
 
-    public init(baseURL: String, apiKey: String, model: String, temperature: Double?, timeout: Double) {
+    public init(baseURL: String, apiKey: String, model: String, temperature: Double?, timeout: Double,
+                service: AIService = .openAICompatible) {
         self.baseURL = baseURL
         self.apiKey = apiKey
         self.model = model
         self.temperature = temperature
         self.timeout = timeout
+        self.service = service
     }
 
     public static let `default` = AIConfig(
@@ -38,14 +50,17 @@ public struct AIConfig: Equatable, Sendable {
         return url
     }
 
-    /// 接口在本机（Ollama、LM Studio 等），文字不会离开这台 Mac，也不需要 API Key。
+    /// 接口在本机（Ollama、LM Studio 等）或者使用 Apple 智能，文字不会离开这台 Mac，也不需要 API Key。
     public var isLocal: Bool {
+        if service == .apple { return true }
         guard let host = chatCompletionsURL?.host()?.lowercased() else { return false }
         return ["localhost", "127.0.0.1", "::1", "[::1]"].contains(host) || host.hasSuffix(".local")
     }
 
+    /// Apple 智能不需要填写任何东西；这台 Mac 能不能用，调用时再检查。
     public var isConfigured: Bool {
-        chatCompletionsURL != nil
+        if service == .apple { return true }
+        return chatCompletionsURL != nil
             && (isLocal || !apiKey.trimmingCharacters(in: .whitespaces).isEmpty)
             && !model.trimmingCharacters(in: .whitespaces).isEmpty
     }
@@ -84,7 +99,10 @@ public struct AIConfig: Equatable, Sendable {
 ///   "caption_auto_hide": true,
 ///   "caption_translate": false,
 ///   "caption_language": "zh-Hans",
-///   "caption_style": "dark"
+///   "caption_style": "dark",
+///   "caption_live_translate": true,
+///   "speech_model": "sense_voice",
+///   "learn_corrections": true
 /// }
 /// ```
 public struct AppConfig: Equatable, Sendable {
@@ -134,6 +152,12 @@ public struct AppConfig: Equatable, Sendable {
     public var captionLanguage: OutputLanguage
     /// 字幕条的样式。
     public var captionStyle: CaptionStyle
+    /// 字幕翻译时，正在说的这句也边听边翻译（会多调用几次 AI 服务）。
+    public var captionLiveTranslate: Bool
+    /// 语音识别模型。
+    public var speechModel: SpeechModel
+    /// 粘贴后发现用户改了某个词时，提示加入词库。
+    public var learnCorrections: Bool
 
     public init(cleanupEnabled: Bool = true, ai: AIConfig = .default, typography: Bool = true,
                 vocabulary: [String] = [], replacements: [String: String] = [:],
@@ -144,7 +168,9 @@ public struct AppConfig: Equatable, Sendable {
                 customRules: [String] = [], autoUpdateCheck: Bool = true, livePreview: Bool = true,
                 listenSource: String = "", captionSize: CaptionSize = .medium, captionAutoHide: Bool = true,
                 captionTranslate: Bool = false, captionLanguage: OutputLanguage = .captionDefault(),
-                captionStyle: CaptionStyle = .dark) {
+                captionStyle: CaptionStyle = .dark, captionLiveTranslate: Bool = true,
+                speechModel: SpeechModel = .senseVoice,
+                learnCorrections: Bool = true) {
         self.cleanupEnabled = cleanupEnabled
         self.ai = ai
         self.typography = typography
@@ -170,6 +196,9 @@ public struct AppConfig: Equatable, Sendable {
         self.captionTranslate = captionTranslate
         self.captionLanguage = captionLanguage.isTranslation ? captionLanguage : .captionDefault()
         self.captionStyle = captionStyle
+        self.captionLiveTranslate = captionLiveTranslate
+        self.speechModel = speechModel
+        self.learnCorrections = learnCorrections
     }
 
     /// 实际生效的语音改写触发键：和说话的触发键相同时视为关闭。
@@ -213,6 +242,10 @@ public struct AppConfig: Equatable, Sendable {
         static let captionTranslate = "caption_translate"
         static let captionLanguage = "caption_language"
         static let captionStyle = "caption_style"
+        static let captionLiveTranslate = "caption_live_translate"
+        static let speechModel = "speech_model"
+        static let learnCorrections = "learn_corrections"
+        static let service = "service"
         static let off = "off"
         /// 旧版本的按应用风格，已废弃，写回时删除
         static let legacyAppStyles = "app_styles"
@@ -240,7 +273,8 @@ public struct AppConfig: Equatable, Sendable {
                 apiKey: (ai[Key.apiKey] as? String) ?? defaults.apiKey,
                 model: (ai[Key.model] as? String) ?? defaults.model,
                 temperature: temperature,
-                timeout: (ai[Key.timeout] as? NSNumber)?.doubleValue ?? defaults.timeout
+                timeout: (ai[Key.timeout] as? NSNumber)?.doubleValue ?? defaults.timeout,
+                service: (ai[Key.service] as? String).flatMap(AIService.init(rawValue:)) ?? .openAICompatible
             ),
             typography: (root[Key.typography] as? Bool) ?? true,
             vocabulary: (root[Key.vocabulary] as? [Any])?.compactMap { $0 as? String } ?? [],
@@ -268,7 +302,10 @@ public struct AppConfig: Equatable, Sendable {
             captionAutoHide: (root[Key.captionAutoHide] as? Bool) ?? true,
             captionTranslate: (root[Key.captionTranslate] as? Bool) ?? false,
             captionLanguage: (root[Key.captionLanguage] as? String).flatMap(OutputLanguage.init(rawValue:)) ?? .captionDefault(),
-            captionStyle: (root[Key.captionStyle] as? String).flatMap(CaptionStyle.init(rawValue:)) ?? .dark
+            captionStyle: (root[Key.captionStyle] as? String).flatMap(CaptionStyle.init(rawValue:)) ?? .dark,
+            captionLiveTranslate: (root[Key.captionLiveTranslate] as? Bool) ?? true,
+            speechModel: (root[Key.speechModel] as? String).flatMap(SpeechModel.init(rawValue:)) ?? .senseVoice,
+            learnCorrections: (root[Key.learnCorrections] as? Bool) ?? true
         )
     }
 
@@ -283,6 +320,7 @@ public struct AppConfig: Equatable, Sendable {
         ai[Key.model] = self.ai.model
         ai[Key.temperature] = self.ai.temperature.map { $0 as Any } ?? NSNull()
         ai[Key.timeout] = self.ai.timeout
+        ai[Key.service] = self.ai.service.rawValue
         root[Key.ai] = ai
         root[Key.typography] = typography
         root[Key.vocabulary] = vocabulary
@@ -306,6 +344,9 @@ public struct AppConfig: Equatable, Sendable {
         root[Key.captionTranslate] = captionTranslate
         root[Key.captionLanguage] = captionLanguage.rawValue
         root[Key.captionStyle] = captionStyle.rawValue
+        root[Key.captionLiveTranslate] = captionLiveTranslate
+        root[Key.speechModel] = speechModel.rawValue
+        root[Key.learnCorrections] = learnCorrections
         root[Key.legacyAppStyles] = nil
 
         return try JSONSerialization.data(withJSONObject: root,

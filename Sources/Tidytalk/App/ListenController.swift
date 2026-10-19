@@ -7,7 +7,7 @@ import TidytalkCore
 @MainActor
 final class ListenController {
     private let model: AppModel
-    private let recognizer: () async -> SpeechRecognizer?
+    private let recognizer: () async -> (any SpeechTranscribing)?
     private var capture: SystemAudioCapture?
     private var segmenter: SpeechSegmenter?
 
@@ -22,6 +22,13 @@ final class ListenController {
     private static let maxTranslations = 2
     /// 每次收听只提示一次翻译失败，避免每句都弹出来。
     private var reportedTranslationError = false
+    /// 边听边翻译：同时只翻译一次正在说的这句，记下上次送去翻译的文字和时间，控制调用次数。
+    private var translatingPartial = false
+    private var lastPartialSource = ""
+    private var lastPartialRequest = Date.distantPast
+    private static let partialInterval: TimeInterval = 1.5
+    /// 多出这么多字才重新翻译正在说的这句。
+    private static let partialGrowth = 3
 
     /// 字幕条按这些回调显示、隐藏。
     var onStart: (() -> Void)?
@@ -30,7 +37,7 @@ final class ListenController {
     /// 开发用：记录切出的每一句和识别结果。
     var onDebug: ((String) -> Void)?
 
-    init(model: AppModel, recognizer: @escaping () async -> SpeechRecognizer?) {
+    init(model: AppModel, recognizer: @escaping () async -> (any SpeechTranscribing)?) {
         self.model = model
         self.recognizer = recognizer
         SystemAudioCapture.observeOutputDevice { [weak self] in
@@ -160,6 +167,7 @@ final class ListenController {
                     let text = await recognizer.transcribe(final.samples)
                     onDebug?("final \(final.samples.count) samples → \(text)")
                     guard model.isListening else { return }
+                    lastPartialSource = ""
                     if let id = model.captions.commit(polish(text), start: min(final.start, final.end), end: final.end) {
                         requestTranslation(id)
                     }
@@ -167,7 +175,10 @@ final class ListenController {
                     pendingPartial = nil
                     let current = generation
                     let text = await recognizer.transcribe(samples)
-                    if current == generation, model.isListening { model.captions.partial = polish(text) }
+                    if current == generation, model.isListening {
+                        model.captions.partial = polish(text)
+                        requestPartialTranslation()
+                    }
                 } else {
                     return
                 }
@@ -187,7 +198,7 @@ final class ListenController {
         paste(model.captions.recentPassage())
     }
 
-    /// 点字幕条上的某一句：从那一句粘贴到最新。`id` 为 nil 表示点的是正在说的这句。
+    /// 点字幕条上某一句旁边的"粘贴"：从那一句粘贴到最新。`id` 为 nil 表示正在说的这句。
     func paste(from id: Int?) {
         guard model.isListening else { return }
         paste(model.captions.passage(from: id))
@@ -232,11 +243,15 @@ final class ListenController {
         while translating < Self.maxTranslations, !translationQueue.isEmpty {
             // 积压太多时只翻译最近的几句，前面的已经滚出字幕条了
             if translationQueue.count > Self.maxTranslations * 2 {
-                for id in translationQueue.dropLast(Self.maxTranslations) { model.captions.setTranslation(nil, for: id) }
+                for id in translationQueue.dropLast(Self.maxTranslations) {
+                    model.captions.setTranslation(model.captions.sentence(id)?.translation, for: id)
+                }
                 translationQueue.removeFirst(translationQueue.count - Self.maxTranslations)
             }
             let id = translationQueue.removeFirst()
             guard let sentence = model.captions.sentence(id) else { continue }
+            // 正式译文回来之前，先显示边听边翻出来的译文（有的话）；失败时也保留它
+            let provisional = sentence.translation
             let context = model.captions.sentences.prefix { $0.id != id }.suffix(2).map(\.text)
             let config = model.configStore.config
             translating += 1
@@ -251,16 +266,44 @@ final class ListenController {
                                           vocabulary: config.vocabulary)
                     guard model.isListening else { return }
                     let translation = CaptionTranslation.validate(original: sentence.text, translated: output)
-                    model.captions.setTranslation(translation.map(polishTranslation), for: id)
+                    model.captions.setTranslation(translation.map(polishTranslation) ?? provisional, for: id)
                 } catch {
                     guard model.isListening else { return }
-                    model.captions.setTranslation(nil, for: id)
+                    model.captions.setTranslation(provisional, for: id)
                     if !reportedTranslationError {
                         reportedTranslationError = true
                         onError?(String(localized: "字幕翻译失败：\(error.localizedDescription)"))
                     }
                 }
             }
+        }
+    }
+
+    /// 边听边翻译正在说的这句。每次最多一个请求，至少隔 1.5 秒、多出几个字才再翻译；
+    /// 这句说完后（generation 变了）回来的结果作废。失败时不提示，说完后整句翻译会再试。
+    private func requestPartialTranslation() {
+        let config = model.configStore.config
+        let text = model.captions.partial
+        guard config.captionTranslate, config.captionLiveTranslate, config.ai.isConfigured, !translatingPartial,
+              Date().timeIntervalSince(lastPartialRequest) >= Self.partialInterval,
+              text.count >= 4, text.count >= lastPartialSource.count + Self.partialGrowth || text.count < lastPartialSource.count,
+              CaptionTranslation.needsTranslation(text, to: config.captionLanguage)
+        else { return }
+        translatingPartial = true
+        lastPartialRequest = Date()
+        lastPartialSource = text
+        let session = generation
+        let context = model.captions.sentences.suffix(2).map(\.text)
+        Task {
+            defer { translatingPartial = false }
+            guard let output = try? await ChatCompletionClient(config: config.ai)
+                .translateCaption(text, context: context, language: config.captionLanguage,
+                                  vocabulary: config.vocabulary, partial: true),
+                  model.isListening, session == generation, !model.captions.partial.isEmpty,
+                  let translation = CaptionTranslation.validate(original: text, translated: output)
+            else { return }
+            model.captions.partialTranslation = polishTranslation(translation)
+            onDebug?("partial translation: \(text) → \(translation)")
         }
     }
 

@@ -50,9 +50,9 @@ struct ChatCompletionClient: Sendable {
 
     /// 翻译一句字幕，返回模型原始输出，调用方用 `CaptionTranslation.validate` 校验。
     func translateCaption(_ sentence: String, context: [String], language: OutputLanguage,
-                          vocabulary: [String] = []) async throws -> String {
+                          vocabulary: [String] = [], partial: Bool = false) async throws -> String {
         let messages = CaptionTranslation.messages(for: sentence, context: context, language: language,
-                                                   vocabulary: vocabulary)
+                                                   vocabulary: vocabulary, partial: partial)
         return try await complete(messages.map { .init(role: $0.role.rawValue, content: $0.content) })
     }
 
@@ -62,6 +62,9 @@ struct ChatCompletionClient: Sendable {
     }
 
     private func complete(_ messages: [ChatRequest.Message]) async throws -> String {
+        if config.service == .apple {
+            return try await AppleIntelligence.complete(messages.map { ($0.role, $0.content) }, timeout: config.timeout)
+        }
         guard config.isConfigured, let url = config.chatCompletionsURL else { throw ClientError.notConfigured }
 
         var request = URLRequest(url: url)

@@ -44,7 +44,23 @@ final class AppModel {
     var microphoneGranted = Permissions.microphone == .granted
     var accessibilityGranted = Permissions.accessibility
 
-    let models = ModelManager()
+    /// 每个识别模型各自的下载状态。
+    let modelManagers: [SpeechModel: ModelManager] = Dictionary(
+        uniqueKeysWithValues: SpeechModel.allCases.map { ($0, ModelManager(model: $0)) })
+
+    /// 当前选中的识别模型。
+    var models: ModelManager { modelManagers[configStore.config.speechModel]! }
+
+    /// 换用另一个识别模型。还没下载时先下载，下载完成后再切换，期间继续用原来的模型。
+    func useSpeechModel(_ speechModel: SpeechModel) {
+        guard let manager = modelManagers[speechModel] else { return }
+        if manager.isReady {
+            configStore.update { $0.speechModel = speechModel }
+        } else {
+            manager.useWhenReady = { [weak self] in self?.configStore.update { $0.speechModel = speechModel } }
+            manager.download()
+        }
+    }
 
     /// `~/.tidytalk.json` 中的整理开关和 AI 接口配置。
     let configStore = ConfigStore()
@@ -74,6 +90,38 @@ final class AppModel {
 
     func clearHistory() {
         history.removeAll()
+    }
+
+    /// 粘贴后发现用户改掉的词，等用户确认后加入词库。只保存在内存中。
+    private(set) var correctionSuggestions: [WordCorrection] = []
+    /// 用户忽略过的改动，这次运行期间不再提示。
+    @ObservationIgnored private var dismissedCorrections = Set<WordCorrection>()
+
+    /// 记下新发现的改动，返回其中真正新的（已经在替换表里、忽略过的不算）。
+    @discardableResult
+    func suggestCorrections(_ corrections: [WordCorrection]) -> [WordCorrection] {
+        let replacements = configStore.config.replacements
+        let fresh = corrections.filter {
+            replacements[$0.from] != $0.to && !dismissedCorrections.contains($0) && !correctionSuggestions.contains($0)
+        }
+        correctionSuggestions.append(contentsOf: fresh)
+        return fresh
+    }
+
+    /// 加入词库：以后识别出左边的写法时替换成右边的，右边的词也加进常用词。
+    func acceptCorrection(_ correction: WordCorrection) {
+        configStore.update { config in
+            config.replacements[correction.from] = correction.to
+            if !config.vocabulary.contains(where: { $0.caseInsensitiveCompare(correction.to) == .orderedSame }) {
+                config.vocabulary.append(correction.to)
+            }
+        }
+        correctionSuggestions.removeAll { $0 == correction }
+    }
+
+    func dismissCorrection(_ correction: WordCorrection) {
+        dismissedCorrections.insert(correction)
+        correctionSuggestions.removeAll { $0 == correction }
     }
 
     static let levelHistory = 24

@@ -5,7 +5,8 @@ import TidytalkCore
 /// 实时字幕条：浮在所有窗口（包括全屏视频）上方，显示最近两行字幕。
 ///
 /// 不激活的面板，点它不会抢走当前应用的焦点；可以拖到任意位置。
-/// 鼠标移上去时显示翻译、暂停和关闭按钮，关闭就是停止收听；点某一句，从那一句粘贴到最新。
+/// 鼠标移上去时显示翻译、暂停和关闭按钮，关闭就是停止收听；停在某一句上时这句右边出现"粘贴"，
+/// 点它从那一句粘贴到最新。点句子本身什么都不做，以免拖动字幕条时误粘贴。
 /// 两种样式：深色（参照系统"实时字幕"，深色底板、白色文字，放在任何画面上都看得清），
 /// 或者玻璃（和控制中心、说话指示器一样的清透玻璃，文字颜色跟随系统的深浅色）。
 @MainActor
@@ -258,15 +259,23 @@ final class CaptionPanel {
         return targets.target(at: textView.convert(windowPoint, from: nil))
     }
 
+    /// 鼠标下面的"粘贴"按钮属于哪一句。
+    private func pasteButton(at windowPoint: NSPoint) -> CaptionTargets.Target? {
+        guard model.isListening, !model.listeningPaused else { return nil }
+        return targets.pasteButton(at: textView.convert(windowPoint, from: nil))
+    }
+
     private func hover(at windowPoint: NSPoint?) {
         let target = windowPoint.flatMap(target(at:))
         if targets.hovered != target { targets.hovered = target }
-        container.toolTip = target == nil ? nil : String(localized: "点按粘贴这句及之后的内容")
-        if target != nil { NSCursor.pointingHand.set() } else { NSCursor.arrow.set() }
+        let onButton = windowPoint.flatMap(pasteButton(at:)) != nil
+        container.toolTip = onButton ? String(localized: "从这句开始粘贴到最新") : nil
+        if onButton { NSCursor.pointingHand.set() } else { NSCursor.arrow.set() }
     }
 
+    /// 只有点在"粘贴"按钮上才粘贴。
     fileprivate func click(at windowPoint: NSPoint) {
-        guard let target = target(at: windowPoint) else { return }
+        guard let target = pasteButton(at: windowPoint) else { return }
         switch target {
         case .sentence(let id): onPasteFrom?(id)
         case .partial: onPasteFrom?(nil)
@@ -281,9 +290,9 @@ extension CaptionPanel {
         targets.hovered = target
     }
 
-    /// 开发用：在某一句的中心模拟一次点击，走和真实点击相同的坐标换算。
-    func debugClick(_ target: CaptionTargets.Target) {
-        guard let frame = targets.frames[target] else { return }
+    /// 开发用：在某一句（或它的"粘贴"按钮，需先 `debugHover` 到这一句）的中心模拟一次点击，走和真实点击相同的坐标换算。
+    func debugClick(_ target: CaptionTargets.Target, onButton: Bool) {
+        guard let frame = onButton ? targets.buttonFrames[target] : targets.frames[target] else { return }
         click(at: textView.convert(NSPoint(x: frame.midX, y: frame.midY), to: nil))
     }
 }
@@ -300,11 +309,18 @@ final class CaptionTargets {
 
     /// 布局时写入，不需要触发界面刷新。
     @ObservationIgnored var frames: [Target: CGRect] = [:]
-    /// 鼠标所在的句子，高亮显示。
+    /// 鼠标停在某一句上时出现的"粘贴"按钮的位置。
+    @ObservationIgnored var buttonFrames: [Target: CGRect] = [:]
+    /// 鼠标所在的句子，高亮显示并出现"粘贴"按钮。
     var hovered: Target?
 
     func target(at point: CGPoint) -> Target? {
         frames.first { $0.value.insetBy(dx: -6, dy: -3).contains(point) }?.key
+    }
+
+    func pasteButton(at point: CGPoint) -> Target? {
+        guard let hovered, let frame = buttonFrames[hovered], frame.insetBy(dx: -4, dy: -4).contains(point) else { return nil }
+        return hovered
     }
 }
 
@@ -429,9 +445,10 @@ struct CaptionTextView: View {
                 VStack(alignment: .leading, spacing: Self.lineGap) {
                     Text(sentence.text).font(originalFont)
                     if translating, let translation = sentence.translation {
+                        // 正式译文回来之前显示的是边听边翻的译文，淡一些
                         Text(translation)
                             .font(.system(size: CaptionPanel.translationPointSize(size)))
-                            .foregroundStyle(.primary.opacity(0.8))
+                            .foregroundStyle(.primary.opacity(sentence.isTranslating ? 0.6 : 0.8))
                     } else if translating, sentence.isTranslating {
                         Text(verbatim: "…")
                             .font(.system(size: CaptionPanel.translationPointSize(size)))
@@ -442,8 +459,16 @@ struct CaptionTextView: View {
                 .modifier(Target(target: .sentence(sentence.id), targets: targets, space: Self.space))
             }
             if !partial.isEmpty {
-                Text(partial).font(originalFont)
-                    .modifier(Target(target: .partial, targets: targets, space: Self.space))
+                VStack(alignment: .leading, spacing: Self.lineGap) {
+                    Text(partial).font(originalFont)
+                    // 边听边翻译：随原文更新
+                    if translating, !model.captions.partialTranslation.isEmpty {
+                        Text(model.captions.partialTranslation)
+                            .font(.system(size: CaptionPanel.translationPointSize(size)))
+                            .foregroundStyle(.primary.opacity(0.6))
+                    }
+                }
+                .modifier(Target(target: .partial, targets: targets, space: Self.space))
             }
         }
     }
@@ -463,11 +488,34 @@ struct CaptionTextView: View {
                         .padding(.horizontal, -CaptionTextView.highlightInset)
                         .padding(.vertical, -3)
                 }
+                .overlay(alignment: .topTrailing) {
+                    if targets.hovered == target {
+                        PasteBadge()
+                            .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(space)) } action: { frame in
+                                targets.buttonFrames[target] = frame
+                            }
+                            .onDisappear { targets.buttonFrames[target] = nil }
+                    }
+                }
                 .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(space)) } action: { frame in
                     targets.frames[target] = frame
                 }
                 .onDisappear { targets.frames[target] = nil }
         }
+    }
+}
+
+/// 鼠标停在某一句上时出现在这句右上角的"粘贴"按钮（只是外观，点击由底层视图按位置判断）。
+private struct PasteBadge: View {
+    var body: some View {
+        Label("粘贴", systemImage: "doc.on.clipboard")
+            .font(.caption.weight(.semibold))
+            .labelStyle(.titleAndIcon)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(.primary.opacity(0.18), in: Capsule())
+            .overlay(Capsule().strokeBorder(.primary.opacity(0.2)))
+            .accessibilityLabel(String(localized: "从这句开始粘贴到最新"))
     }
 }
 
