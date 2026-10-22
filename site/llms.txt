@@ -2,7 +2,7 @@
 
 > Tidytalk is a free, open-source (MIT) voice input app for macOS. Hold a shortcut, say a whole paragraph, and let go: speech is recognized on your Mac, an AI service of your choice removes filler words and slips and adds punctuation, and the clean text is pasted at your cursor in any app. Audio is never uploaded, and with a local model (Ollama, LM Studio) or Apple Intelligence the text stays on the Mac too.
 
-Current version: 0.2.0. Requires macOS 26 or later on a Mac with Apple silicon. Interface in English and Simplified Chinese. Not notarized yet: on first launch, click "Open Anyway" in System Settings › Privacy & Security.
+Current version: 0.2.1. Requires macOS 26 or later on a Mac with Apple silicon. Interface in English and Simplified Chinese. Not notarized yet: on first launch, click "Open Anyway" in System Settings › Privacy & Security.
 
 Key facts:
 

@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v0.2.1",
+    "name": "Tidytalk 0.2.1",
+    "date": "2026-10-22",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.1",
+    "body": "- 转写文件和链接时，每一段开头的字不再被吞掉（录音一开始就有人说话时最明显）。\n- 识别模型说明更准确：Qwen3-ASR 支持 30 种语言和 22 种中文方言（如四川话、东北话、吴语、闽南语）。\n- 识别模型设置页加高了一点，英文界面下底部的说明不再被截断。\n\n安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"，或在终端执行 `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`。\n\n- Transcribing files and links no longer cuts off the first words of each segment (most noticeable when someone starts speaking right at the beginning of a recording).\n- More accurate model descriptions: Qwen3-ASR supports 30 languages and 22 Chinese dialects, such as Sichuanese, Northeastern, Wu, and Minnan.\n- The Speech Model settings page is a little taller, so its footer is no longer cut off in English.\n\nInstall: requires macOS 26 or later on a Mac with Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`.\n\nSHA-256 (Tidytalk-0.2.1.dmg): `a32f5236ee3c8fee8acb2b64a13de1d4434b09d23505ac9d0489e73acab952ca`\n"
+  },
+  {
     "tag": "v0.2.0",
     "name": "Tidytalk 0.2.0",
     "date": "2026-10-19",
