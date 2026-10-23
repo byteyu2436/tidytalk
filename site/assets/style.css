@@ -5,11 +5,15 @@
   --surface: #ffffff;
   --surface-2: #f5f5f7;
   --text: #1d1d1f;
-  --muted: #6e6e73;
-  --faint: #a1a1a6;
+  /* 文字颜色在白底和 --surface-2 上都至少 4.5:1（WCAG AA） */
+  --muted: #636366;
+  --faint: #6e6e73;
   --border: rgba(0, 0, 0, 0.08);
+  /* --accent 用于链接；按钮底色用 --accent-fill，上面的白字至少 4.5:1 */
   --accent: #0071e3;
-  --accent-hover: #0077ed;
+  --accent-hover: #0066cc;
+  --accent-fill: #0071e3;
+  --accent-fill-hover: #0066cc;
   --on-accent: #ffffff;
   --strike: #c7362b;
   --glass: rgba(255, 255, 255, 0.55);
@@ -26,10 +30,13 @@
     --surface-2: #1d1d20;
     --text: #f5f5f7;
     --muted: #a1a1a6;
-    --faint: #6e6e73;
+    --faint: #8e8e93;
     --border: rgba(255, 255, 255, 0.12);
     --accent: #2997ff;
     --accent-hover: #47a6ff;
+    /* 深色下链接用亮蓝 #2997ff；按钮底色仍用 #0071e3，白字才够清楚 */
+    --accent-fill: #0071e3;
+    --accent-fill-hover: #0066cc;
     --on-accent: #ffffff;
     --strike: #ff6b5e;
     --glass: rgba(60, 60, 64, 0.55);
@@ -180,6 +187,13 @@ kbd {
   color: var(--muted);
 }
 
+/* 文字链接的点击区域至少 24px 高（WCAG 2.2 目标尺寸），不改变看起来的大小 */
+.nav-links a:not(.button) {
+  display: inline-block;
+  padding: 6px 3px;
+  white-space: nowrap;
+}
+
 .nav-links a:hover {
   color: var(--text);
   text-decoration: none;
@@ -187,6 +201,31 @@ kbd {
 
 .nav-links .nav-section {
   display: none;
+}
+
+/* 手机上只留"使用指南"，其余页面从页脚进入 */
+.nav-links .nav-section.nav-keep {
+  display: list-item;
+}
+
+@media (max-width: 759px) {
+  .nav-links {
+    gap: 14px;
+  }
+}
+
+/* 手机上放不下：GitHub 在首屏按钮和页脚里都有 */
+@media (max-width: 479px) {
+  .nav-links .nav-github {
+    display: none;
+  }
+}
+
+/* 320px 宽的老机型连"使用指南"也放不下，从页脚进入 */
+@media (max-width: 359px) {
+  .nav-links .nav-section.nav-keep {
+    display: none;
+  }
 }
 
 @media (min-width: 760px) {
@@ -277,12 +316,12 @@ h1 {
 }
 
 .button-primary {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
 }
 
 .button-primary:hover {
-  background: var(--accent-hover);
+  background: var(--accent-fill-hover);
 }
 
 .button-secondary {
@@ -833,11 +872,17 @@ h3 {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: 2px;
 }
 
 .footer-grid a {
   color: var(--muted);
+}
+
+/* 点击区域至少 24px 高；列表间距相应收小，看起来和原来一样 */
+.footer-grid li a {
+  display: inline-block;
+  padding: 3px 0;
 }
 
 .footer-grid .brand {
@@ -873,6 +918,8 @@ h3 {
 }
 
 .breadcrumbs a {
+  display: inline-block;
+  padding: 4px 0;
   color: var(--muted);
 }
 
@@ -999,8 +1046,15 @@ h3 {
 }
 
 .prose td .yes {
-  color: #1f9d55;
+  /* 白底上 5:1 以上；深色模式换成亮一些的绿 */
+  color: #1a7f45;
   font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose td .yes {
+    color: #4ade80;
+  }
 }
 
 .prose td .no {
@@ -1117,7 +1171,7 @@ h3 {
   margin-left: 8px;
   padding: 2px 10px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
   font-size: 13px;
   font-weight: 600;
@@ -1148,6 +1202,12 @@ a.card .more {
   text-align: center;
   color: var(--muted);
   margin: 28px 0 0;
+}
+
+/* 单独一行的"了解更多"链接：点击区域至少 24px 高 */
+.section-foot a {
+  display: inline-block;
+  padding: 2px 0;
 }
 
 /* 功能版块里的"了解更多"链接跟着正文左对齐 */
@@ -1188,6 +1248,7 @@ a.card .more {
 /* ---------- 首页（清爽版）：白底、少边框、短句 ---------- */
 
 .nav .button-small {
+  white-space: nowrap;
   min-height: 34px;
   padding: 0 14px;
   font-size: 14px;

@@ -23,6 +23,7 @@ GitHub Releases，取不到时使用 site-src/releases.json 里的缓存。正�
 """
 
 import datetime
+import hashlib
 import html
 import json
 import os
@@ -36,6 +37,15 @@ OUT = os.path.join(ROOT, "site")
 DOMAIN = "https://tidytalk.zayen.dev"
 REPO = "byteyu2436/tidytalk"
 GITHUB = f"https://github.com/{REPO}"
+
+
+def asset_url(name):
+    """带内容哈希的静态文件地址：文件改了地址就变，访客不会继续用浏览器缓存里的旧样式和脚本。"""
+    with open(os.path.join(OUT, "assets", name), "rb") as f:
+        digest = hashlib.sha256(f.read()).hexdigest()[:10]
+    return f"/assets/{name}?v={digest}"
+
+
 ANALYTICS_TOKEN = "88c5b4942b344ed7a3a8023fb3a384a4"
 # 必应网站管理员工具的网站验证（tidytalk.zayen.dev），放在首页
 BING_VERIFICATION = "5141999B3D274F89A3147B442359C0A5"
@@ -228,7 +238,7 @@ def render(page, lang):
         '<link rel="icon" href="/favicon.ico" sizes="any">',
         '<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">',
         '<link rel="apple-touch-icon" href="/assets/icon-180.png">',
-        '<link rel="stylesheet" href="/assets/style.css">',
+        f'<link rel="stylesheet" href="{asset_url("style.css")}">',
     ]
 
     if page["path"] == "/":
@@ -267,9 +277,11 @@ def render(page, lang):
     other_label, other_hreflang = ui["other_lang"]
     other_href = (zh_path if lang == "en" else en_path) or UI["zh" if lang == "en" else "en"]["home"]
     current = ' aria-current="page"'
+    # 第一项（使用指南）在手机上也显示，其余只在宽屏显示
     nav_items = "".join(
-        f'<li class="nav-section"><a href="{href}"{current if href == page["path"] else ""}>{label}</a></li>'
-        for label, href in ui["nav"])
+        f'<li class="nav-section{" nav-keep" if index == 0 else ""}">'
+        f'<a href="{href}"{current if href == page["path"] else ""}>{label}</a></li>'
+        for index, (label, href) in enumerate(ui["nav"]))
     header = f"""<a class="skip-link" href="#main">{ui["skip"]}</a>
   <header class="site-header">
     <nav class="container nav" aria-label="{ui["nav_label"]}">
@@ -279,7 +291,7 @@ def render(page, lang):
       </a>
       <ul class="nav-links">
         {nav_items}
-        <li><a href="{GITHUB}" aria-label="GitHub">{GITHUB_ICON}<span class="nav-github-label">GitHub</span></a></li>
+        <li class="nav-github"><a href="{GITHUB}" aria-label="GitHub">{GITHUB_ICON}<span class="nav-github-label">GitHub</span></a></li>
         <li><a href="{other_href}" hreflang="{other_hreflang}" lang="{other_hreflang}">{other_label}</a></li>
         <li><a class="button button-primary button-small" href="{GITHUB}/releases/latest">{ui["download"]}</a></li>
       </ul>
@@ -311,6 +323,7 @@ def render(page, lang):
   </footer>"""
 
     body = page["body"].replace("{{updated}}", f'{ui["updated"]} {page["modified"]}')
+    body = body.replace('src="/assets/demo.js"', f'src="{asset_url("demo.js")}"')
     beacon = json.dumps({"token": ANALYTICS_TOKEN})
     analytics = ('<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
                  f"data-cf-beacon='{beacon}'></script>")
