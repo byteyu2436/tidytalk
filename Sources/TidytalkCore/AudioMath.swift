@@ -55,4 +55,12 @@ public enum AudioMath {
         ranges.append(start..<sampleCount)
         return ranges
     }
+
+    /// 还在录音时，已经可以确定下来的片段：除最后一段（还在变长）以外的所有片段。
+    ///
+    /// 每个切点只取决于它前面不超过 `maxSeconds` 的音频，所以这些片段和录完后整段切分的结果完全一样，
+    /// 可以先识别，松开后只需要识别最后一段。
+    public static func finishedChunks(_ samples: [Float], sampleRate: Int = sampleRate, maxSeconds: Double) -> [Range<Int>] {
+        Array(chunkRanges(samples, sampleRate: sampleRate, maxSeconds: maxSeconds).dropLast())
+    }
 }

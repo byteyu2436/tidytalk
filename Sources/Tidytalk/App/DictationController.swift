@@ -27,6 +27,10 @@ final class DictationController {
     private var purpose: HotkeyMonitor.Purpose = .dictation
     private var messageTask: Task<Void, Never>?
     private var previewTask: Task<Void, Never>?
+    /// 说长段话时边录边识别（见 `IncrementalTranscription`）。
+    private var incremental: IncrementalTranscription?
+    private var incrementalTask: Task<Void, Never>?
+    private static let incrementalInterval: Duration = .seconds(1)
 
     init(model: AppModel, indicator: IndicatorPanel) {
         self.model = model
@@ -123,6 +127,28 @@ final class DictationController {
         return await task.value
     }
 
+    // MARK: - 外部控制（tidytalk://）
+
+    var isRecording: Bool { recorder.isRecording }
+
+    /// 开始或结束说话输入；正在处理上一段话时忽略。
+    func externalToggle() {
+        guard !isProcessing else { return }
+        hotkeys.externalToggle()
+    }
+
+    func externalStart() {
+        if !recorder.isRecording { externalToggle() }
+    }
+
+    func externalStop() {
+        if recorder.isRecording, purpose == .dictation { externalToggle() }
+    }
+
+    func externalCancel() {
+        hotkeys.externalCancel()
+    }
+
     // MARK: - 按键动作
 
     private func handle(_ action: HotkeyStateMachine.Action, _ source: HotkeyMonitor.Purpose) {
@@ -172,6 +198,28 @@ final class DictationController {
         model.phase = .recording
         indicator.show()
         if config.livePreview { startLivePreview() }
+        startIncremental(model: config.speechModel)
+    }
+
+    /// 模型已经加载好时，录音期间每秒检查一次，把已经确定的片段先识别掉。
+    private func startIncremental(model speechModel: SpeechModel) {
+        stopIncremental()
+        guard let recognizer, recognizerKey == currentKey else { return }
+        let session = IncrementalTranscription(recognizer: recognizer, maxSeconds: speechModel.chunkSeconds)
+        incremental = session
+        incrementalTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: Self.incrementalInterval)
+                guard let self, !Task.isCancelled, recorder.isRecording else { return }
+                session.update(with: recorder.recordedSamples())
+            }
+        }
+    }
+
+    private func stopIncremental() {
+        incrementalTask?.cancel()
+        incrementalTask = nil
+        incremental = nil
     }
 
     /// 指示器上的模式标签：只转文字（关闭整理或没有配置 AI）时不显示；开启 AI 整理显示"整理"；翻译时显示"译成英文"这类文案；
@@ -185,6 +233,7 @@ final class DictationController {
     private func cancelRecording() {
         guard recorder.isRecording else { return }
         stopLivePreview()
+        stopIncremental()
         recorder.cancel()
         hide()
     }
@@ -193,6 +242,8 @@ final class DictationController {
         guard recorder.isRecording else { return }
         // 停止刷新预览，但保留已经显示的文字，处理期间继续可见
         previewTask?.cancel()
+        let session = incremental
+        stopIncremental()
         let samples = recorder.stop()
         if model.configStore.config.sounds { Sounds.finish() }
         let duration = Double(samples.count) / Double(AudioMath.sampleRate)
@@ -205,20 +256,26 @@ final class DictationController {
         isProcessing = true
         let source = purpose
         Task {
-            await process(samples, for: source)
+            await process(samples, for: source, incremental: session)
             isProcessing = false
         }
     }
 
     // MARK: - 处理
 
-    private func process(_ samples: [Float], for source: HotkeyMonitor.Purpose) async {
+    private func process(_ samples: [Float], for source: HotkeyMonitor.Purpose,
+                         incremental: IncrementalTranscription? = nil) async {
         guard let recognizer = await readyRecognizer() else {
             showMessage(String(localized: "语音识别模型加载失败"))
             return
         }
 
-        let transcript = await recognizer.transcribe(samples)
+        let transcript: String
+        if let incremental, incremental.uses(recognizer) {
+            transcript = await incremental.finish(with: samples)
+        } else {
+            transcript = await recognizer.transcribe(samples)
+        }
         guard TranscriptCleanup.hasContent(transcript) else {
             showMessage(String(localized: "没有听到内容"))
             return

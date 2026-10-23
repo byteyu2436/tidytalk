@@ -2,6 +2,7 @@ import AppKit
 import Carbon.HIToolbox
 import Observation
 import SwiftUI
+import TidytalkCore
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
@@ -17,6 +18,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var settingsWindow: NSWindow?
     private var transcribeWindow: NSWindow?
     private var transcriber: TranscribeController!
+    /// 最近一个在前台的其他应用：通过网址被打开时 Tidytalk 可能会被激活，要把焦点还回去，才能粘贴到原来的输入框。
+    private var lastFrontApp: NSRunningApplication?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = makeMainMenu()
@@ -36,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         controller.start()
         observeAccessibility()
+        observeFrontApp()
         UpdateChecker.checkInBackgroundIfNeeded(enabled: model.configStore.config.autoUpdateCheck)
 
         if !model.onboardingCompleted || model.readiness != .ready {
@@ -89,6 +93,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         pasteHotKey = GlobalHotKey(keyCode: kVK_ANSI_V, modifiers: controlKey | optionKey) { [weak self] in
             self?.listener.pasteRecent()
         }
+    }
+
+    // MARK: - 外部控制
+
+    /// tidytalk://toggle、tidytalk://captions 等网址，见 `ExternalCommand`。
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            guard let command = ExternalCommand(url: url) else { continue }
+            returnFocus()
+            switch command {
+            case .toggle: controller.externalToggle()
+            case .start: controller.externalStart()
+            case .stop: controller.externalStop()
+            case .cancel: controller.externalCancel()
+            case .captions(.toggle): listener.toggle()
+            case .captions(.start): if !model.isListening { listener.toggle() }
+            case .captions(.stop): if model.isListening { listener.stop() }
+            }
+        }
+    }
+
+    private func observeFrontApp() {
+        lastFrontApp = NSWorkspace.shared.frontmostApplication.flatMap { $0 == .current ? nil : $0 }
+        NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
+                                                          object: nil, queue: .main) { [weak self] note in
+            guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                  app != .current else { return }
+            MainActor.assumeIsolated { self?.lastFrontApp = app }
+        }
+    }
+
+    /// 被网址激活、又没有打开的窗口时，把焦点还给原来的应用。
+    private func returnFocus() {
+        guard NSApp.isActive, !NSApp.windows.contains(where: { $0.isVisible && $0.canBecomeMain }) else { return }
+        lastFrontApp?.activate()
     }
 
     /// 授权辅助功能后立即开始监听按键，无需重启应用。

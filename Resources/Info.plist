@@ -33,6 +33,18 @@
 	<true/>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<!-- tidytalk://toggle 等网址，供 Raycast、快捷指令等工具控制录音和字幕 -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>app.tidytalk.Tidytalk</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tidytalk</string>
+			</array>
+		</dict>
+	</array>
 	<key>TidytalkUpdateURL</key>
 	<string>__UPDATE_URL__</string>
 	<key>NSAppTransportSecurity</key>

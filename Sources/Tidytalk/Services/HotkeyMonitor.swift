@@ -108,6 +108,17 @@ final class HotkeyMonitor {
         channel(purpose).dispatch(.recordingEndedExternally)
     }
 
+    /// 从应用外部开始或结束说话输入（tidytalk://toggle），按免按住录音处理。
+    func externalToggle() {
+        dictation.dispatch(.externalToggle)
+    }
+
+    /// 从应用外部取消正在进行的录音（tidytalk://cancel），和按 Esc 一样。
+    func externalCancel() {
+        dictation.dispatch(.escapeDown)
+        rewrite.dispatch(.escapeDown)
+    }
+
     fileprivate func handle(type: CGEventType, flags: CGEventFlags, keyCode: Int64, isSynthetic: Bool) {
         switch type {
         case .tapDisabledByTimeout, .tapDisabledByUserInput:

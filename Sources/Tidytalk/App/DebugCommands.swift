@@ -28,6 +28,49 @@ enum DebugCommands {
             done.wait()
             return true
         }
+        // 开发用：--incremental-test <音频文件> [--model qwen3_asr]，按真实时间模拟边录边识别，
+        // 比较结果是否和整段识别一致，以及松开后要等多久
+        if let index = args.firstIndex(of: "--incremental-test"), index + 1 < args.count {
+            let url = URL(fileURLWithPath: args[index + 1])
+            let speechModel = value(of: "--model").flatMap(SpeechModel.init(rawValue:)) ?? .senseVoice
+            let directory = speechModel.spec.map(ModelManager.directory(for:)) ?? URL(fileURLWithPath: "/")
+            Task { @MainActor in
+                do {
+                    let samples = try loadAudio(url)
+                    let recognizer = try SpeechRecognizers.load(speechModel, directory: directory, hotwords: [])
+                    let seconds = Double(samples.count) / Double(AudioMath.sampleRate)
+                    var start = Date()
+                    let whole = await recognizer.transcribe(samples)
+                    let wholeWait = Date().timeIntervalSince(start)
+
+                    let session = IncrementalTranscription(recognizer: recognizer, maxSeconds: speechModel.chunkSeconds)
+                    var recorded = 0
+                    while recorded < samples.count {
+                        try? await Task.sleep(for: .seconds(1))
+                        recorded = min(samples.count, recorded + AudioMath.sampleRate)
+                        session.update(with: Array(samples.prefix(recorded)))
+                    }
+                    start = Date()
+                    let incremental = await session.finish(with: samples)
+                    let incrementalWait = Date().timeIntervalSince(start)
+                    print("模型 \(speechModel.rawValue)，录音 \(String(format: "%.1f", seconds)) 秒")
+                    print("整段识别：松开后等 \(String(format: "%.2f", wholeWait)) 秒")
+                    print("边录边识别：松开后等 \(String(format: "%.2f", incrementalWait)) 秒")
+                    print("结果一致：\(whole == incremental ? "是" : "否")")
+                    if whole != incremental { print("整段：\(whole)\n边录：\(incremental)") }
+                } catch {
+                    print("失败：\(error.localizedDescription)")
+                }
+                exit(0)
+            }
+            RunLoop.main.run(until: Date().addingTimeInterval(600))
+            return true
+        }
+        if let index = args.firstIndex(of: "--paste-receipt-test"), index + 1 < args.count {
+            let output = args[index + 1]
+            MainActor.assumeIsolated { PasteReceiptTest.run(output: output) }
+            return true
+        }
         if let index = args.firstIndex(of: "--rewrite-text"), index + 1 < args.count,
            let instruction = value(of: "--instruction") {
             let selection = args[index + 1]
@@ -1059,4 +1102,87 @@ enum TranscribeCaptureCommand {
         return true
     }
 }
+
+/// 开发用：在一个独立的剪贴板上验证"读取回执后再恢复"，不影响系统剪贴板，也不发送按键。
+///
+///     Tidytalk --paste-receipt-test <输出文件>
+///
+/// 三种情况：应用 1.5 秒后才读取（卡顿）、一直不读取、读取前用户又复制了别的内容。
+@MainActor
+enum PasteReceiptTest {
+    static func run(output: String) {
+        var log: [String] = []
+        Task { @MainActor in
+            let pasteboard = NSPasteboard(name: .init("app.tidytalk.paste-receipt-test"))
+            defer { pasteboard.releaseGlobally() }
+
+            func reset() {
+                pasteboard.clearContents()
+                pasteboard.setString("用户原来的内容", forType: .string)
+            }
+
+            // 1. 应用卡了 1.5 秒才读取
+            reset()
+            var readText: String?
+            var start = Date()
+            await PasteService.paste("新的说话内容", pasteboard: pasteboard) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    readText = pasteboard.string(forType: .string)
+                }
+            }
+            log.append("慢应用：读到「\(readText ?? "nil")」，\(String(format: "%.2f", Date().timeIntervalSince(start))) 秒后恢复为「\(pasteboard.string(forType: .string) ?? "nil")」")
+
+            // 2. 一直没有读取
+            reset()
+            start = Date()
+            await PasteService.paste("没人读的内容", pasteboard: pasteboard) {}
+            log.append("不读取：\(String(format: "%.2f", Date().timeIntervalSince(start))) 秒后恢复为「\(pasteboard.string(forType: .string) ?? "nil")」")
+
+            // 3. 读取之前用户复制了别的东西
+            reset()
+            start = Date()
+            await PasteService.paste("会被替换的内容", pasteboard: pasteboard) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    pasteboard.clearContents()
+                    pasteboard.setString("用户刚复制的", forType: .string)
+                }
+            }
+            log.append("被替换：\(String(format: "%.2f", Date().timeIntervalSince(start))) 秒后剪贴板是「\(pasteboard.string(forType: .string) ?? "nil")」")
+
+            // 4. 另一个进程读取：用 pbpaste 读"查找"剪贴板（不是平时复制粘贴用的那个），测完恢复原样
+            let find = NSPasteboard(name: .find)
+            let findBefore = find.string(forType: .string)
+            find.clearContents()
+            find.setString("查找框原来的内容", forType: .string)
+            final class Box: @unchecked Sendable { var text = "" }
+            let crossRead = Box()
+            start = Date()
+            await PasteService.paste("跨进程读到的内容", pasteboard: find) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    let process = Process()
+                    process.executableURL = URL(fileURLWithPath: "/usr/bin/pbpaste")
+                    process.arguments = ["-pboard", "find"]
+                    process.environment = ["LANG": "en_US.UTF-8"]
+                    let pipe = Pipe()
+                    process.standardOutput = pipe
+                    try? process.run()
+                    // 读取完成前不能阻塞主线程：提供数据的回调要在主线程上执行
+                    DispatchQueue.global().async {
+                        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                        let text = String(decoding: data, as: UTF8.self)
+                        DispatchQueue.main.async { crossRead.text = text }
+                    }
+                }
+            }
+            log.append("跨进程：pbpaste 读到「\(crossRead.text)」，\(String(format: "%.2f", Date().timeIntervalSince(start))) 秒后恢复为「\(find.string(forType: .string) ?? "nil")」")
+            find.clearContents()
+            if let findBefore { find.setString(findBefore, forType: .string) }
+
+            try? (log.joined(separator: "\n") + "\n").write(toFile: output, atomically: true, encoding: .utf8)
+            exit(0)
+        }
+        RunLoop.main.run(until: Date().addingTimeInterval(20))
+    }
+}
+
 #endif

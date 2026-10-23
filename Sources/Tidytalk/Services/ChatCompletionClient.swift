@@ -1,4 +1,5 @@
 import Foundation
+import os
 import TidytalkCore
 
 /// OpenAI 兼容的 Chat Completions 接口，用于整理识别文本。
@@ -10,6 +11,7 @@ struct ChatCompletionClient: Sendable {
         case unauthorized
         case http(Int, String?)
         case invalidResponse
+        case truncated
 
         var errorDescription: String? {
             switch self {
@@ -18,11 +20,15 @@ struct ChatCompletionClient: Sendable {
             case .http(let code, let message):
                 message.map { String(localized: "接口返回错误 \(code)：\($0)") } ?? String(localized: "接口返回错误 \(code)")
             case .invalidResponse: String(localized: "AI 服务返回了无法识别的内容")
+            case .truncated: String(localized: "AI 服务的回复不完整")
             }
         }
     }
 
     let config: AIConfig
+
+    /// 不接受"关闭思考"字段的接口（地址 + 模型），记住后直接发普通请求，不再白白失败一次。
+    private static let reasoningRejected = OSAllocatedUnfairLock(initialState: Set<String>())
 
     private static let session: URLSession = {
         let configuration = URLSessionConfiguration.ephemeral
@@ -67,6 +73,22 @@ struct ChatCompletionClient: Sendable {
         }
         guard config.isConfigured, let url = config.chatCompletionsURL else { throw ClientError.notConfigured }
 
+        let model = config.model.trimmingCharacters(in: .whitespaces)
+        let endpoint = url.absoluteString + "|" + model
+        // 整理口语不需要思考：推理模型思考会慢很多，还会把思考过程混进回答里
+        let switchOff = !Self.reasoningRejected.withLock { $0.contains(endpoint) }
+        do {
+            return try await send(messages, to: url, model: model, disableReasoning: switchOff)
+        } catch ClientError.http(let code, _) where switchOff && (code == 400 || code == 422) {
+            // 有的接口不认识这些字段，去掉后重试一次；成功了就记住
+            let content = try await send(messages, to: url, model: model, disableReasoning: false)
+            Self.reasoningRejected.withLock { _ = $0.insert(endpoint) }
+            return content
+        }
+    }
+
+    private func send(_ messages: [ChatRequest.Message], to url: URL, model: String,
+                      disableReasoning: Bool) async throws -> String {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.timeoutInterval = config.timeout
@@ -75,12 +97,15 @@ struct ChatCompletionClient: Sendable {
         if !key.isEmpty { request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization") }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.httpBody = try JSONEncoder().encode(ChatRequest(
-            model: config.model.trimmingCharacters(in: .whitespaces),
-            messages: messages,
-            temperature: config.temperature,
-            stream: false
-        ))
+        var body = ChatRequest(model: model, messages: messages, temperature: config.temperature, stream: false)
+        if disableReasoning {
+            switch ModelOutput.reasoningSwitch(forBaseURL: config.baseURL) {
+            case .effortNone: body.reasoning_effort = "none"
+            case .openRouter: body.reasoning = .init(effort: "none", exclude: true)
+            case .deepSeek: body.thinking = .init(type: "disabled")
+            }
+        }
+        request.httpBody = try JSONEncoder().encode(body)
 
         let (data, response) = try await Self.session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw ClientError.invalidResponse }
@@ -95,9 +120,12 @@ struct ChatCompletionClient: Sendable {
         }
 
         guard let decoded = try? JSONDecoder().decode(ChatResponse.self, from: data),
-              let content = decoded.choices.first?.message.content
+              let choice = decoded.choices.first, let content = choice.message.content
         else { throw ClientError.invalidResponse }
-        return content
+        // 回复因为长度上限被截断时，粘贴出去的会是半句话，按失败处理（调用方会粘贴原文）
+        if choice.finish_reason == "length" { throw ClientError.truncated }
+        guard let answer = ModelOutput.stripReasoning(content) else { throw ClientError.truncated }
+        return answer
     }
 }
 
@@ -107,17 +135,31 @@ private struct ChatRequest: Encodable {
         let content: String
     }
 
+    struct Reasoning: Encodable {
+        let effort: String
+        let exclude: Bool
+    }
+
+    struct Thinking: Encodable {
+        let type: String
+    }
+
     let model: String
     let messages: [Message]
     /// 为 nil 时不编码该字段。
     let temperature: Double?
     let stream: Bool
+    // 关闭思考的字段，每次最多带一种（见 ModelOutput.ReasoningSwitch），为 nil 时不编码
+    var reasoning_effort: String?
+    var reasoning: Reasoning?
+    var thinking: Thinking?
 }
 
 private struct ChatResponse: Decodable {
     struct Choice: Decodable {
         struct Message: Decodable { let content: String? }
         let message: Message
+        let finish_reason: String?
     }
 
     let choices: [Choice]

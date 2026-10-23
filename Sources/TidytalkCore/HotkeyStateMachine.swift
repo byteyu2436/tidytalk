@@ -13,6 +13,8 @@ import Foundation
 /// - 快速双击触发键，第二次按下时立即开始录音，松开后继续录音。
 /// - 再按一次触发键结束录音；按 Esc 取消。
 /// - 录音期间打字、点击鼠标不会取消，方便边说边切换输入框。
+///
+/// 外部触发（tidytalk://toggle，可以从 Raycast、快捷指令调用）：空闲时按免按住模式开始录音，录音中则结束录音。
 public struct HotkeyStateMachine: Sendable {
     public enum State: Equatable, Sendable {
         case idle
@@ -48,6 +50,8 @@ public struct HotkeyStateMachine: Sendable {
         case holdTimerFired
         /// 录音因时长上限或启动失败等原因在外部结束。
         case recordingEndedExternally
+        /// 从应用外部开始或结束录音（tidytalk://toggle）。
+        case externalToggle
     }
 
     public enum Action: Equatable, Sendable {
@@ -88,6 +92,21 @@ public struct HotkeyStateMachine: Sendable {
             }
             state = .pending
             return [.scheduleHoldTimer]
+
+        case (.idle, .externalToggle):
+            // 按免按住录音处理：打字、点击不会取消，再触发一次或按触发键结束，Esc 取消
+            lastTapRelease = nil
+            state = .handsFree
+            return [.startRecording]
+
+        case (.handsFree, .externalToggle):
+            state = .idle
+            return [.finishRecording]
+
+        case (.recording, .externalToggle), (.handsFreeHolding, .externalToggle):
+            // 触发键还按着，等松开后才能开始下一次
+            state = .blocked
+            return [.finishRecording]
 
         case (.idle, .keyDown), (.idle, .escapeDown), (.idle, .mouseDown):
             // 两次短按之间有其他操作，不算双击

@@ -775,3 +775,6 @@
 "用\"配置 AI\"里的服务翻译，译文显示在原文下面。边听边翻译时，正在说的这句也会先翻出来，随说话内容更新，会多调用几次 AI 服务。" = "Translated with your Set Up AI service and shown under the original. With live translation, the sentence being spoken is translated too and updates as it goes, which calls the AI service a few more times.";
 "只收听某个应用时，其他声音不会出现在字幕里。收听时按 ⌃⌥V，或点字幕条上某一句旁边的\"粘贴\"，可以把听到的话整理后粘贴到光标处。" = "Pick an app to caption only its audio. While listening, press ⌃⌥V, or click Paste next to a sentence in the captions, to tidy and paste what was said at the cursor.";
 "从这句开始粘贴到最新" = "Paste from this sentence onward";
+
+/* 剪贴板回执、关闭思考、外部控制、边录边识别、本地纠正词库 */
+"AI 服务的回复不完整" = "The AI service sent an incomplete reply";
