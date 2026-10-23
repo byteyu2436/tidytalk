@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v0.2.2",
+    "name": "Tidytalk 0.2.2",
+    "date": "2026-10-23",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.2",
+    "body": "- 粘贴更可靠：等目标应用真正读完文字再恢复原来的剪贴板，不再固定等待。应用卡顿时也不会粘出之前复制的内容。\n- 说长段话更快出字：录音过程中先识别已经说完的部分，松开后只识别最后一段。用 Qwen3-ASR 说 40 秒，松开后的等待从约 5.7 秒缩短到约 1 秒，结果不变。\n- 本机纠正词库里的词：大小写或空格不同（github → GitHub）、较长英文词拼错一两个字母、三个字以上的中文同音词（张三峰 → 张三丰），关闭整理也生效。网址、邮箱和路径里的词不会被改动。\n- 推理模型可以直接用：接 Ollama 里的 Qwen3、DeepSeek-R1 等模型时，会请求跳过思考，并去掉回复里的思考过程；回复被截断时粘贴原文，不会粘出半句话。\n- 新增 `tidytalk://` 网址，可以在 Raycast、快捷指令、Karabiner 里控制：`tidytalk://toggle` 开始或结束说话输入，`tidytalk://cancel` 取消，`tidytalk://captions` 开关实时字幕。\n\n安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"，或在终端执行 `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`。\n\n- More reliable pasting: your clipboard is restored only after the target app has actually read the text, instead of after a fixed delay, so a busy app no longer pastes what you copied before.\n- Faster results for long dictation: what you've already said is recognized while you keep talking, so only the last part is left when you let go. With Qwen3-ASR, a 40-second recording is ready about 1 second after release instead of about 5.7, with the same result.\n- Vocabulary fixes on your Mac: different capitalization or spacing (github → GitHub), a letter or two off in long English words, and Chinese homophones of terms three characters or longer, even with tidying off. Words in links, email addresses, and paths aren't touched.\n- Reasoning models just work: with Qwen3, DeepSeek-R1, and similar models in Ollama, Tidytalk asks the service to skip thinking and removes any thinking from the reply. A cut-off reply pastes the original text instead of half a sentence.\n- New `tidytalk://` links for Raycast, Shortcuts, and Karabiner: `tidytalk://toggle` starts or finishes dictation, `tidytalk://cancel` cancels, and `tidytalk://captions` turns live captions on or off.\n\nInstall: requires macOS 26 or later on a Mac with Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security, or run `xattr -dr com.apple.quarantine /Applications/Tidytalk.app`.\n\nSHA-256 (Tidytalk-0.2.2.dmg): `0ad516472ffc1e0eade7653da46b5a0d0d52d883b326e0ffb89059badcee3cb8`\n"
+  },
+  {
     "tag": "v0.2.1",
     "name": "Tidytalk 0.2.1",
     "date": "2026-10-22",

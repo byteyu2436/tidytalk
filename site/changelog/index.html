@@ -76,8 +76,15 @@
       <p class="lead">New features, fixes, and downloads for every Tidytalk release.</p>
     </header>
     <div class="prose">
+      <article class="release" id="v0.2.2">
+        <h2><a href="#v0.2.2">0.2.2</a> <span class="badge">Latest</span></h2>
+        <p class="release-date"><time datetime="2026-10-23">2026-10-23</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.2">Download</a></p>
+        <ul><li>More reliable pasting: your clipboard is restored only after the target app has actually read the text, instead of after a fixed delay, so a busy app no longer pastes what you copied before.</li><li>Faster results for long dictation: what you&#x27;ve already said is recognized while you keep talking, so only the last part is left when you let go. With Qwen3-ASR, a 40-second recording is ready about 1 second after release instead of about 5.7, with the same result.</li><li>Vocabulary fixes on your Mac: different capitalization or spacing (github → GitHub), a letter or two off in long English words, and Chinese homophones of terms three characters or longer, even with tidying off. Words in links, email addresses, and paths aren&#x27;t touched.</li><li>Reasoning models just work: with Qwen3, DeepSeek-R1, and similar models in Ollama, Tidytalk asks the service to skip thinking and removes any thinking from the reply. A cut-off reply pastes the original text instead of half a sentence.</li><li>New <code>tidytalk://</code> links for Raycast, Shortcuts, and Karabiner: <code>tidytalk://toggle</code> starts or finishes dictation, <code>tidytalk://cancel</code> cancels, and <code>tidytalk://captions</code> turns live captions on or off.</li></ul>
+<p>Install: requires macOS 26 or later on a Mac with Apple silicon. The app isn&#x27;t notarized. The first time you open it, click &quot;Open Anyway&quot; in System Settings › Privacy &amp; Security, or run <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>.</p>
+<p class="checksum">SHA-256 (Tidytalk-0.2.2.dmg): <code>0ad516472ffc1e0eade7653da46b5a0d0d52d883b326e0ffb89059badcee3cb8</code></p>
+      </article>
       <article class="release" id="v0.2.1">
-        <h2><a href="#v0.2.1">0.2.1</a> <span class="badge">Latest</span></h2>
+        <h2><a href="#v0.2.1">0.2.1</a></h2>
         <p class="release-date"><time datetime="2026-10-22">2026-10-22</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.1">Download</a></p>
         <ul><li>Transcribing files and links no longer cuts off the first words of each segment (most noticeable when someone starts speaking right at the beginning of a recording).</li><li>More accurate model descriptions: Qwen3-ASR supports 30 languages and 22 Chinese dialects, such as Sichuanese, Northeastern, Wu, and Minnan.</li><li>The Speech Model settings page is a little taller, so its footer is no longer cut off in English.</li></ul>
 <p>Install: requires macOS 26 or later on a Mac with Apple silicon. The app isn&#x27;t notarized. The first time you open it, click &quot;Open Anyway&quot; in System Settings › Privacy &amp; Security, or run <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>.</p>

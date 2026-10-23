@@ -76,8 +76,15 @@
       <p class="lead">Tidytalk 每个版本的新功能、修复和下载。</p>
     </header>
     <div class="prose">
+      <article class="release" id="v0.2.2">
+        <h2><a href="#v0.2.2">0.2.2</a> <span class="badge">最新</span></h2>
+        <p class="release-date"><time datetime="2026-10-23">2026-10-23</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.2">下载</a></p>
+        <ul><li>粘贴更可靠：等目标应用真正读完文字再恢复原来的剪贴板，不再固定等待。应用卡顿时也不会粘出之前复制的内容。</li><li>说长段话更快出字：录音过程中先识别已经说完的部分，松开后只识别最后一段。用 Qwen3-ASR 说 40 秒，松开后的等待从约 5.7 秒缩短到约 1 秒，结果不变。</li><li>本机纠正词库里的词：大小写或空格不同（github → GitHub）、较长英文词拼错一两个字母、三个字以上的中文同音词（张三峰 → 张三丰），关闭整理也生效。网址、邮箱和路径里的词不会被改动。</li><li>推理模型可以直接用：接 Ollama 里的 Qwen3、DeepSeek-R1 等模型时，会请求跳过思考，并去掉回复里的思考过程；回复被截断时粘贴原文，不会粘出半句话。</li><li>新增 <code>tidytalk://</code> 网址，可以在 Raycast、快捷指令、Karabiner 里控制：<code>tidytalk://toggle</code> 开始或结束说话输入，<code>tidytalk://cancel</code> 取消，<code>tidytalk://captions</code> 开关实时字幕。</li></ul>
+<p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
+<p class="checksum">SHA-256 (Tidytalk-0.2.2.dmg): <code>0ad516472ffc1e0eade7653da46b5a0d0d52d883b326e0ffb89059badcee3cb8</code></p>
+      </article>
       <article class="release" id="v0.2.1">
-        <h2><a href="#v0.2.1">0.2.1</a> <span class="badge">最新</span></h2>
+        <h2><a href="#v0.2.1">0.2.1</a></h2>
         <p class="release-date"><time datetime="2026-10-22">2026-10-22</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.2.1">下载</a></p>
         <ul><li>转写文件和链接时，每一段开头的字不再被吞掉（录音一开始就有人说话时最明显）。</li><li>识别模型说明更准确：Qwen3-ASR 支持 30 种语言和 22 种中文方言（如四川话、东北话、吴语、闽南语）。</li><li>识别模型设置页加高了一点，英文界面下底部的说明不再被截断。</li></ul>
 <p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
