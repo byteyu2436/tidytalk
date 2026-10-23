@@ -22,6 +22,7 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
           <li><a href="#hold-to-talk">按住说话</a></li>
           <li><a href="#hands-free">免按住录音</a></li>
           <li><a href="#rewrite">语音改写选中的文字</a></li>
+          <li><a href="#external-control">从其他应用控制</a></li>
           <li><a href="#speech-models">识别模型</a></li>
           <li><a href="#live-captions">实时字幕</a></li>
           <li><a href="#transcribe">转写文件或链接</a></li>
@@ -73,7 +74,7 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
       </ul>
 
       <h2 id="hands-free">免按住录音</h2>
-      <p>快速双击快捷键，开始录音后就可以松手，适合说较长的内容；再按一次快捷键结束，按 <kbd>Esc</kbd> 取消。录音期间打字、点击鼠标不会打断录音。可以在"设置 › 说话输入"里关闭。</p>
+      <p>快速双击快捷键，开始录音后就可以松手，适合说较长的内容；再按一次快捷键结束，按 <kbd>Esc</kbd> 取消。录音期间打字、点击鼠标不会打断录音。说得很长时，Tidytalk 会边录边识别已经说完的部分，松开后很快就能出字。可以在"设置 › 说话输入"里关闭。</p>
 
       <h2 id="rewrite">语音改写选中的文字</h2>
       <p>先选中一段文字，按住<kbd>右侧 Option</kbd>说出修改要求，例如"改得正式一点""缩短到一句话""翻译成英文"，松开后选中的文字会被替换成改写结果。</p>
@@ -82,6 +83,21 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
         <li>没有选中文字时会提示先选中；改写失败时原文不会改动。</li>
         <li>改写键可以在"设置 › 说话输入"里更换或关闭。</li>
       </ul>
+
+      <h2 id="external-control">从其他应用控制</h2>
+      <p>Tidytalk 能响应 <code>tidytalk://</code> 开头的网址，可以在 Raycast、快捷指令、Karabiner、Stream Deck 里绑定：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>网址</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>tidytalk://toggle</code></td><td>开始说话输入，和双击快捷键一样不用按住；再打开一次结束</td></tr>
+            <tr><td><code>tidytalk://start</code> / <code>tidytalk://stop</code></td><td>只开始 / 只结束</td></tr>
+            <tr><td><code>tidytalk://cancel</code></td><td>取消这次录音</td></tr>
+            <tr><td><code>tidytalk://captions</code></td><td>打开或关闭实时字幕；也可以用 <code>captions/start</code>、<code>captions/stop</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>在终端或脚本里用 <code>open -g tidytalk://toggle</code>，焦点会留在正在打字的地方。如果打开网址时 Tidytalk 被切到了前台，它会把焦点还给原来的应用，文字照样粘贴到光标处。</p>
 
       <h2 id="speech-models">识别模型</h2>
       <p>默认用 SenseVoice：体积小（约 240&nbsp;MB）、速度快，中英文混说效果好。在"设置 › 识别模型"里可以换用其他模型，所有模型都在本机运行。</p>
@@ -174,14 +190,14 @@ description: Tidytalk 在 Mac 上的完整用法：安装和授权、按住说�
         <li>在"设置 › 配置 AI"顶部选 <strong>Ollama</strong> 或 <strong>LM Studio</strong>，确认模型名后保存。要换回 DeepSeek、OpenAI 等云端接口，选<strong>云端</strong>。本机模型不需要 API Key，超时默认放宽到 60 秒。</li>
         <li>点"测试连接"确认可用。</li>
       </ol>
-      <p>效果取决于模型大小。小模型对"只整理、不回答"和自定义规则的遵守不如云端模型稳定，建议用 7B 左右或更大的模型。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
+      <p>Qwen3、DeepSeek-R1 这类会"思考"的推理模型也能用：Tidytalk 会请求它跳过思考，万一还是带了思考过程，也会自动去掉。效果取决于模型大小。小模型对"只整理、不回答"和自定义规则的遵守不如云端模型稳定，建议用 7B 左右或更大的模型。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
       <h3>Apple 智能</h3>
       <p>支持 Apple 智能的 Mac，在"设置 › 配置 AI"里选 <strong>Apple 智能</strong>，就用系统自带的模型整理和翻译，不需要 API Key，文字不会离开这台 Mac。需要先在系统设置里打开 Apple 智能；这台 Mac 不支持或还没打开时，这一项会变灰并写明原因。</p>
 
       <h2 id="vocabulary">词库</h2>
       <p>都在"设置 › 词库"里。</p>
       <h3>常用词</h3>
-      <p>每行一个人名、产品名或专业术语，这些词最容易识别错。识别模型选 Qwen3-ASR 时，识别阶段就能认对这些词；它们还会放进 AI 整理的提示里，让模型把读音相近的错误识别改成正确写法，例如"森斯沃伊斯"改为"SenseVoice"（这一步需要开启"整理文字"）。</p>
+      <p>每行一个人名、产品名或专业术语，这些词最容易识别错。识别模型选 Qwen3-ASR 时，识别阶段就能认对这些词；它们还会放进 AI 整理的提示里，让模型把读音相近的错误识别改成正确写法，例如"森斯沃伊斯"改为"SenseVoice"（这一步需要开启"整理文字"）。关闭整理时，Tidytalk 也会在本机纠正和词库里"差一点"的词：大小写或空格不同（"github" → "GitHub"、"chat gpt" → "ChatGPT"），较长的英文词拼错一个字母（"Kubernetis" → "Kubernetes"），以及三个字以上读音完全相同的中文词（"张三峰" → "张三丰"）。网址、邮箱和文件路径里的词不会被改动。</p>
       <h3>固定替换</h3>
       <p>识别结果里出现某个词时，总是替换成指定写法，例如"克劳德"总是替换成"Claude"。英文不区分大小写，只匹配完整单词。在本机处理，关闭整理时也生效。在菜单栏图标的"最近记录"里选一条，点"加入词库…"，可以直接把识别错的词加进来。</p>
       <h3>自动学词</h3>

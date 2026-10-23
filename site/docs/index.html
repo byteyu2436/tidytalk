@@ -110,6 +110,7 @@
           <li><a href="#hold-to-talk">Hold to talk</a></li>
           <li><a href="#hands-free">Hands-free recording</a></li>
           <li><a href="#rewrite">Rewrite selected text</a></li>
+          <li><a href="#external-control">Control from other apps</a></li>
           <li><a href="#speech-models">Speech models</a></li>
           <li><a href="#live-captions">Live captions</a></li>
           <li><a href="#transcribe">Transcribe files and links</a></li>
@@ -161,7 +162,7 @@
       </ul>
 
       <h2 id="hands-free">Hands-free recording</h2>
-      <p>Double-tap the shortcut to start recording without holding the keys, which is handy for longer thoughts. Press the shortcut once more to finish, or <kbd>Esc</kbd> to cancel. Typing and clicking don't interrupt a hands-free recording. You can turn this off in Settings › Dictation.</p>
+      <p>Double-tap the shortcut to start recording without holding the keys, which is handy for longer thoughts. Press the shortcut once more to finish, or <kbd>Esc</kbd> to cancel. Typing and clicking don't interrupt a hands-free recording. When you talk for a long time, Tidytalk recognizes what you've already said while you keep talking, so the text is ready soon after you finish. You can turn this off in Settings › Dictation.</p>
 
       <h2 id="rewrite">Rewrite selected text</h2>
       <p>Select some text, hold <kbd>Right Option</kbd>, and say how to change it, such as "make it more formal", "shorten this to one sentence", or "translate to English". When you let go, the selection is replaced with the rewrite.</p>
@@ -170,6 +171,21 @@
         <li>If nothing is selected, Tidytalk asks you to select text first. If the rewrite fails, your text isn't changed.</li>
         <li>Change or turn off the rewrite shortcut in Settings › Dictation.</li>
       </ul>
+
+      <h2 id="external-control">Control from other apps</h2>
+      <p>Tidytalk responds to <code>tidytalk://</code> links, so you can start dictation from Raycast, Shortcuts, Karabiner, or a Stream Deck:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Link</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>tidytalk://toggle</code></td><td>Start dictation, like double-tapping the shortcut; open it again to finish</td></tr>
+            <tr><td><code>tidytalk://start</code> / <code>tidytalk://stop</code></td><td>Only start, or only finish</td></tr>
+            <tr><td><code>tidytalk://cancel</code></td><td>Cancel the current recording</td></tr>
+            <tr><td><code>tidytalk://captions</code></td><td>Turn live captions on or off; also <code>captions/start</code> and <code>captions/stop</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>In Terminal or a script, use <code>open -g tidytalk://toggle</code> so focus stays where you're typing. If opening a link brings Tidytalk to the front, it hands focus back to the app you were in, so the text still lands at your cursor.</p>
 
       <h2 id="speech-models">Speech models</h2>
       <p>SenseVoice is the default: small (about 240&nbsp;MB), fast, and great with mixed Chinese and English. In Settings › Speech Model you can switch to another model. All of them run on your Mac.</p>
@@ -261,14 +277,14 @@
         <li>At the top of Settings › Set Up AI, choose <strong>Ollama</strong> or <strong>LM Studio</strong>, confirm the model name, and save. To go back to DeepSeek, OpenAI, or another online service, choose <strong>Cloud</strong>. Local models don't need an API key, and the timeout is raised to 60 seconds.</li>
         <li>Click "Test Connection".</li>
       </ol>
-      <p>Results depend on the model size. Small models follow "tidy, don't answer" and custom rules less reliably than cloud models, so a model around 7B or larger is recommended. See <a href="/use-cases/offline/">Private and offline dictation</a> for details.</p>
+      <p>Reasoning models such as Qwen3 or DeepSeek-R1 work too: Tidytalk asks the service to skip thinking and removes any thinking that still comes back. Results depend on the model size. Small models follow "tidy, don't answer" and custom rules less reliably than cloud models, so a model around 7B or larger is recommended. See <a href="/use-cases/offline/">Private and offline dictation</a> for details.</p>
       <h3>Apple Intelligence</h3>
       <p>On a Mac that supports Apple Intelligence, choose <strong>Apple Intelligence</strong> in Settings › Set Up AI to tidy and translate with the model built into macOS. No API key is needed, and your text never leaves your Mac. Turn on Apple Intelligence in System Settings first; if this Mac doesn't support it or it's off, the option is dimmed and says why.</p>
 
       <h2 id="vocabulary">Vocabulary</h2>
       <p>All of these are in Settings › Vocabulary.</p>
       <h3>Common words</h3>
-      <p>List names, products, and terms you use, one per line. These are the words speech recognition gets wrong most often. With Qwen3-ASR as the speech model, they're recognized correctly from the start. They're also added to the AI prompt so similar-sounding mistakes are corrected to your spelling, which requires "Tidy up text".</p>
+      <p>List names, products, and terms you use, one per line. These are the words speech recognition gets wrong most often. With Qwen3-ASR as the speech model, they're recognized correctly from the start. They're also added to the AI prompt so similar-sounding mistakes are corrected to your spelling, which requires "Tidy up text". Even with tidying off, close matches are fixed on your Mac: different capitalization or spacing ("github" → "GitHub", "chat gpt" → "ChatGPT"), a letter off in a long word ("Kubernetis" → "Kubernetes"), and Chinese words of three or more characters that sound the same ("张三峰" → "张三丰"). Words inside links, email addresses, and file paths aren't touched.</p>
       <h3>Replacements</h3>
       <p>Always replace one spelling with another, for example "cloud" with "Claude". English matching ignores case and only matches whole words. Replacements run on your Mac, even with tidying off. From "Recent" in the menu bar, choose a result and "Add to Vocabulary…" to add a misheard word directly.</p>
       <h3>Words you correct</h3>
