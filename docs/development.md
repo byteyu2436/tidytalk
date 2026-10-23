@@ -44,8 +44,8 @@ AI 文本整理（OpenAI 兼容接口，可关闭；带上词库、整理模式�
 需要 macOS 26 和 Swift 6.2 以上（macOS 26 SDK）。只装 Command Line Tools 就能编译，也可以用 Xcode 打开 `Package.swift`。
 
 ```bash
-scripts/fetch-deps.sh   # 下载 sherpa-onnx 预编译动态库和头文件到 Vendor/
-swift test              # 运行单元测试
+scripts/fetch-deps.sh   # 下载 sherpa-onnx 预编译动态库，校验后组装成 Vendor/*.xcframework
+swift test              # 运行单元测试（TidytalkCoreTests、TidytalkAppTests）
 scripts/install.sh      # 编译、安装到 /Applications 并启动
 ```
 
@@ -59,17 +59,19 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 | `BUILD_NUMBER` | 构建号，默认当前时间 |
 | `UPDATE_URL` | 检查更新地址，默认读取本仓库 GitHub Releases 的最新版本；设为空字符串则隐藏检查更新 |
 | `DEV_TOOLS` | 设为 `1` 时编入下文的开发命令；发给用户的版本不要设置 |
-| `SIGN_IDENTITY` | 签名身份，例如 `Developer ID Application: 名字 (TEAMID)`；不设置时使用本地临时签名 |
+| `SIGN_IDENTITY` | 签名身份。不设置时，钥匙串里有 `Tidytalk Self-Signed` 证书就用它，否则用本地临时签名；也可以是 `Developer ID Application: 名字 (TEAMID)` |
 | `NOTARY_PROFILE` | 仅 `make-dmg.sh`：`xcrun notarytool store-credentials` 保存的钥匙串配置名 |
 
-本地临时签名会把签名身份固定为 bundle id（`app.tidytalk.Tidytalk`），重新编译后辅助功能权限仍然有效。
+正式安装包用作者的自签名证书 `Tidytalk Self-Signed` 签名，系统按这张证书识别 Tidytalk：其他程序冒充同一个 bundle id 拿不到它的权限，各个版本之间升级也不用重新授权。证书和私钥的备份不在仓库里；丢失后再发版，所有用户都要重新授权一次。自签名证书去不掉"无法验证开发者"的提示，那需要 Developer ID 加公证。
+
+没有这张证书时（例如其他人自己编译），使用本地临时签名，签名身份固定为 bundle id（`app.tidytalk.Tidytalk`），重新编译后辅助功能权限仍然有效。临时签名只适合本机开发：任何同 bundle id 的临时签名程序都能继承这些权限，所以 `make-dmg.sh` 找不到证书时会拒绝打包（确实需要时设 `ALLOW_ADHOC=1`）。
 
 应用平时只在菜单栏显示图标；打开引导或设置窗口时会临时出现在 Dock 中，关闭窗口后隐藏。应用运行时再次从启动台或 Spotlight 打开它，会弹出设置窗口。
 
 ## 发布
 
 ```bash
-# 未公证的试用版
+# 自签名、未公证的安装包（需要钥匙串里有 Tidytalk Self-Signed 证书）
 VERSION=0.2.0 scripts/make-dmg.sh
 
 # Developer ID 签名并公证
@@ -118,7 +120,6 @@ python3 -m http.server 8765 --directory site   # 打开 http://localhost:8765/
 .build/debug/Tidytalk --rewrite-text "选中的文字" --instruction "改得正式一点"
 .build/debug/Tidytalk --snapshot 输出目录               # 把引导、设置、指示器渲染成 PNG
 .build/debug/Tidytalk --list-mics                      # 列出麦克风及其 UID
-.build/debug/Tidytalk --clipboard-test                 # 在测试剪贴板上验证保存与恢复
 .build/debug/Tidytalk --update-feed https://api.github.com/repos/byteyu2436/tidytalk/releases/latest --current 0.1.0
 ```
 
@@ -147,10 +148,12 @@ open -n /Applications/Tidytalk.app --args --onboarding-capture /tmp/onboarding #
 | 目录 | 内容 |
 | --- | --- |
 | `Sources/TidytalkCore` | 与系统无关的纯逻辑：按键状态机、整理提示词与结果校验、词库与替换、整理模式、中英文排版、长音频切分、配置与模型清单 |
-| `Sources/Tidytalk/Services` | 本地识别（sherpa-onnx）、录音、全局按键监听、粘贴、AI 接口、配置文件、模型下载、检查更新 |
-| `Sources/Tidytalk/App` | 应用入口、全局状态、录音到粘贴的主流程、开发命令 |
-| `Sources/Tidytalk/UI` | 指示器、菜单栏图标、首次启动引导、设置窗口 |
-| `Sources/CSherpaOnnx` | sherpa-onnx C API 的模块映射 |
+| `Sources/TidytalkApp/Services` | 本地识别（sherpa-onnx）、录音、全局按键监听、粘贴、AI 接口、配置文件、钥匙串、模型下载、检查更新 |
+| `Sources/TidytalkApp/App` | 应用入口（`Launch`）、全局状态、录音到粘贴的主流程、开发命令 |
+| `Sources/TidytalkApp/UI` | 指示器、菜单栏图标、首次启动引导、设置窗口 |
+| `Sources/Tidytalk` | 可执行文件，只有调用 `Launch.run()` 的 main.swift |
+| `Vendor/CSherpaOnnx.xcframework`、`Vendor/OnnxRuntime.xcframework` | `fetch-deps.sh` 生成的预编译动态库（不进仓库），Package.swift 里是 binaryTarget |
 | `Tests/TidytalkCoreTests` | `TidytalkCore` 的单元测试 |
+| `Tests/TidytalkAppTests` | 应用层的单元测试：配置文件和钥匙串、粘贴后恢复剪贴板、边录边识别；钥匙串、剪贴板都用测试替身，不碰真实数据 |
 
 模型依次尝试从 Hugging Face 和 hf-mirror.com 下载，失败自动切换，支持断点续传，下载完成后校验 SHA-256，保存在 `~/Library/Application Support/Tidytalk/Models/`。

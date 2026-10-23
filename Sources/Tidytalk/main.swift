@@ -1,0 +1,3 @@
+import TidytalkApp
+
+Launch.run()

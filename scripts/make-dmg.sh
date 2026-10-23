@@ -2,7 +2,8 @@
 # 打包 DMG，并可选地签名、公证。
 #
 # 环境变量：
-#   SIGN_IDENTITY     Developer ID Application 身份（必填才能公证）
+#   SIGN_IDENTITY     签名身份，默认用钥匙串里的"Tidytalk Self-Signed"（见 scripts/signing.sh）；
+#                     公证需要 Developer ID Application 身份。确实要发临时签名的包时设为 -
 #   NOTARY_PROFILE    `xcrun notarytool store-credentials` 保存的钥匙串配置名；
 #                     设置后会提交公证并装订票据
 #   VERSION           版本号，默认 0.1.0
@@ -13,7 +14,13 @@ cd "$ROOT"
 
 VERSION="${VERSION:-0.1.0}"
 export VERSION
-SIGN_IDENTITY="${SIGN_IDENTITY:--}"
+source "$ROOT/scripts/signing.sh"
+if [[ "$SIGN_IDENTITY" == "-" && -z "${ALLOW_ADHOC:-}" ]]; then
+  # 临时签名只按 bundle id 识别应用，任何同 id 的程序都能继承权限；
+  # 而且和之前版本的签名身份不同，用户升级后要重新授权
+  echo "钥匙串里没有签名证书\"$SELF_SIGNED_IDENTITY\"，不能打正式安装包（确实要临时签名请设 ALLOW_ADHOC=1）" >&2
+  exit 1
+fi
 DMG="$ROOT/build/Tidytalk-$VERSION.dmg"
 
 scripts/build-app.sh
@@ -84,12 +91,13 @@ hdiutil detach "$MNT" -quiet
 rm -f "$DMG"
 hdiutil convert "$RW" -format UDZO -imagekey zlib-level=9 -o "$DMG" >/dev/null
 
-if [[ "$SIGN_IDENTITY" != "-" ]]; then
+# 只有 Developer ID 才给 DMG 签名：自签名证书签的 DMG 对下载的用户没有意义
+if [[ "$SIGN_IDENTITY" == "Developer ID Application:"* ]]; then
   codesign --force --sign "$SIGN_IDENTITY" --timestamp "$DMG"
 fi
 
 if [[ -n "${NOTARY_PROFILE:-}" ]]; then
-  if [[ "$SIGN_IDENTITY" == "-" ]]; then
+  if [[ "$SIGN_IDENTITY" != "Developer ID Application:"* ]]; then
     echo "公证需要设置 SIGN_IDENTITY 为 Developer ID Application 证书" >&2
     exit 1
   fi

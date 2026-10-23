@@ -6,15 +6,35 @@ import Foundation
 /// - 英文：大小写或空格不同但字母完全一样（"github" → "GitHub"、"chat gpt" → "ChatGPT"）；
 ///   较长的词（7 个字母以上）允许拼错 1 个字母，10 个字母以上允许 2 个（"Kubernetis" → "Kubernetes"）。
 ///   网址、邮箱、文件路径里的词不动。
-/// - 中文：3 个字以上的词，读音（不计声调）完全相同的同音字（"张三峰" → "张三丰"）。两个字的词同音的太多，不处理。
+/// - 中文：3 个字以上的词，读音（不计声调）完全相同、并且至少有一个字相同的同音字（"张三峰" → "张三丰"）。
+///   两个字的词同音的太多，不处理。
+///
+/// 真实存在的英文单词（由应用通过 `dictionaryWordCheck` 提供拼写检查）不做模糊匹配，避免"discard"被改成"Discord"；
+/// 只差大小写的普通单词（"outlook"）、拆开的普通单词（"we chat"）只在挨着中文时才改——这种情况基本只出现在中英混说里。
 public enum VocabularyMatcher {
-    public static func correct(_ text: String, terms: [String]) -> String {
+    /// 判断是不是真实存在的英文单词，由应用在启动时设置（用系统拼写检查）。为 nil 时都当作不是。
+    public static var dictionaryWordCheck: (@Sendable (String) -> Bool)? {
+        get { checkLock.withLock { check } }
+        set { checkLock.withLock { check = newValue } }
+    }
+    private static let checkLock = NSLock()
+    nonisolated(unsafe) private static var check: (@Sendable (String) -> Bool)?
+
+    private static func isDictionaryWords(_ text: String, check: ((String) -> Bool)?) -> Bool {
+        guard let check else { return false }
+        let words = text.split(whereSeparator: { $0 == " " || $0 == "-" })
+        return !words.isEmpty && words.allSatisfy { check(String($0)) }
+    }
+
+    /// - Parameter isWord: 判断真实英文单词的函数，默认用 `dictionaryWordCheck`（测试时可以单独传入）。
+    public static func correct(_ text: String, terms: [String], isWord: ((String) -> Bool)? = nil) -> String {
+        let isWord = isWord ?? dictionaryWordCheck
         let terms = Vocabulary.normalize(terms)
         guard !terms.isEmpty, !text.isEmpty else { return text }
         let latin = terms.compactMap(LatinTerm.init)
         let han = terms.filter { $0.count >= 3 && $0.allSatisfy(isHan) }
         var result = text
-        if !latin.isEmpty { result = correctLatin(result, terms: latin) }
+        if !latin.isEmpty { result = correctLatin(result, terms: latin, isWord: isWord) }
         if !han.isEmpty { result = correctHan(result, terms: han) }
         return result
     }
@@ -25,6 +45,8 @@ public enum VocabularyMatcher {
         let text: String
         /// 只保留字母和数字的小写形式，用来比较。
         let key: [Character]
+        /// 词库里写成几个词（"Claude Code" 是 2 个）。
+        let words: Int
 
         init?(_ text: String) {
             guard text.unicodeScalars.allSatisfy({ $0.isASCII }),
@@ -34,6 +56,7 @@ public enum VocabularyMatcher {
             guard key.count >= 3 else { return nil }
             self.text = text
             self.key = key
+            self.words = text.split(whereSeparator: { $0 == " " || $0 == "-" }).count
         }
     }
 
@@ -50,7 +73,7 @@ public enum VocabularyMatcher {
     /// 网址、邮箱、路径、代码标识符里的词：前后紧挨着这些符号。
     private static let embedding: Set<Character> = ["@", "/", "\\", "_", ":", "#", "=", "&", "?"]
 
-    private static func correctLatin(_ text: String, terms: [LatinTerm]) -> String {
+    private static func correctLatin(_ text: String, terms: [LatinTerm], isWord: ((String) -> Bool)?) -> String {
         let chars = Array(text)
         var tokens: [Token] = []
         var i = 0
@@ -72,6 +95,16 @@ public enum VocabularyMatcher {
             return false
         }
 
+        /// 前后最近的非空格字符是不是汉字：中英混说的上下文。
+        func nextToHan(_ range: Range<Int>) -> Bool {
+            var i = range.lowerBound - 1
+            while i >= 0, chars[i] == " " { i -= 1 }
+            if i >= 0, isHan(chars[i]) { return true }
+            var j = range.upperBound
+            while j < chars.count, chars[j] == " " { j += 1 }
+            return j < chars.count && isHan(chars[j])
+        }
+
         /// 相邻两个词之间只有空格或一个连字符，才能当成一个词组比较。
         func joinable(_ a: Token, _ b: Token) -> Bool {
             let gap = chars[a.range.upperBound..<b.range.lowerBound]
@@ -89,20 +122,29 @@ public enum VocabularyMatcher {
                 guard !embedded(span) else { continue }
                 let candidate = String(chars[span])
                 let candidateKey = key(candidate)
-                if let term = bestTerm(for: candidateKey, words: n, in: terms) {
-                    if term.text != candidate { replacements.append((span, term.text)) }
-                    t += n
-                    matched = true
-                    break
-                }
+                guard let (term, exact) = bestTerm(for: candidateKey, words: n, in: terms) else { continue }
+                let mixed = nextToHan(span)
+                let ordinary = isDictionaryWords(candidate, check: isWord)
+                // 把几个普通单词拼成一个词（"we chat" → "WeChat"）、只改普通单词的大小写（"outlook" → "Outlook"）、
+                // 或者模糊匹配普通单词，都只在中英混说里做
+                // 词库里本来就写成几个词（"Claude Code"）时，按原样分词出现不算拼接
+                let allowed = exact
+                    ? (!ordinary || mixed || (n > 1 && term.words == n))
+                    : (!ordinary || (mixed && term.words == n))
+                guard allowed, n == 1 || term.words == n || mixed else { continue }
+                if term.text != candidate { replacements.append((span, term.text)) }
+                t += n
+                matched = true
+                break
             }
             if !matched { t += 1 }
         }
         return apply(replacements, to: chars)
     }
 
-    private static func bestTerm(for candidate: [Character], words: Int, in terms: [LatinTerm]) -> LatinTerm? {
-        if let exact = terms.first(where: { $0.key == candidate }) { return exact }
+    /// 找最接近的词：完全相同（只差大小写、空格）时 exact 为 true。
+    private static func bestTerm(for candidate: [Character], words: Int, in terms: [LatinTerm]) -> (LatinTerm, exact: Bool)? {
+        if let exact = terms.first(where: { $0.key == candidate }) { return (exact, true) }
         var best: (LatinTerm, Int)?
         for term in terms {
             let length = term.key.count
@@ -117,7 +159,7 @@ public enum VocabularyMatcher {
             let distance = levenshtein(candidate, term.key)
             if distance <= allowed, best.map({ distance < $0.1 }) ?? true { best = (term, distance) }
         }
-        return best?.0
+        return best.map { ($0.0, false) }
     }
 
     static func levenshtein(_ a: [Character], _ b: [Character]) -> Int {
@@ -143,12 +185,19 @@ public enum VocabularyMatcher {
         }
     }
 
+    // NSCache 自身是线程安全的
+    nonisolated(unsafe) private static let pinyinCache = NSCache<NSString, NSString>()
+
     /// 单个汉字的拼音，不带声调。
     static func pinyin(_ c: Character) -> String {
+        let key = String(c) as NSString
+        if let cached = pinyinCache.object(forKey: key) { return cached as String }
         let s = NSMutableString(string: String(c)) as CFMutableString
         CFStringTransform(s, nil, kCFStringTransformMandarinLatin, false)
         CFStringTransform(s, nil, kCFStringTransformStripCombiningMarks, false)
-        return (s as String).lowercased()
+        let result = (s as String).lowercased()
+        pinyinCache.setObject(result as NSString, forKey: key)
+        return result
     }
 
     private static func correctHan(_ text: String, terms: [String]) -> String {
@@ -167,7 +216,10 @@ public enum VocabularyMatcher {
                     advanced = true
                     break
                 }
-                if zip(sounds[range], term.sound).allSatisfy({ $0 == $1 }) {
+                // 读音完全相同，并且至少有一个字相同（真实的识别错误通常会保留一部分字，
+                // 完全不同的字只是碰巧同音，比如"离假期"和"李佳琦"）
+                if zip(sounds[range], term.sound).allSatisfy({ $0 == $1 }),
+                   zip(chars[range], term.chars).contains(where: { $0 == $1 }) {
                     replacements.append((range, term.text))
                     for k in range { sounds[k] = nil }
                     i = range.upperBound

@@ -74,14 +74,14 @@ Tidytalk 能响应 `tidytalk://` 开头的网址，可以在 Raycast、快捷指
 - **字幕条**：一句一段，前面的句子淡一些。可以拖到任意位置，位置会被记住；没有声音 10 秒后自动隐藏，有声音再出现。鼠标移上去时右上角出现翻译、暂停、关闭三个按钮；点句子本身不会有任何操作，可以放心拖动，关闭就是停止收听。样式（深色或玻璃）和文字大小在"设置 › 实时字幕"里选。
 - **收听来源**：默认收听全部声音（不含 Tidytalk 自己的提示音），也可以只听某个应用，在菜单的"收听来源"或"设置 › 实时字幕"里选。
 - **翻译**：打开"翻译字幕"后，用"配置 AI"里的服务翻译，译文显示在原文下面；原文已经是目标语言的句子不翻译。默认"边听边翻译"：正在说的这句也会先翻出来，随说话内容更新，说完后换成整句的正式译文；关掉后改为每句说完再翻译，调用 AI 的次数更少。选 Ollama、LM Studio 或 Apple 智能时全程不联网，选云端服务时字幕文字会发送给该服务。
-- **粘贴刚才那段**：收听时把光标放进输入框，按 **⌃⌥V**，把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）按说话输入的规则整理后粘贴。也可以把鼠标移到字幕条上的某一句，点它右边出现的"粘贴"，从那句粘贴到最新。没打开字幕时按 ⌃⌥V 只会提示，不会录音。
+- **粘贴刚才那段**：收听时把光标放进输入框，按 **⌃⌥V**，把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）按说话输入的规则整理后粘贴。也可以把鼠标移到字幕条上的某一句，点它右边出现的"粘贴"，从那句粘贴到最新。⌃⌥V 只在收听期间生效，没打开字幕时这个组合键留给其他应用使用。说话输入正在录音或处理时按 ⌃⌥V，会响一声提示，不会打断当前的输入。
 
 ## 转写文件或链接
 
 在菜单栏菜单里选"转写文件或链接…"：
 
 - 把音频或视频文件（MP3、M4A、WAV、MP4、MOV 等，最长 3 小时）拖进窗口，或点"选择文件…"。
-- 也可以粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35 MB）并校验；之后只下载链接里的音频，转写完就删除。仅限你有权使用的内容。
+- 也可以粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35 MB），并按同一个发布页公布的 SHA-256 校验，能发现下载损坏，但防不了发布页本身被篡改。下载后超过 14 天会自动更新到最新版，免得视频网站改版后用不了。之后只下载链接里的音频，转写完就删除。仅限你有权使用的内容。
 - 按停顿切成一句句，带时间显示。可以拷贝全文，或导出成纯文本（.txt）、字幕（.srt）或 Markdown。
 - 使用"设置 › 识别模型"里选的模型，在本机识别，同样套用固定替换和中英文排版。
 
@@ -214,6 +214,10 @@ Qwen3、DeepSeek-R1 这类会"思考"的推理模型也能用：Tidytalk 会请�
 | 网络不可用、AI 服务超时或报错 | 直接粘贴识别原文，并提示"整理失败，已粘贴原文" |
 | 整理结果明显异常（比原文长很多或短很多） | 视为整理失败，粘贴识别原文 |
 | 没有识别到内容 | 提示"没有听到内容"，不粘贴 |
+| 等 AI 整理时不想要了 | 按 Esc 取消，不会粘贴 |
+| 录音中途麦克风断开（例如拔掉耳机、蓝牙耳机断连） | 换到另一个麦克风后继续录。一直没有恢复时，照常粘贴断开前录到的部分，并提示"后面的话没有录到"；语音改写则不执行，提示再说一次 |
+| 语音识别模型文件损坏 | 设置里该模型显示"加载失败"和"重新下载"按钮 |
+| 配置文件格式错误 | 菜单栏菜单最上面提示，点它打开文件修改；修好前设置改动不会保存 |
 | 缺少权限 | 提示需要授权的项目 |
 
 ### 辅助功能显示未授权
@@ -235,6 +239,7 @@ tccutil reset Accessibility app.tidytalk.Tidytalk
    ```bash
    rm -rf ~/Library/Application\ Support/Tidytalk
    rm -f ~/.tidytalk.json
+   security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
    rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
    defaults delete app.tidytalk.Tidytalk
    tccutil reset All app.tidytalk.Tidytalk
@@ -243,9 +248,10 @@ tccutil reset Accessibility app.tidytalk.Tidytalk
 | 位置 | 内容 |
 | --- | --- |
 | `~/Library/Application Support/Tidytalk/` | 语音识别模型（SenseVoice 约 240 MB，其他模型各约 1 GB），以及转写链接用的 yt-dlp |
-| `~/.tidytalk.json` | 设置、AI 接口地址和 API Key、词库、快捷短语、自定义规则 |
+| `~/.tidytalk.json` | 设置、AI 接口地址、词库、快捷短语、自定义规则 |
+| 钥匙串里的 `app.tidytalk.Tidytalk` | API Key |
 | `~/Library/Caches/app.tidytalk.Tidytalk/`、`~/Library/HTTPStorages/app.tidytalk.Tidytalk/` | 系统为联网请求留下的缓存 |
 | `~/Library/Preferences/app.tidytalk.Tidytalk.plist` | 系统保存的窗口位置等偏好，用 `defaults delete` 删除 |
 | 系统设置里的麦克风、辅助功能、录制系统音频授权 | 用 `tccutil reset` 清除，也可以在"系统设置 › 隐私与安全性"里选中 Tidytalk 点"−"移除 |
 
-打算以后重装、想保留设置和词库的话，可以不删 `~/.tidytalk.json`。这个文件里有 API Key，电脑给别人用之前建议删掉；它是隐藏文件，在访达里按 Command + Shift + 句号可以显示。
+打算以后重装、想保留设置和词库的话，可以不删 `~/.tidytalk.json`。它是隐藏文件，在访达里按 Command + Shift + 句号可以显示。

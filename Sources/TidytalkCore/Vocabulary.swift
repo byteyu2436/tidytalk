@@ -6,8 +6,8 @@ import Foundation
 /// 1. 固定替换表在本地直接替换（例如"克劳德"总是替换成"Claude"），不依赖 AI；
 /// 2. 词库放进 AI 整理的提示里，让模型把发音相近的错误识别纠正过来。
 public enum Vocabulary {
-    /// 提示词里最多带的词条数，避免提示过长。
-    public static let promptLimit = 200
+    /// 提示词里最多带的词条数：每次请求都会整份发送，太多既浪费也会让模型为了用上词库去改句子。
+    public static let promptLimit = 80
 
     /// 去掉空白和重复项，保持原有顺序。
     public static func normalize(_ terms: [String]) -> [String] {

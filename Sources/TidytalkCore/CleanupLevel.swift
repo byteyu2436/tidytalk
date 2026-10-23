@@ -46,4 +46,10 @@ public enum CleanupLevel: String, CaseIterable, Sendable {
     var minimumKeptRatio: Double {
         self == .thorough ? 0.2 : 0.3
     }
+
+    /// 校验时输出里至少要有多少比例的字词来自原文（见 `TranscriptCleanup.overlap`）。
+    /// 书面、深度整理会换掉一些说法，所以留出余量；被"回答"的短问题通常只有一两成。
+    var minimumOverlap: Double {
+        self == .thorough ? 0.4 : 0.5
+    }
 }

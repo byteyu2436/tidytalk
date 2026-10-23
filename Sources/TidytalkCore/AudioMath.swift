@@ -56,6 +56,20 @@ public enum AudioMath {
         return ranges
     }
 
+    /// 语音检测切出的句子（起点和长度，单位是样本）往前补一点，免得吞掉开头的字（F4）：
+    /// 检测器确认开始说话时，这句话已经开始了一小会儿。补的部分不超过上一句的结尾，
+    /// 否则边界上的字会被识别两次，字幕时间也会互相重叠。
+    public static func paddedRanges(_ segments: [(start: Int, count: Int)], padding: Int, total: Int) -> [Range<Int>] {
+        var previousEnd = 0
+        return segments.compactMap { segment in
+            let end = min(total, segment.start + segment.count)
+            let start = max(previousEnd, max(0, segment.start - padding))
+            guard start < end else { return nil }
+            previousEnd = end
+            return start..<end
+        }
+    }
+
     /// 还在录音时，已经可以确定下来的片段：除最后一段（还在变长）以外的所有片段。
     ///
     /// 每个切点只取决于它前面不超过 `maxSeconds` 的音频，所以这些片段和录完后整段切分的结果完全一样，

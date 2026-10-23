@@ -69,7 +69,7 @@ Recording and speech recognition always happen on your Mac, and your voice is ne
 | Cloud AI (DeepSeek, OpenAI, and others) | Stays on your Mac | Sent to the AI service you chose |
 
 - No account and no tracking in the app. Apart from the AI service you set up, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
-- Settings, including your API key, are stored in `~/.tidytalk.json`, readable only by you.
+- Settings are stored in `~/.tidytalk.json`, readable only by you. Your API key is kept in the macOS Keychain.
 - Recent results and live captions are kept in memory only and cleared when you turn captions off or quit. With caption translation on, caption text is sent to your AI service (or stays on your Mac with a local model).
 - The code is fully open source, so you can verify all of this yourself.
 

@@ -52,6 +52,8 @@ public struct HotkeyStateMachine: Sendable {
         case recordingEndedExternally
         /// 从应用外部开始或结束录音（tidytalk://toggle）。
         case externalToggle
+        /// 停止监听（例如辅助功能权限被收回）：不管处在什么状态都回到空闲，正在进行的录音取消。
+        case reset
     }
 
     public enum Action: Equatable, Sendable {
@@ -77,6 +79,17 @@ public struct HotkeyStateMachine: Sendable {
 
     /// - Parameter time: 事件发生的时间（秒，单调递增即可），用于判断双击。
     public mutating func handle(_ event: Event, at time: TimeInterval = 0) -> [Action] {
+        if event == .reset {
+            defer {
+                state = .idle
+                lastTapRelease = nil
+            }
+            switch state {
+            case .recording, .handsFree, .handsFreeHolding: return [.cancelRecording]
+            case .pending: return [.cancelHoldTimer]
+            case .idle, .blocked: return []
+            }
+        }
         switch (state, event) {
         case (.idle, .modifiersChanged(let m)):
             guard m.trigger else { return [] }

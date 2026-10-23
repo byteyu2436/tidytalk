@@ -39,6 +39,12 @@ public struct AIConfig: Equatable, Sendable {
         timeout: 12
     )
 
+    /// 实际使用的超时：不流式返回时，服务端整理完才开始回传，长段口述需要更久。
+    /// 按输入长度放大，五六百字约 34 秒；用户设置得更长时以用户为准。
+    public func timeout(forInputLength length: Int) -> Double {
+        max(timeout, 10 + Double(length) / 25)
+    }
+
     /// `{base_url}/chat/completions`
     public var chatCompletionsURL: URL? {
         var base = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -182,8 +188,8 @@ public struct AppConfig: Equatable, Sendable {
         self.microphone = microphone
         self.history = history
         self.handsFree = handsFree
-        // 两个触发键相同时关闭语音改写
-        self.rewriteHotkey = rewriteHotkey == hotkey ? nil : rewriteHotkey
+        // 两个触发键相同时不在这里改写成关闭：改回不同的触发键后应该恢复。实际使用看 activeRewriteHotkey
+        self.rewriteHotkey = rewriteHotkey
         self.sounds = sounds
         self.cleanupLevel = cleanupLevel
         self.snippets = snippets

@@ -28,6 +28,11 @@ public enum Typography {
         }
     }
 
+    /// 是否含有平假名或片假名，也就是日文。
+    public static func containsKana(_ text: String) -> Bool {
+        text.unicodeScalars.contains { (0x3040...0x30FF).contains($0.value) && $0.value != 0x30FB }
+    }
+
     static func isLatinOrDigit(_ c: Character) -> Bool {
         c.isASCII && (c.isLetter || c.isNumber)
     }

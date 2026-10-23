@@ -224,3 +224,78 @@ extension OutputLanguage {
         return .english
     }
 }
+
+/// 实时字幕切句的缓冲：在语音检测的结果之上，决定什么时候送出正在说的这句（预览）和说完的一句。
+///
+/// - 自己保留从开始说话前一小段（`preroll`）起的音频，整句识别时比检测器切出的那段更完整，
+///   和刚才的预览一致，不会最后一下少了开头几个字；
+/// - 保留的长度比检测器的单句上限多一点（`maxRecent`），超过时丢掉最早的部分；
+/// - 正在说话时每隔 `partialInterval` 送出一次预览。
+public struct SentenceBuffer: Sendable {
+    public enum Event: Equatable, Sendable {
+        case partial([Float])
+        case final([Float])
+    }
+
+    public let preroll: Int
+    public let maxRecent: Int
+    public let partialInterval: Int
+    private var recent: [Float] = []
+    private var sincePartial = 0
+
+    /// - Parameter maxSpeechSeconds: 语音检测的单句上限，保留的音频比它多 2 秒。
+    public init(sampleRate: Int = AudioMath.sampleRate, maxSpeechSeconds: Int, prerollSeconds: Double = 0.5,
+                partialSeconds: Double = 0.6) {
+        preroll = Int(Double(sampleRate) * prerollSeconds)
+        maxRecent = sampleRate * (maxSpeechSeconds + 2)
+        partialInterval = Int(Double(sampleRate) * partialSeconds)
+    }
+
+    /// - Parameters:
+    ///   - samples: 新收到的音频。
+    ///   - finished: 语音检测在这批音频里确认结束的句子。
+    ///   - speaking: 语音检测认为现在是不是在说话。
+    public mutating func process(_ samples: [Float], finished: [[Float]], speaking: Bool) -> [Event] {
+        var events: [Event] = []
+        recent.append(contentsOf: samples)
+        for segment in finished {
+            events.append(.final(recent.count >= segment.count ? recent : segment))
+            recent.removeAll()
+            sincePartial = 0
+        }
+        guard speaking else {
+            if recent.count > preroll { recent.removeFirst(recent.count - preroll) }
+            return events
+        }
+        if recent.count > maxRecent { recent.removeFirst(recent.count - maxRecent) }
+        sincePartial += samples.count
+        if sincePartial >= partialInterval, recent.count >= preroll * 2 {
+            sincePartial = 0
+            events.append(.partial(recent))
+        }
+        return events
+    }
+
+    public mutating func reset() {
+        recent.removeAll()
+        sincePartial = 0
+    }
+}
+
+/// 边听边翻译正在说的这句：什么时候值得再发一次请求。
+public enum PartialTranslationGate {
+    /// 两次请求至少间隔多久。
+    public static let interval: TimeInterval = 1.5
+    /// 多出这么多字才重新翻译。
+    public static let growth = 3
+
+    /// - Parameters:
+    ///   - text: 正在说的这句目前的识别结果。
+    ///   - lastSource: 上次送去翻译的文字。
+    ///   - sinceLastRequest: 距离上次请求过了多久。
+    public static func shouldTranslate(_ text: String, lastSource: String, sinceLastRequest: TimeInterval) -> Bool {
+        guard sinceLastRequest >= interval, text.count >= 4 else { return false }
+        // 识别结果变短（重新识别时改了说法）也重新翻译
+        return text.count >= lastSource.count + growth || text.count < lastSource.count
+    }
+}

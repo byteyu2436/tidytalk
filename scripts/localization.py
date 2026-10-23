@@ -16,7 +16,7 @@ import json, re, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = [ROOT / "Sources/Tidytalk", ROOT / "Sources/TidytalkCore"]
+SOURCES = [ROOT / "Sources/Tidytalk", ROOT / "Sources/TidytalkApp", ROOT / "Sources/TidytalkCore"]
 SKIP = {"DebugCommands.swift"}  # 开发用命令行，不面向用户
 STRINGS = ROOT / "Resources/en.lproj/Localizable.strings"
 

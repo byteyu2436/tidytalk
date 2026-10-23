@@ -778,3 +778,18 @@
 
 /* 剪贴板回执、关闭思考、外部控制、边录边识别、本地纠正词库 */
 "AI 服务的回复不完整" = "The AI service sent an incomplete reply";
+
+/* 2026-10 代码审查的修复 */
+"麦克风中途断开了，请再说一次" = "The microphone dropped out. Please say it again.";
+"麦克风中途断开了，后面的话没有录到" = "The microphone dropped out. The rest wasn't recorded.";
+"%@，已粘贴原文" = "%@. The original text was pasted.";
+"收不到电脑的声音：请在\"系统设置 › 隐私与安全性 › 录制系统音频\"里允许 Tidytalk" = "Can't hear your Mac's audio. Allow Tidytalk in System Settings › Privacy & Security › Screen & System Audio Recording.";
+"导出失败" = "Export Failed";
+"无法读取配置文件 ~/.tidytalk.json：%@" = "Can't read the settings file ~/.tidytalk.json: %@";
+"内容太长，Apple 智能处理不了" = "This is too long for Apple Intelligence";
+"Apple 智能拒绝处理这段内容" = "Apple Intelligence declined to process this text";
+"模型加载失败，文件可能已损坏，请重新下载（%@）" = "The model couldn't be loaded and may be damaged. Please download it again (%@).";
+"磁盘空间不足，还需要 %@" = "Not enough disk space. %@ more is needed.";
+"重新下载" = "Download Again";
+"⚠️ 配置文件格式错误，设置改动不会保存。点此打开修改" = "⚠️ The config file has an error, so changes won't be saved. Click to open and fix it";
+"正在分句…" = "Splitting into sentences…";

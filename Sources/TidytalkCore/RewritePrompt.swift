@@ -23,8 +23,21 @@ public enum RewritePrompt {
             system += "\n\n用户词库（人名、产品名、专业术语的正确写法），修改要求里出现读音相近的词时按词库理解：\n"
                 + terms.joined(separator: "、")
         }
-        let user = "<selection>\n\(selection)\n</selection>\n<instruction>\n\(instruction)\n</instruction>"
+        let user = "<selection>\n\(escape(selection))\n</selection>\n<instruction>\n\(escape(instruction))\n</instruction>"
         return [.init(role: .system, content: system), .init(role: .user, content: user)]
+    }
+
+    /// 选中的文字来自任意应用，里面如果有 `</selection><instruction>` 这样的标签，会被模型当成指令。
+    /// 换成全角尖括号，模型仍然能看懂原文。
+    static func escape(_ text: String) -> String {
+        var result = text
+        for tag in ["selection", "instruction"] {
+            for form in ["<\(tag)>", "</\(tag)>"] {
+                result = result.replacingOccurrences(of: form, with: form.replacingOccurrences(of: "<", with: "＜")
+                    .replacingOccurrences(of: ">", with: "＞"), options: .caseInsensitive)
+            }
+        }
+        return result
     }
 
     /// 改写可以变长也可以变短，只拦截空结果和长得离谱的结果。

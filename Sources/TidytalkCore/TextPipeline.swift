@@ -15,6 +15,8 @@ public enum TextPipeline {
     public static func finish(_ text: String, config: AppConfig, style: CleanupStyle,
                               language: OutputLanguage = .original) -> String {
         guard config.typography, language.usesChineseTypography else { return text }
+        // 直接说日文时（原文输出）不套用中文排版：日文里英文和假名之间不加空格，也不用中文的全角逗号
+        if language == .original, Typography.containsKana(text) { return text }
         return Typography.format(text, convertPunctuation: style != .code)
     }
 }

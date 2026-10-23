@@ -31,7 +31,7 @@
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
   <link rel="apple-touch-icon" href="/assets/icon-180.png">
-  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/style.css?v=23a39baa74">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,8 +87,8 @@
         Tidytalk
       </a>
       <ul class="nav-links">
-        <li class="nav-section"><a href="/zh/docs/" aria-current="page">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
-        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li class="nav-section nav-keep"><a href="/zh/docs/" aria-current="page">使用指南</a></li><li class="nav-section"><a href="/zh/compare/">对比</a></li><li class="nav-section"><a href="/zh/changelog/">更新日志</a></li>
+        <li class="nav-github"><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
         <li><a href="/docs/" hreflang="en" lang="en">English</a></li>
         <li><a class="button button-primary button-small" href="https://github.com/byteyu2436/tidytalk/releases/latest">下载</a></li>
       </ul>
@@ -204,7 +204,7 @@
         <li><strong>字幕条</strong>：一句一段，前面的句子淡一些。可以拖到任意位置，位置会被记住；没有声音 10 秒后自动隐藏，有声音再出现。鼠标移上去时右上角出现翻译、暂停、关闭三个按钮，关闭就是停止收听；点句子本身不会有任何操作，可以放心拖动。样式（深色或玻璃）和文字大小在"设置 › 实时字幕"里选。</li>
         <li><strong>收听来源</strong>：默认收听全部声音（不含 Tidytalk 自己的提示音），也可以只听某个应用，在菜单的"收听来源"或"设置 › 实时字幕"里选。</li>
         <li><strong>翻译</strong>：打开"翻译字幕"后，用"配置 AI"里的服务翻译，译文显示在原文下面；原文已经是目标语言的句子不翻译。默认"边听边翻译"：正在说的这句也会先翻出来，随说话内容更新，说完后换成整句的正式译文；关掉后改为每句说完再翻译，调用 AI 的次数更少。选 Ollama、LM Studio 或 Apple 智能时全程不联网，选云端服务时字幕文字会发送给该服务。</li>
-        <li><strong>粘贴刚才那段</strong>：收听时把光标放进输入框，按 <kbd>⌃⌥V</kbd>，把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）按说话输入的设置整理后粘贴。也可以把鼠标移到字幕条上的某一句，点它右边出现的"粘贴"，从那句粘贴到最新。没打开字幕时按 <kbd>⌃⌥V</kbd> 只会提示，不会录音。</li>
+        <li><strong>粘贴刚才那段</strong>：收听时把光标放进输入框，按 <kbd>⌃⌥V</kbd>，把最近一段话（从上一次超过 2 秒的停顿开始，最多 30 秒）按说话输入的设置整理后粘贴。也可以把鼠标移到字幕条上的某一句，点它右边出现的"粘贴"，从那句粘贴到最新。<kbd>⌃⌥V</kbd> 只在收听期间生效，没打开字幕时这个组合键留给其他应用使用。</li>
       </ul>
 
       <p>一步步的设置方法见<a href="/zh/guides/live-translated-captions/">在 Mac 上给视频和会议加实时翻译字幕</a>。</p>
@@ -213,7 +213,7 @@
       <p>在菜单栏菜单里选"转写文件或链接…"：</p>
       <ul>
         <li>把音频或视频文件（MP3、M4A、WAV、MP4、MOV 等，最长 3 小时）拖进窗口，或点"选择文件…"。</li>
-        <li>也可以粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35&nbsp;MB）并校验；之后只下载链接里的音频，转写完就删除。仅限你有权使用的内容。</li>
+        <li>也可以粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35&nbsp;MB）并按发布页公布的校验值核对，之后每两周自动更新；之后只下载链接里的音频，转写完就删除。仅限你有权使用的内容。</li>
         <li>按停顿切成一句句，带时间显示。可以拷贝全文，或导出成纯文本（.txt）、字幕（.srt）或 Markdown。</li>
         <li>使用"设置 › 识别模型"里选的模型，在本机识别。</li>
       </ul>
@@ -330,16 +330,17 @@
       <h3>辅助功能一直显示未授权</h3>
       <p>系统设置里已经打开了 Tidytalk 的开关，应用却仍显示未授权，通常是列表里留着旧版本的条目。在"系统设置 › 隐私与安全性 › 辅助功能"里选中 Tidytalk 点"−"删除，再回到 Tidytalk 点"授权"重新添加；或者在终端执行：</p>
       <pre><code>tccutil reset Accessibility app.tidytalk.Tidytalk</code></pre>
-      <p>所有设置都保存在 <code>~/.tidytalk.json</code>，也可以直接编辑，字段说明见<a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">配置文件文档</a>。</p>
+      <p>所有设置都保存在 <code>~/.tidytalk.json</code>（API Key 存在 macOS 钥匙串里，不写进文件），也可以直接编辑，字段说明见<a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">配置文件文档</a>。</p>
 
       <h2 id="uninstall">卸载</h2>
       <p>把 Tidytalk 拖进废纸篓只会删除应用本身，语音识别模型、配置和授权记录都会留在电脑上。完整卸载：先退出 Tidytalk（开启过开机自动启动的话先关掉），把应用拖进废纸篓，再在终端执行：</p>
       <pre><code>rm -rf ~/Library/Application\ Support/Tidytalk
 rm -f ~/.tidytalk.json
+security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>这几行依次删除语音识别模型（SenseVoice 约 240&nbsp;MB，其他模型各约 1&nbsp;GB）和 yt-dlp、配置文件（含 API Key）、联网缓存、系统偏好，以及麦克风、辅助功能和录制系统音频的授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
+      <p>这几行依次删除语音识别模型（SenseVoice 约 240&nbsp;MB，其他模型各约 1&nbsp;GB）和 yt-dlp、配置文件、钥匙串里的 API Key、联网缓存、系统偏好，以及麦克风、辅助功能和录制系统音频的授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
     </div>
 
     <aside class="page-cta">

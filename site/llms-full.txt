@@ -308,7 +308,7 @@ Tidytalk can caption whatever your Mac is playing, such as a video, a lecture, o
 
 - Translation: turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.
 
-- Paste what was just said: while listening, put your cursor in a text field and press ⌃⌥V. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. If captions are off, ⌃⌥V only shows a reminder and never starts recording.
+- Paste what was just said: while listening, put your cursor in a text field and press ⌃⌥V. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. ⌃⌥V only works while captions are on; the rest of the time other apps can use it.
 
 For a step-by-step walkthrough, see Live translated captions for videos and meetings.
 
@@ -318,7 +318,7 @@ Choose "Transcribe File or Link…" in the menu bar menu.
 
 - Drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) into the window, or click "Choose File…".
 
-- Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35 MB) from its official GitHub release and verifies it. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.
+- Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35 MB) from its official GitHub release, checks it against the checksum published there, and updates it every two weeks. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.
 
 - The text is split at pauses with timestamps. Copy it all, or export plain text (.txt), subtitles (.srt), or Markdown.
 
@@ -465,18 +465,19 @@ macOS says it can't verify the developer | The app isn't notarized yet. Click "O
 If Tidytalk is turned on in System Settings but still shows as not allowed, the list probably has an entry from an older version. In System Settings › Privacy & Security › Accessibility, select Tidytalk, click "−" to remove it, then click "Allow" in Tidytalk to add it again. Or run:
 tccutil reset Accessibility app.tidytalk.Tidytalk
 
-All settings are stored in ~/.tidytalk.json, which you can edit directly. See the configuration reference.
+All settings are stored in ~/.tidytalk.json, which you can edit directly. Your API key is kept in the macOS Keychain instead of that file. See the configuration reference.
 
 ## Uninstall
 
 Dragging Tidytalk to the Trash removes only the app. The speech model, settings, and permission records stay on your Mac. To remove everything, quit Tidytalk (turn off "Open at login" first if you enabled it), move the app to the Trash, and run:
 rm -rf ~/Library/Application\ Support/Tidytalk
 rm -f ~/.tidytalk.json
+security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk
 
-These remove the speech models (SenseVoice is about 240 MB, other models about 1 GB each) and yt-dlp, your settings including your API key, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep ~/.tidytalk.json if you plan to reinstall and want your settings back.
+These remove the speech models (SenseVoice is about 240 MB, other models about 1 GB each) and yt-dlp, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep ~/.tidytalk.json if you plan to reinstall and want your settings back.
 
 ---
 

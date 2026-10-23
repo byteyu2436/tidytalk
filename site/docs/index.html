@@ -31,7 +31,7 @@
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
   <link rel="apple-touch-icon" href="/assets/icon-180.png">
-  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/style.css?v=23a39baa74">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,8 +87,8 @@
         Tidytalk
       </a>
       <ul class="nav-links">
-        <li class="nav-section"><a href="/docs/" aria-current="page">Docs</a></li><li class="nav-section"><a href="/compare/">Compare</a></li><li class="nav-section"><a href="/changelog/">Changelog</a></li>
-        <li><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
+        <li class="nav-section nav-keep"><a href="/docs/" aria-current="page">Docs</a></li><li class="nav-section"><a href="/compare/">Compare</a></li><li class="nav-section"><a href="/changelog/">Changelog</a></li>
+        <li class="nav-github"><a href="https://github.com/byteyu2436/tidytalk" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav-github-label">GitHub</span></a></li>
         <li><a href="/zh/docs/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li>
         <li><a class="button button-primary button-small" href="https://github.com/byteyu2436/tidytalk/releases/latest">Download</a></li>
       </ul>
@@ -204,7 +204,7 @@
         <li><strong>The caption bar:</strong> one sentence per line, with earlier sentences dimmed. Drag it anywhere and it remembers the spot. It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons; close stops listening. Clicking a sentence does nothing, so you can drag freely. Choose a dark or glass style and a text size in Settings › Live Captions.</li>
         <li><strong>What it listens to:</strong> all audio except Tidytalk's own sounds, or a single app you pick under Listen To in the menu or in Settings › Live Captions.</li>
         <li><strong>Translation:</strong> turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.</li>
-        <li><strong>Paste what was just said:</strong> while listening, put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. If captions are off, <kbd>⌃⌥V</kbd> only shows a reminder and never starts recording.</li>
+        <li><strong>Paste what was just said:</strong> while listening, put your cursor in a text field and press <kbd>⌃⌥V</kbd>. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. <kbd>⌃⌥V</kbd> only works while captions are on; the rest of the time other apps can use it.</li>
       </ul>
       <p>For a step-by-step walkthrough, see <a href="/guides/live-translated-captions/">Live translated captions for videos and meetings</a>.</p>
 
@@ -212,7 +212,7 @@
       <p>Choose "Transcribe File or Link…" in the menu bar menu.</p>
       <ul>
         <li>Drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) into the window, or click "Choose File…".</li>
-        <li>Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35&nbsp;MB) from its official GitHub release and verifies it. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.</li>
+        <li>Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35&nbsp;MB) from its official GitHub release, checks it against the checksum published there, and updates it every two weeks. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.</li>
         <li>The text is split at pauses with timestamps. Copy it all, or export plain text (.txt), subtitles (.srt), or Markdown.</li>
         <li>It uses the speech model from Settings › Speech Model and runs on your Mac.</li>
       </ul>
@@ -329,16 +329,17 @@
       <h3>Accessibility still shows as not allowed</h3>
       <p>If Tidytalk is turned on in System Settings but still shows as not allowed, the list probably has an entry from an older version. In System Settings › Privacy &amp; Security › Accessibility, select Tidytalk, click "−" to remove it, then click "Allow" in Tidytalk to add it again. Or run:</p>
       <pre><code>tccutil reset Accessibility app.tidytalk.Tidytalk</code></pre>
-      <p>All settings are stored in <code>~/.tidytalk.json</code>, which you can edit directly. See the <a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">configuration reference</a>.</p>
+      <p>All settings are stored in <code>~/.tidytalk.json</code>, which you can edit directly. Your API key is kept in the macOS Keychain instead of that file. See the <a href="https://github.com/byteyu2436/tidytalk/blob/main/docs/configuration.md">configuration reference</a>.</p>
 
       <h2 id="uninstall">Uninstall</h2>
       <p>Dragging Tidytalk to the Trash removes only the app. The speech model, settings, and permission records stay on your Mac. To remove everything, quit Tidytalk (turn off "Open at login" first if you enabled it), move the app to the Trash, and run:</p>
       <pre><code>rm -rf ~/Library/Application\ Support/Tidytalk
 rm -f ~/.tidytalk.json
+security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>These remove the speech models (SenseVoice is about 240&nbsp;MB, other models about 1&nbsp;GB each) and yt-dlp, your settings including your API key, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
+      <p>These remove the speech models (SenseVoice is about 240&nbsp;MB, other models about 1&nbsp;GB each) and yt-dlp, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
     </div>
 
     <aside class="page-cta">

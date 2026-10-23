@@ -142,6 +142,11 @@ import Testing
     }
 
     @Test func rewriteKeyCannotEqualHotkey() {
-        #expect(AppConfig(hotkey: .rightOption, rewriteHotkey: .rightOption).rewriteHotkey == nil)
+        // 相同时不启用改写，但保留设置：触发键改回去后改写键恢复（A6）
+        var config = AppConfig(hotkey: .rightOption, rewriteHotkey: .rightOption)
+        #expect(config.activeRewriteHotkey == nil)
+        #expect(config.rewriteHotkey == .rightOption)
+        config.hotkey = .optionCommand
+        #expect(config.activeRewriteHotkey == .rightOption)
     }
 }
