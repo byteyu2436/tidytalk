@@ -6,6 +6,8 @@ import TidytalkCore
 final class DictationController {
     static let minimumDuration: TimeInterval = 0.5
     static let messageDuration: Duration = .seconds(2.5)
+    /// 较长、需要用户照着做的提示。
+    static let longMessageDuration: Duration = .seconds(4)
 
     private let model: AppModel
     private let indicator: IndicatorPanel
@@ -17,6 +19,8 @@ final class DictationController {
     private var isProcessing = false
     /// 当前这次录音的用途：说话输入，或语音改写选中的文字。
     private var purpose: HotkeyMonitor.Purpose = .dictation
+    /// 这次录音用的是蓝牙耳机的麦克风（开头要等它切换到通话模式）。
+    private var inputIsBluetooth = false
     private var messageTask: Task<Void, Never>?
     /// 录音期间的识别：边录边识别和实时预览（见 `LiveTranscription`）。
     private var live: LiveTranscription?
@@ -43,6 +47,7 @@ final class DictationController {
         hotkeys.rewriteKey = { [weak model] in model?.configStore.config.activeRewriteHotkey }
         hotkeys.handsFreeEnabled = { [weak model] in model?.configStore.config.handsFree ?? false }
         recorder.onLevel = { [weak self] level in self?.model.pushLevel(level) }
+        recorder.onInputReady = { [weak self] in self?.inputReady() }
         recorder.onLimitReached = { [weak self] in
             guard let self else { return }
             hotkeys.recordingEndedExternally(purpose)
@@ -165,11 +170,17 @@ final class DictationController {
         if config.speechModel == .apple { model.models.refreshAppleStatus() }
         // 上一次粘贴后的"自动学词"比较到此为止，免得把这次的语音改写、快捷短语当成手动改词
         corrections.stop()
-        if config.sounds { Sounds.start() }
+        // 蓝牙耳机的麦克风打开时要先切到通话模式，一两秒后才有声音：提示音等麦克风真正开始收音时再响，
+        // 听到再说就不会丢掉开头。其他麦克风几乎立刻就绪，照旧按下就响
+        inputIsBluetooth = AudioDevices.effectiveInput(uid: config.microphone)?.isBluetooth ?? false
+        if config.sounds, !inputIsBluetooth { Sounds.start() }
         do {
             model.resetLevels()
+            // 收到第一段真正的声音之前，指示器的电平条变暗、缓慢闪烁（见 inputReady）
+            model.waitingForInput = true
             try recorder.start(deviceUID: config.microphone)
         } catch {
+            model.waitingForInput = false
             hotkeys.recordingEndedExternally(source)
             showMessage(String(localized: "无法开始录音：\(error.localizedDescription)"))
             return
@@ -181,6 +192,23 @@ final class DictationController {
         model.phase = .recording
         indicator.show()
         startLive(model: config.speechModel, preview: config.livePreview)
+    }
+
+    /// 麦克风送来了第一段真正的声音：电平条恢复正常；蓝牙耳机这时才响开始的提示音。
+    private func inputReady() {
+        guard recorder.isRecording, model.waitingForInput else { return }
+        model.waitingForInput = false
+        if inputIsBluetooth, model.configStore.config.sounds { Sounds.start() }
+    }
+
+    /// 没录到声音时的提示。蓝牙耳机多半是还没切换到通话模式，建议改用 Mac 的麦克风。
+    private func showNoInput() {
+        if inputIsBluetooth {
+            showMessage(String(localized: "没录到声音：蓝牙耳机的麦克风启动慢，可在设置里改用 Mac 的麦克风"),
+                        duration: Self.longMessageDuration)
+        } else {
+            showMessage(String(localized: "没录到声音：麦克风没有送来数据"))
+        }
     }
 
     /// 模型已经加载好时，录音期间每隔一小段时间把已经确定的片段先识别掉，并刷新胶囊下方的预览。
@@ -226,6 +254,7 @@ final class DictationController {
         stopLivePreview()
         stopLive()
         recorder.cancel()
+        model.waitingForInput = false
         hide()
     }
 
@@ -237,33 +266,48 @@ final class DictationController {
         liveTask = nil
         live = nil
         let lostInput = recorder.lostInput()
+        let held = recorder.elapsed
+        let signalDelay = recorder.signalDelay
         let samples = recorder.stop()
+        model.waitingForInput = false
         if model.configStore.config.sounds { Sounds.finish() }
-        let duration = Double(samples.count) / Double(AudioMath.sampleRate)
-        guard duration >= Self.minimumDuration else {
+        let captured = Double(samples.count) / Double(AudioMath.sampleRate)
+        let lateStart: Bool
+        switch InputCheck.outcome(held: held, captured: captured, signalDelay: signalDelay,
+                                  lostInput: lostInput, minimum: Self.minimumDuration) {
+        case .tooShort:
             session?.cancel()
             hide()
             return
-        }
-        if lostInput, purpose == .rewrite {
-            // 麦克风中途断开、一直没有恢复：改写要求只听到一半，不能照着改
+        case .noInput:
+            // 按住说了一阵却没有声音（蓝牙耳机还没切换好、麦克风被静音）：说明原因，不要悄悄收起
             session?.cancel()
-            showMessage(String(localized: "麦克风中途断开了，请再说一次"))
+            showNoInput()
             return
+        case .recorded(let lostTail, let late):
+            if lostTail, purpose == .rewrite {
+                // 麦克风中途断开、一直没有恢复：改写要求只听到一半，不能照着改
+                session?.cancel()
+                showMessage(String(localized: "麦克风中途断开了，请再说一次"))
+                return
+            }
+            lateStart = late
         }
 
         model.phase = .processing
         let source = purpose
         startProcessing { [weak self] in
-            await self?.process(samples, for: source, live: session, inputLost: lostInput)
+            await self?.process(samples, for: source, live: session, inputLost: lostInput, lateStart: lateStart)
         }
     }
 
     // MARK: - 处理
 
-    /// - Parameter inputLost: 麦克风中途断开、一直没有恢复。照常粘贴已经录到的部分，最后提示后面的没录到。
+    /// - Parameters:
+    ///   - inputLost: 麦克风中途断开、一直没有恢复。照常粘贴已经录到的部分，最后提示后面的没录到。
+    ///   - lateStart: 按下后过了一阵麦克风才有声音。什么都没识别出来时，按没录到声音提示。
     private func process(_ samples: [Float], for source: HotkeyMonitor.Purpose,
-                         live: LiveTranscription? = nil, inputLost: Bool = false) async {
+                         live: LiveTranscription? = nil, inputLost: Bool = false, lateStart: Bool = false) async {
         guard let recognizer = await readyRecognizer() else {
             showMessage(String(localized: "语音识别模型加载失败"))
             return
@@ -286,6 +330,8 @@ final class DictationController {
                 showMessage(reason)
             } else if inputLost {
                 showMessage(String(localized: "麦克风中途断开了，请再说一次"))
+            } else if lateStart, inputIsBluetooth {
+                showNoInput()
             } else {
                 showMessage(String(localized: "没有听到内容"))
             }
@@ -486,7 +532,7 @@ final class DictationController {
 
     // MARK: - 指示器
 
-    func showMessage(_ text: String) {
+    func showMessage(_ text: String, duration: Duration = DictationController.messageDuration) {
         // 被取消的处理任务（Esc、tidytalk://cancel）还会走到这里，例如网络请求被取消后报"改写失败"。
         // 这时指示器可能已经在显示新的录音，不能再动它
         guard !Task.isCancelled else { return }
@@ -496,7 +542,7 @@ final class DictationController {
         model.phase = .message(text)
         indicator.show()
         messageTask = Task {
-            try? await Task.sleep(for: Self.messageDuration)
+            try? await Task.sleep(for: duration)
             guard !Task.isCancelled else { return }
             hide()
         }

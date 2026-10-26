@@ -264,8 +264,15 @@ struct GeneralSettings: View {
 struct RecordingSettings: View {
     let model: AppModel
     @ViewState private var microphones: [AudioInputDevice] = []
+    @ViewState private var defaultMicrophone: AudioInputDevice?
 
     private var config: AppConfig { model.configStore.config }
+
+    /// 说话输入实际会用的麦克风是蓝牙耳机时返回它（选了"系统默认"、默认的是 AirPods 时也算）。
+    private var bluetoothMicrophone: AudioInputDevice? {
+        let used = microphones.first { $0.uid == config.microphone } ?? defaultMicrophone
+        return used?.isBluetooth == true ? used : nil
+    }
 
     private var hotkeyFooter: String {
         var text = String(localized: "按住说话，松开结束，按 Esc 取消。")
@@ -319,6 +326,23 @@ struct RecordingSettings: View {
                         Text("已选的麦克风（未连接）").tag(config.microphone)
                     }
                 }
+                if let bluetooth = bluetoothMicrophone {
+                    // 蓝牙耳机的麦克风打开时要先切到通话模式，开头一两秒没有声音（issue #1）
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Theme.warning)
+                        Text("正在用蓝牙耳机的麦克风（\(bluetooth.name)）：每次开始录音都要先切换到通话模式，开头一两秒录不到，耳机音质也会暂时变差。建议改用 Mac 自带的麦克风，耳机照常用来听。")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                        if let builtIn = microphones.first(where: \.isBuiltIn) {
+                            IconButton("laptopcomputer", help: "改用 Mac 自带的麦克风", size: 26, tint: Theme.Tint.dictation) {
+                                model.configStore.update { $0.microphone = builtIn.uid }
+                            }
+                        }
+                    }
+                }
                 Toggle("显示实时文字", isOn: model.configStore.binding(\.livePreview))
                 Toggle("播放提示音", isOn: model.configStore.binding(\.sounds))
             } header: {
@@ -347,6 +371,8 @@ struct RecordingSettings: View {
             while !Task.isCancelled {
                 let devices = AudioDevices.inputDevices()
                 if devices != microphones { microphones = devices }
+                let fallback = AudioDevices.defaultInput()
+                if fallback != defaultMicrophone { defaultMicrophone = fallback }
                 try? await Task.sleep(for: .seconds(1))
             }
         }

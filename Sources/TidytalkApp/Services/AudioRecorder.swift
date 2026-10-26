@@ -22,46 +22,72 @@ final class AudioRecorder {
     var onLevel: ((Float) -> Void)?
     /// 达到最长录音时长。
     var onLimitReached: (() -> Void)?
+    /// 麦克风送来了第一段真正的声音（不全是 0）。蓝牙耳机要先切到通话模式，可能要等一两秒。
+    var onInputReady: (() -> Void)?
 
     private var engine: AVAudioEngine?
     private var sink: SampleSink?
     private var deviceUID = ""
     private var configurationObserver: NSObjectProtocol?
+    private var watchdog: Timer?
     private var startedUptime: TimeInterval = 0
+    private var lastRestartUptime: TimeInterval?
+    private var restarts = 0
 
-    var isRecording: Bool { engine != nil }
+    /// 正在录音。中途重新打开麦克风失败、等待重试时也算（已经录到的保留在 sink 里）。
+    var isRecording: Bool { sink != nil }
 
     /// - Parameter deviceUID: 指定的麦克风；为空或设备已断开时使用系统默认麦克风。
     func start(deviceUID: String = "") throws {
-        guard engine == nil else { return }
+        guard sink == nil else { return }
+        guard let target = AVAudioFormat(commonFormat: .pcmFormatFloat32,
+                                         sampleRate: Double(AudioMath.sampleRate),
+                                         channels: 1, interleaved: false)
+        else { throw RecorderError.unsupportedFormat }
 
+        let maxSamples = Int(Self.maxDuration) * AudioMath.sampleRate
+        let sink = SampleSink(targetFormat: target, maxSamples: maxSamples,
+                              onLevel: { [weak self] level in
+                                  MainActor.assumeIsolated { self?.onLevel?(level) }
+                              },
+                              onLimit: { [weak self] in
+                                  MainActor.assumeIsolated { self?.onLimitReached?() }
+                              },
+                              onSignal: { [weak self] sink in
+                                  MainActor.assumeIsolated {
+                                      // 上一次录音迟到的回调不算
+                                      guard let self, sink === self.sink else { return }
+                                      self.onInputReady?()
+                                  }
+                              })
+        self.deviceUID = deviceUID
+        // 从按下算起：蓝牙耳机切换模式时，启动引擎本身也可能要等一阵
+        startedUptime = ProcessInfo.processInfo.systemUptime
+        try openEngine(feeding: sink)
+        self.sink = sink
+        lastRestartUptime = nil
+        restarts = 0
+        startWatchdog()
+    }
+
+    /// 新建一个引擎接上麦克风。换了设备或格式之后旧引擎不一定能再启动（蓝牙耳机切换模式时尤其如此），
+    /// 所以每次都新建，和会议的 `MicStream` 一样。
+    private func openEngine(feeding sink: SampleSink) throws {
+        closeEngine()
         let engine = AVAudioEngine()
         let input = engine.inputNode
         if let device = AudioDevices.device(uid: deviceUID) {
             // 必须在读取输入格式和安装 tap 之前切换设备
             try input.auAudioUnit.setDeviceID(device.id)
         }
-        let inputFormat = input.outputFormat(forBus: 0)
-        guard inputFormat.sampleRate > 0, inputFormat.channelCount > 0 else { throw RecorderError.noInputDevice }
-
-        guard let target = AVAudioFormat(commonFormat: .pcmFormatFloat32,
-                                         sampleRate: Double(AudioMath.sampleRate),
-                                         channels: 1, interleaved: false),
-              let converter = AVAudioConverter(from: inputFormat, to: target)
-        else { throw RecorderError.unsupportedFormat }
-
-        let maxSamples = Int(Self.maxDuration) * AudioMath.sampleRate
-        let sink = SampleSink(converter: converter, targetFormat: target, maxSamples: maxSamples,
-                              onLevel: { [weak self] level in
-                                  MainActor.assumeIsolated { self?.onLevel?(level) }
-                              },
-                              onLimit: { [weak self] in
-                                  MainActor.assumeIsolated { self?.onLimitReached?() }
-                              })
-
-        let frames = AVAudioFrameCount(inputFormat.sampleRate / 20)
-        input.installTap(onBus: 0, bufferSize: frames, format: inputFormat, block: sink.makeTapBlock())
-
+        let format = input.outputFormat(forBus: 0)
+        guard format.sampleRate > 0, format.channelCount > 0 else { throw RecorderError.noInputDevice }
+        guard let converter = AVAudioConverter(from: format, to: sink.targetFormat) else {
+            throw RecorderError.unsupportedFormat
+        }
+        sink.replaceConverter(converter)
+        input.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate / 20), format: format,
+                         block: sink.makeTapBlock())
         engine.prepare()
         do {
             try engine.start()
@@ -70,55 +96,78 @@ final class AudioRecorder {
             throw error
         }
         self.engine = engine
-        self.sink = sink
-        self.deviceUID = deviceUID
-        startedUptime = ProcessInfo.processInfo.systemUptime
-        // 录音中途换了麦克风或格式变了（AirPods 切到通话模式、拔掉 USB 麦克风）时引擎会停下，重建后继续录
+        // 录音中途换了麦克风或格式变了（AirPods 切到通话模式、拔掉 USB 麦克风）时引擎会停下，重新打开后继续录
         configurationObserver = NotificationCenter.default.addObserver(
             forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.rebuildAfterConfigurationChange() }
+            MainActor.assumeIsolated { self?.restart() }
         }
     }
 
-    /// 重新读取输入格式、换一个格式转换器、重装 tap 再启动；已经录到的音频保留在同一个 sink 里。
-    private func rebuildAfterConfigurationChange() {
-        guard let engine, let sink else { return }
-        let input = engine.inputNode
-        input.removeTap(onBus: 0)
-        if let device = AudioDevices.device(uid: deviceUID) {
-            try? input.auAudioUnit.setDeviceID(device.id)
-        }
-        let format = input.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0,
-              let converter = AVAudioConverter(from: format, to: sink.targetFormat)
-        else { return }
-        sink.replaceConverter(converter)
-        input.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate / 20), format: format,
-                         block: sink.makeTapBlock())
-        engine.prepare()
-        try? engine.start()
-    }
-
-    /// 结束前这么久没有收到声音数据，就认为麦克风断开了。AirPods 切换模式时中断约 1～2 秒，但之后会恢复。
-    private static let inputSilenceLimit: TimeInterval = 1.5
-
-    /// 麦克风断开后一直没有恢复：最近一段时间没有收到任何声音数据（不是安静，而是根本没有数据）。
-    /// 中途断开又恢复（切换设备重建成功）时不算，已经录到的内容照常使用。
-    func lostInput() -> Bool {
-        guard let sink else { return false }
-        let lastData = sink.lastDataUptime ?? startedUptime
-        return ProcessInfo.processInfo.systemUptime - lastData > Self.inputSilenceLimit
-    }
-
-    /// 结束录音并返回采集到的音频。
-    func stop() -> [Float] {
-        guard let engine, let sink else { return [] }
+    private func closeEngine() {
         if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
         configurationObserver = nil
+        guard let engine else { return }
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         self.engine = nil
+    }
+
+    /// 重新打开麦克风，已经录到的音频保留在同一个 sink 里。打不开时（蓝牙耳机还在切换模式）由看门狗稍后再试。
+    /// 次数用完就不再重开（设备一直报格式变化时不会没完没了地重建），结束时按断开处理。
+    private func restart() {
+        guard let sink, restarts < InputCheck.maxRestarts else { return }
+        restarts += 1
+        lastRestartUptime = ProcessInfo.processInfo.systemUptime
+        // 打不开时 engine 留空，看门狗半秒后再试
+        try? openEngine(feeding: sink)
+    }
+
+    /// 每半秒检查一次：上一次打开失败、或者引擎停了却没有发通知，就再试；很久没有数据也重新打开。
+    private func startWatchdog() {
+        watchdog?.invalidate()
+        let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, let sink = self.sink else { return }
+                if InputCheck.shouldRestart(started: self.startedUptime, lastData: sink.lastDataUptime,
+                                            lastRestart: self.lastRestartUptime,
+                                            running: self.engine?.isRunning == true,
+                                            restarts: self.restarts, now: ProcessInfo.processInfo.systemUptime) {
+                    self.restart()
+                }
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        watchdog = timer
+    }
+
+    /// 麦克风断开后一直没有恢复：结束前一段时间没有收到任何声音数据（不是安静，而是根本没有数据）。
+    /// 中途断开又恢复（重新打开成功）时不算，已经录到的内容照常使用。
+    func lostInput() -> Bool {
+        guard let sink else { return false }
+        return InputCheck.lostInput(started: startedUptime, lastData: sink.lastDataUptime,
+                                    now: ProcessInfo.processInfo.systemUptime)
+    }
+
+    /// 从开始录音到现在。
+    var elapsed: TimeInterval {
+        sink == nil ? 0 : ProcessInfo.processInfo.systemUptime - startedUptime
+    }
+
+    /// 从开始录音到收到第一段真正的声音（不全是 0）；还没收到时为 nil。
+    var signalDelay: TimeInterval? {
+        sink?.signalUptime.map { $0 - startedUptime }
+    }
+
+    /// 这次录音重新打开过几次麦克风（开发命令里查看）。
+    var restartCount: Int { restarts }
+
+    /// 结束录音并返回采集到的音频。
+    func stop() -> [Float] {
+        guard let sink else { return [] }
+        watchdog?.invalidate()
+        watchdog = nil
+        closeEngine()
         self.sink = nil
         return sink.drain()
     }
@@ -137,28 +186,45 @@ final class AudioRecorder {
     func cancel() {
         _ = stop()
     }
+
+    #if DEBUG || TIDYTALK_DEV_TOOLS
+    /// 开发用：模拟录音中途设备配置变化（AirPods 切到通话模式），检查重新打开后能接着录。
+    func simulateConfigurationChange() {
+        guard let engine else { return }
+        NotificationCenter.default.post(name: .AVAudioEngineConfigurationChange, object: engine)
+    }
+
+    /// 开发用：模拟引擎悄悄停下、没有发通知，检查看门狗会重新打开。
+    func simulateStall() {
+        engine?.stop()
+    }
+    #endif
 }
 
 /// 在音频线程上接收数据；回调统一派发到主线程。
-private final class SampleSink: @unchecked Sendable {
-    private var converter: AVAudioConverter
+final class SampleSink: @unchecked Sendable {
+    private var converter: AVAudioConverter?
     let targetFormat: AVAudioFormat
     private let maxSamples: Int
     private let onLevel: @Sendable (Float) -> Void
     private let onLimit: @Sendable () -> Void
+    private let onSignal: @Sendable (SampleSink) -> Void
 
     private let lock = NSLock()
     private var samples: [Float] = []
     private var limitReported = false
     private var lastData: TimeInterval?
+    private var signal: TimeInterval?
 
-    init(converter: AVAudioConverter, targetFormat: AVAudioFormat, maxSamples: Int,
-         onLevel: @escaping @Sendable (Float) -> Void, onLimit: @escaping @Sendable () -> Void) {
-        self.converter = converter
+    /// - Parameter onSignal: 收到第一段真正的声音（不全是 0）时回调一次。
+    init(targetFormat: AVAudioFormat, maxSamples: Int,
+         onLevel: @escaping @Sendable (Float) -> Void, onLimit: @escaping @Sendable () -> Void,
+         onSignal: @escaping @Sendable (SampleSink) -> Void = { _ in }) {
         self.targetFormat = targetFormat
         self.maxSamples = maxSamples
         self.onLevel = onLevel
         self.onLimit = onLimit
+        self.onSignal = onSignal
         samples.reserveCapacity(maxSamples)
     }
 
@@ -169,16 +235,14 @@ private final class SampleSink: @unchecked Sendable {
         { [self] buffer, _ in append(buffer) }
     }
 
-    /// 输入设备变了以后换用新格式的转换器。
+    /// 每次打开麦克风时换用对应输入格式的转换器。
     func replaceConverter(_ converter: AVAudioConverter) {
         lock.withLock { self.converter = converter }
     }
 
-    func append(_ buffer: AVAudioPCMBuffer) {
-        let converter = lock.withLock { self.converter }
+    func append(_ buffer: AVAudioPCMBuffer, at now: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         // 设备切换的瞬间可能还收到旧格式的数据，格式对不上的丢掉
-        guard buffer.format == converter.inputFormat else { return }
-        let now = ProcessInfo.processInfo.systemUptime
+        guard let converter = lock.withLock({ self.converter }), buffer.format == converter.inputFormat else { return }
         lock.withLock { lastData = now }
         let ratio = targetFormat.sampleRate / buffer.format.sampleRate
         let capacity = AVAudioFrameCount(Double(buffer.frameLength) * ratio) + 32
@@ -203,12 +267,16 @@ private final class SampleSink: @unchecked Sendable {
         samples.append(contentsOf: chunk.prefix(max(0, room)))
         let reachedLimit = samples.count >= maxSamples && !limitReported
         if reachedLimit { limitReported = true }
+        // 蓝牙耳机切换模式期间可能先送来一段全是 0 的数据，不算真正的声音
+        let firstSignal = signal == nil && InputCheck.firstSignal(in: chunk) != nil
+        if firstSignal { signal = now }
         lock.unlock()
 
         let level = AudioMath.level(fromRMS: AudioMath.rms(chunk))
-        let onLevel = onLevel, onLimit = onLimit
+        let onLevel = onLevel, onLimit = onLimit, onSignal = onSignal
         DispatchQueue.main.async {
             onLevel(level)
+            if firstSignal { onSignal(self) }
             if reachedLimit { onLimit() }
         }
     }
@@ -227,4 +295,7 @@ private final class SampleSink: @unchecked Sendable {
 
     /// 最近一次收到声音数据的时间（`systemUptime`）；还没收到过时为 nil。
     var lastDataUptime: TimeInterval? { lock.withLock { lastData } }
+
+    /// 收到第一段真正的声音（不全是 0）的时间；还没收到时为 nil。
+    var signalUptime: TimeInterval? { lock.withLock { signal } }
 }

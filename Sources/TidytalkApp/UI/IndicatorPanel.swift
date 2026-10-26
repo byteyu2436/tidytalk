@@ -254,13 +254,14 @@ struct IndicatorView: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .animation(.smooth(duration: 0.25), value: model.visiblePhase)
+            .animation(.smooth(duration: 0.2), value: model.waitingForInput)
     }
 
     @ViewBuilder
     private var content: some View {
         switch model.visiblePhase {
         case .recording:
-            withTag(LevelMeter(levels: model.levels))
+            withTag(LevelMeter(levels: model.levels, waiting: model.waitingForInput))
                 .transition(.opacity)
         case .processing:
             withTag(FlowingBars())
@@ -292,11 +293,29 @@ struct IndicatorView: View {
 }
 
 /// 录音时随音量跳动的电平条：中间高、两侧低，最新的电平在中间。
+///
+/// 麦克风还没送来声音时（`waiting`，蓝牙耳机切换到通话模式要一两秒），电平条变暗、缓慢闪烁，
+/// 表示还没开始收音。
 private struct LevelMeter: View {
     let levels: [Float]
+    var waiting = false
     private let barCount = 11
 
     var body: some View {
+        if waiting {
+            TimelineView(.animation) { timeline in
+                let t = timeline.date.timeIntervalSinceReferenceDate
+                bars.opacity(0.25 + 0.3 * (sin(t * 4) + 1) / 2)
+            }
+            .transition(.opacity)
+        } else {
+            bars
+                .animation(.interactiveSpring(duration: 0.12), value: levels)
+                .transition(.opacity)
+        }
+    }
+
+    private var bars: some View {
         HStack(spacing: 4) {
             ForEach(0..<barCount, id: \.self) { index in
                 Capsule()
@@ -305,7 +324,6 @@ private struct LevelMeter: View {
             }
         }
         .frame(width: 120, height: 28)
-        .animation(.interactiveSpring(duration: 0.12), value: levels)
     }
 
     private func height(for index: Int) -> CGFloat {

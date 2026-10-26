@@ -350,8 +350,10 @@ enum DownloadCommand {
 }
 
 /// 开发用：真实录音 1.5 秒后把结果写入文件，检查录音链路（需从应用包启动以获得麦克风权限）。
+/// 结果里有麦克风多久后送来真正的声音（signalDelay）、重新打开了几次、松开后会怎么处理（outcome）。
 ///
-///     open -n Tidytalk.app --args --record-test <输出文件> [--device <麦克风 UID>]
+///     open -n -W Tidytalk.app --args --record-test <输出文件> [--device <麦克风 UID>] [--seconds 3]
+///                                  [--simulate change|stall] --config <临时配置>
 @MainActor
 enum RecordTestCommand {
     static func runIfRequested() -> Bool {
@@ -359,18 +361,40 @@ enum RecordTestCommand {
         guard let index = args.firstIndex(of: "--record-test"), index + 1 < args.count else { return false }
         let recorder = AudioRecorder()
         let deviceUID = args.firstIndex(of: "--device").flatMap { $0 + 1 < args.count ? args[$0 + 1] : nil } ?? ""
+        // 录多久，默认 1.5 秒：`--seconds 4`
+        let seconds = args.firstIndex(of: "--seconds").flatMap { $0 + 1 < args.count ? Double(args[$0 + 1]) : nil } ?? 1.5
         var levelCallbacks = 0
         var maxLevel: Float = 0
         recorder.onLevel = { level in
             levelCallbacks += 1
             maxLevel = max(maxLevel, level)
         }
+        var readyAfter: TimeInterval?
+        let started = ProcessInfo.processInfo.systemUptime
+        recorder.onInputReady = { readyAfter = ProcessInfo.processInfo.systemUptime - started }
         var line: String
         do {
+            let device = AudioDevices.effectiveInput(uid: deviceUID)
             try recorder.start(deviceUID: deviceUID)
-            RunLoop.main.run(until: Date().addingTimeInterval(1.5))
+            // `--simulate change|stall`：0.5 秒时模拟设备配置变化，或引擎悄悄停下
+            if let simulate = args.firstIndex(of: "--simulate").flatMap({ $0 + 1 < args.count ? args[$0 + 1] : nil }) {
+                RunLoop.main.run(until: Date().addingTimeInterval(0.5))
+                if simulate == "change" { recorder.simulateConfigurationChange() } else { recorder.simulateStall() }
+                RunLoop.main.run(until: Date().addingTimeInterval(max(0, seconds - 0.5)))
+            } else {
+                RunLoop.main.run(until: Date().addingTimeInterval(seconds))
+            }
+            let lost = recorder.lostInput(), held = recorder.elapsed, signalDelay = recorder.signalDelay
+            let restarts = recorder.restartCount
             let samples = recorder.stop()
-            line = "ok samples=\(samples.count) seconds=\(Double(samples.count) / Double(AudioMath.sampleRate)) "
+            let captured = Double(samples.count) / Double(AudioMath.sampleRate)
+            let outcome = InputCheck.outcome(held: held, captured: captured, signalDelay: signalDelay,
+                                             lostInput: lost, minimum: DictationController.minimumDuration)
+            line = "ok device=\(device?.name ?? "-") bluetooth=\(device?.isBluetooth ?? false) "
+                + "samples=\(samples.count) seconds=\(captured) "
+                + "signalDelay=\(signalDelay.map { String(format: "%.3f", $0) } ?? "nil") "
+                + "inputReadyCallback=\(readyAfter.map { String(format: "%.3f", $0) } ?? "nil") "
+                + "restarts=\(restarts) lostInput=\(lost) outcome=\(outcome) "
                 + "levelCallbacks=\(levelCallbacks) maxLevel=\(maxLevel) "
                 + "rms=\(AudioMath.rms(samples)) peak=\(samples.map(abs).max() ?? 0)\n"
         } catch {
@@ -414,6 +438,9 @@ enum IndicatorCaptureCommand {
             ("recording", .recording, nil), ("processing", .processing, nil),
             ("message", .message("整理失败，已粘贴原文"), nil),
             ("recording-tag", .recording, OutputLanguage.english.indicatorTag), ("rewrite", .recording, "改写"),
+            // 麦克风还没送来声音（蓝牙耳机切换模式中）
+            ("waiting", .recording, OutputLanguage.simplifiedChinese.indicatorTag),
+            ("no-input-bluetooth", .message(String(localized: "没录到声音：蓝牙耳机的麦克风启动慢，可在设置里改用 Mac 的麦克风")), nil),
         ]
         let previews = [
             "preview-short": "我想问一下这个 API 的 rate limit 是多少",
@@ -427,7 +454,9 @@ enum IndicatorCaptureCommand {
             model.livePreview = previews[name] ?? ""
             model.showsLivePreview = previews[name] != nil
             model.phase = phase
-            for level in [0.3, 0.8, 0.5, 1.0, 0.6, 0.9, 0.4] as [Float] { model.pushLevel(level) }
+            model.waitingForInput = name == "waiting"
+            if name == "waiting" { model.resetLevels() }
+            for level in [0.3, 0.8, 0.5, 1.0, 0.6, 0.9, 0.4] as [Float] where name != "waiting" { model.pushLevel(level) }
             indicator.show()
             RunLoop.main.run(until: Date().addingTimeInterval(0.8))
             let rect = CGRect(x: backdropFrame.minX, y: NSScreen.screens[0].frame.maxY - backdropFrame.maxY,
@@ -488,8 +517,9 @@ enum IndicatorCaptureCommand {
 }
 
 /// 开发用：打开真实的设置窗口并截图每个标签页（只截本进程窗口，无需屏幕录制权限）。
+/// 加上 `--fake-bluetooth-mic` 时假装系统默认的麦克风是 AirPods，查看说话输入页的蓝牙提示。
 ///
-///     Tidytalk --settings-capture <输出目录>
+///     Tidytalk --settings-capture <输出目录> [--dark] [--fake-bluetooth-mic]
 @MainActor
 enum SettingsCaptureCommand {
     private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
@@ -513,6 +543,15 @@ enum SettingsCaptureCommand {
         NSApp.setActivationPolicy(.regular)
 
         if args.contains("--dark") { NSApp.appearance = NSAppearance(named: .darkAqua) }
+        if args.contains("--fake-bluetooth-mic") {
+            // 系统默认的麦克风是 AirPods：说话输入页应该提示改用 Mac 自带的麦克风
+            AudioDevices.simulated = [
+                AudioInputDevice(id: 901, uid: "fake-airpods", name: "王哈哈的 AirPods Pro",
+                                 transport: kAudioDeviceTransportTypeBluetooth),
+                AudioInputDevice(id: 902, uid: "fake-builtin", name: "MacBook Air麦克风",
+                                 transport: kAudioDeviceTransportTypeBuiltIn),
+            ]
+        }
         let navigation = SettingsNavigation()
         let window = SettingsWindow.make(model: AppModel(), meetingStore: MeetingStore(root: FileManager.default.temporaryDirectory.appending(path: "Tidytalk-capture-meetings")),
                                          navigation: navigation)
@@ -552,6 +591,42 @@ enum SettingsCaptureCommand {
                 try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
                     .write(to: dir.appending(path: "settings-tab\(i).png"))
             }
+        }
+        return true
+    }
+}
+
+/// 开发用：用一份更新说明打开"发现新版本"的提示并截图（不点按钮，截完就退出）。
+///
+///     open -n -W Tidytalk.app --args --update-dialog-capture <输出.png> <说明.md> --config <临时配置>
+@MainActor
+enum UpdateDialogCaptureCommand {
+    private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
+
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--update-dialog-capture"), index + 2 < args.count,
+              let symbol = dlsym(dlopen(nil, RTLD_NOW), "CGWindowListCreateImage")
+        else { return false }
+        let capture = unsafeBitCast(symbol, to: CreateImage.self)
+        _ = NSApplication.shared
+        NSApp.setActivationPolicy(.regular)
+        let notes = (try? String(contentsOfFile: args[index + 2], encoding: .utf8)) ?? ""
+        let release = UpdateChecker.Release(version: "9.9.9", url: URL(string: "https://example.com")!, notes: notes)
+        let alert = UpdateChecker.makeAlert(release)
+        alert.layout()
+        alert.window.center()
+        alert.window.makeKeyAndOrderFront(nil)
+        NSApp.activate()
+        RunLoop.main.run(until: Date().addingTimeInterval(1.0))
+        print("提示框大小：\(alert.window.frame.size)")
+        if let box = alert.accessoryView as? NSBox, let scroll = box.contentView as? NSScrollView {
+            // 可见区域应该从 0 开始（停在说明的开头）
+            print("说明区域：\(box.frame.size) 可见 \(scroll.contentView.bounds) 内容高 \(scroll.documentView?.frame.height ?? 0)")
+        }
+        if let image = capture(.null, 1 << 3, UInt32(alert.window.windowNumber), 0)?.takeRetainedValue() {
+            try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                .write(to: URL(fileURLWithPath: args[index + 1]))
         }
         return true
     }

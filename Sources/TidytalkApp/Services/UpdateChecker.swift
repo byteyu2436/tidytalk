@@ -85,14 +85,105 @@ enum UpdateChecker {
 
     private static func present(_ release: Release) {
         NSApp.activate()
-        let alert = NSAlert()
-        alert.messageText = String(localized: "发现新版本 \(release.version)")
-        alert.informativeText = (release.notes.map { $0 + "\n\n" } ?? "") + String(localized: "当前版本 \(currentVersion)。")
-        alert.addButton(withTitle: String(localized: "下载"))
-        alert.addButton(withTitle: String(localized: "以后再说"))
-        if alert.runModal() == .alertFirstButtonReturn {
+        if makeAlert(release).runModal() == .alertFirstButtonReturn {
             NSWorkspace.shared.open(release.url)
         }
+    }
+
+    /// 更新说明放在下面一块可以滚动的区域里，说明再长按钮也不会被挤出屏幕；只显示界面语言的那一半。
+    static func makeAlert(_ release: Release) -> NSAlert {
+        let alert = NSAlert()
+        alert.messageText = String(localized: "发现新版本 \(release.version)")
+        alert.informativeText = String(localized: "当前版本 \(currentVersion)。")
+        alert.addButton(withTitle: String(localized: "下载"))
+        alert.addButton(withTitle: String(localized: "以后再说"))
+        if let notes = release.notes {
+            let chinese = Bundle.main.preferredLocalizations.first?.hasPrefix("zh") ?? true
+            alert.accessoryView = notesView(ReleaseNotes.localized(notes, chinese: chinese))
+        }
+        return alert
+    }
+
+    private static let notesWidth: CGFloat = 420
+    private static let notesMaxHeight: CGFloat = 300
+
+    private static func notesView(_ notes: String) -> NSView {
+        let inset = NSSize(width: 6, height: 8)
+        let width = notesWidth
+        let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: width, height: 0))
+        textView.isEditable = false
+        // 不能选中：能选中时提示框一打开焦点就落在说明上，说明会被滚到中间
+        textView.isSelectable = false
+        textView.drawsBackground = false
+        textView.textContainerInset = inset
+        textView.textContainer?.widthTracksTextView = true
+        textView.isVerticallyResizable = true
+        textView.autoresizingMask = [.width]
+        textView.textStorage?.setAttributedString(formatted(notes))
+
+        var contentHeight = notesMaxHeight
+        if let container = textView.textContainer, let layout = textView.layoutManager {
+            layout.ensureLayout(for: container)
+            contentHeight = ceil(layout.usedRect(for: container).height) + inset.height * 2
+        }
+        // 内容不多时按内容的高度，多了就在这块区域里滚动，按钮始终看得见
+        let height = min(notesMaxHeight, contentHeight)
+        textView.frame = NSRect(x: 0, y: 0, width: width, height: max(height, contentHeight))
+        textView.minSize = NSSize(width: 0, height: height)
+        textView.maxSize = NSSize(width: width, height: .greatestFiniteMagnitude)
+
+        let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: width, height: height))
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
+        scrollView.autoresizingMask = [.width, .height]
+        scrollView.documentView = textView
+
+        // 浅色底，看得出这是一块单独的、可以滚动的区域
+        let box = NSBox(frame: scrollView.frame)
+        box.boxType = .custom
+        box.borderWidth = 0
+        box.cornerRadius = 8
+        box.fillColor = .quaternarySystemFill
+        box.contentViewMargins = .zero
+        box.contentView = scrollView
+        return box
+    }
+
+    /// "- " 开头的行显示成项目符号（折行和文字对齐），行内的 `代码`、**粗体** 按 Markdown 显示。
+    private static func formatted(_ notes: String) -> NSAttributedString {
+        let font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        let result = NSMutableAttributedString()
+        for (index, rawLine) in notes.components(separatedBy: "\n").enumerated() {
+            if index > 0 { result.append(NSAttributedString(string: "\n")) }
+            var line = rawLine
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.paragraphSpacing = 4
+            if line.hasPrefix("- ") || line.hasPrefix("* ") {
+                line = "•\t" + line.dropFirst(2)
+                paragraph.tabStops = [NSTextTab(textAlignment: .left, location: 12)]
+                paragraph.headIndent = 12
+            }
+            let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            let parsed = (try? NSMutableAttributedString(AttributedString(markdown: line, options: options)))
+                ?? NSMutableAttributedString(string: line)
+            let range = NSRange(location: 0, length: parsed.length)
+            parsed.addAttributes([.font: font, .foregroundColor: NSColor.labelColor, .paragraphStyle: paragraph], range: range)
+            // Markdown 里的代码用等宽字体，粗体加粗
+            parsed.enumerateAttribute(.inlinePresentationIntent, in: range) { value, subrange, _ in
+                guard let raw = value as? UInt else { return }
+                let intent = InlinePresentationIntent(rawValue: raw)
+                if intent.contains(.code) {
+                    parsed.addAttribute(.font, value: NSFont.monospacedSystemFont(ofSize: font.pointSize, weight: .regular),
+                                        range: subrange)
+                } else if intent.contains(.stronglyEmphasized) {
+                    parsed.addAttribute(.font, value: NSFont.boldSystemFont(ofSize: font.pointSize), range: subrange)
+                }
+            }
+            result.append(parsed)
+        }
+        return result
     }
 
     private static func alert(_ title: String, _ message: String) {

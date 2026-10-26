@@ -33,6 +33,8 @@ final class AppModel {
     var livePreview = ""
     /// 是否显示实时文字的胶囊。单独保存，避免每次文字更新都重新排版指示器。
     var showsLivePreview = false
+    /// 正在录音、但麦克风还没送来真正的声音（蓝牙耳机切换到通话模式要一两秒）：电平条变暗、缓慢闪烁。
+    var waitingForInput = false
     /// 最近的电平，最新的在末尾。
     private(set) var levels: [Float] = Array(repeating: 0, count: AppModel.levelHistory)
 

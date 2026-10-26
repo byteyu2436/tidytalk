@@ -769,6 +769,10 @@
 /* 2026-10 代码审查的修复 */
 "麦克风中途断开了，请再说一次" = "The microphone dropped out. Please say it again.";
 "麦克风中途断开了，后面的话没有录到" = "The microphone dropped out. The rest wasn't recorded.";
+"没录到声音：蓝牙耳机的麦克风启动慢，可在设置里改用 Mac 的麦克风" = "Nothing recorded: Bluetooth headset mics are slow to start. You can switch to the Mac's mic in Settings.";
+"没录到声音：麦克风没有送来数据" = "Nothing recorded: the microphone sent no audio.";
+"正在用蓝牙耳机的麦克风（%@）：每次开始录音都要先切换到通话模式，开头一两秒录不到，耳机音质也会暂时变差。建议改用 Mac 自带的麦克风，耳机照常用来听。" = "You're using a Bluetooth headset mic (%@). It has to switch to call mode every time recording starts, so the first second or two is lost and the headset's sound quality drops for a while. Use the Mac's built-in mic instead and keep listening on the headset.";
+"改用 Mac 自带的麦克风" = "Use the Mac's Built-in Mic";
 "%@，已粘贴原文" = "%@. The original text was pasted.";
 "收不到电脑的声音：请在\"系统设置 › 隐私与安全性 › 录制系统音频\"里允许 Tidytalk" = "Can't hear your Mac's audio. Allow Tidytalk in System Settings › Privacy & Security › Screen & System Audio Recording.";
 "导出失败" = "Export Failed";
