@@ -347,6 +347,16 @@ def render(page, lang):
 
 # ---------- 更新日志 ----------
 
+def full_notes(releases):
+    """GitHub 上的发布说明会显示在旧版本的更新提示里，所以写得很短；官网的更新日志用仓库里的完整版
+    site-src/release-notes/<标签>.md（有这个文件时）。"""
+    for release in releases:
+        path = os.path.join(SRC, "release-notes", f"{release['tag']}.md")
+        if os.path.exists(path):
+            release["body"] = open(path, encoding="utf-8").read().strip()
+    return releases
+
+
 def fetch_releases():
     cache = os.path.join(SRC, "releases.json")
     request = urllib.request.Request(f"https://api.github.com/repos/{REPO}/releases?per_page=50",
@@ -469,7 +479,7 @@ def write_llms(pages, version):
 # ---------- 主流程 ----------
 
 def main():
-    releases = fetch_releases()
+    releases = full_notes(fetch_releases())
     version = releases[0]["tag"].lstrip("v") if releases else ""
     pages = []
     for lang in ("en", "zh"):

@@ -82,6 +82,11 @@ NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
 
 生成的安装包在 `build/Tidytalk-<版本号>.dmg`。打开后的窗口里只有 Tidytalk 和"应用程序"文件夹，背景上的箭头提示拖过去；背景图由 `scripts/make-dmg-background.swift` 生成。打包时会让访达排好窗口，第一次运行时系统可能会询问是否允许控制访达；如果已经挂着一个叫 Tidytalk 的磁盘，要先推出。在 GitHub 上新建 Release，标签写 `v0.2.0`，上传 DMG，发布说明会显示在应用的更新提示里。
 
+发布说明分两份写：
+
+- **GitHub Release 的说明写短**：中英文各三条左右的要点，加上官网更新日志的链接和安装提示，最后是 DMG 的 SHA-256。已经装好的旧版本会把这段说明原样放进更新提示里（0.3.0 及更早的版本不能滚动），太长时提示框会比屏幕还高、按钮点不到。
+- **完整的更新日志**写在 `site-src/release-notes/<标签>.md`（例如 `v0.3.1.md`），格式和发布说明一样：中文段落在前，英文在后，`SHA-256` 开头的一行两边都显示。官网的更新日志页有这个文件时用它，没有时用 GitHub 上的说明。要在发布 Release 之前提交并推送这个文件：发布和编辑 Release 都会触发官网重新生成。
+
 应用启动时（每天最多一次）和菜单"检查更新…"会读取 `UPDATE_URL`。默认是 GitHub 的 `releases/latest` 接口，取标签里的版本号，发现新版本时打开 Release 页面；还没有发布任何版本时视为已是最新。也可以指向自建的 JSON：
 
 ```json
