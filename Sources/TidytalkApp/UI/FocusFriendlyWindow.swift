@@ -37,11 +37,3 @@ final class FocusFriendlyWindow: NSWindow {
         return false
     }
 }
-
-/// 切换设置标签页时同样不自动聚焦输入框。
-final class SettingsTabViewController: NSTabViewController {
-    override func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
-        super.tabView(tabView, didSelect: tabViewItem)
-        (view.window as? FocusFriendlyWindow)?.clearFocusSoon()
-    }
-}

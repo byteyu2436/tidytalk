@@ -41,6 +41,14 @@ final class AppModel {
     var listeningPaused = false
     var captions = CaptionTranscript()
 
+    /// 会议：正在录、或者录完还在识别和分说话人。这期间不能释放识别模型。
+    var meetingRecording = false
+    var meetingProcessing = false
+    var meetingActive: Bool { meetingRecording || meetingProcessing }
+
+    /// 会议模式的说话人模型（和识别模型分开管理，不会被当成识别器加载）。
+    let diarizationModels = ModelManager(spec: .speakerDiarization)
+
     var microphoneGranted = Permissions.microphone == .granted
     var accessibilityGranted = Permissions.accessibility
 

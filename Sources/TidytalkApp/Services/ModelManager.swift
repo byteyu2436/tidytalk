@@ -3,10 +3,10 @@ import Foundation
 import Observation
 import TidytalkCore
 
-/// 管理一个语音识别模型的下载、校验和本地状态。
+/// 管理一个模型（语音识别模型，或会议模式的说话人模型）的下载、校验和本地状态。
 ///
 /// 下载支持断点续传（未完成的数据保存在 `*.part` 文件中），一个下载源失败时自动换下一个。
-/// Apple 系统识别没有文件，由系统下载和管理。
+/// Apple 系统识别没有文件（`spec` 为 nil），由系统下载和管理。
 @MainActor
 @Observable
 final class ModelManager {
@@ -18,7 +18,6 @@ final class ModelManager {
         case failed(String)
     }
 
-    let speechModel: SpeechModel
     let spec: ModelSpec?
     private(set) var status: Status = .missing
     @ObservationIgnored private var task: Task<Void, Never>?
@@ -28,9 +27,12 @@ final class ModelManager {
     /// 文件大小对但加载失败（多半是文件损坏），需要删掉重新下载。
     private(set) var needsRedownload = false
 
-    init(model: SpeechModel = .senseVoice) {
-        speechModel = model
-        spec = model.spec
+    convenience init(model: SpeechModel = .senseVoice) {
+        self.init(spec: model.spec)
+    }
+
+    init(spec: ModelSpec?) {
+        self.spec = spec
         if spec != nil {
             status = isInstalled ? .ready : .missing
         } else {

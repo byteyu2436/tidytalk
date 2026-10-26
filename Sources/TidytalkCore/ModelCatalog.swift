@@ -1,11 +1,21 @@
 import Foundation
 
-/// 语音识别模型的文件清单和下载源。
+/// 模型（语音识别、说话人分离）的文件清单和下载源。
 public struct ModelSpec: Sendable {
     public struct File: Sendable {
+        /// 保存在本地目录里的文件名
         public let name: String
         public let size: Int64
         public let sha256: String
+        /// 文件不在下载源的同一个仓库里时，相对于下载源网站根目录的路径（例如 "user/repo/resolve/main/model.onnx"）
+        public let remotePath: String?
+
+        public init(name: String, size: Int64, sha256: String, remotePath: String? = nil) {
+            self.name = name
+            self.size = size
+            self.sha256 = sha256
+            self.remotePath = remotePath
+        }
     }
 
     public struct Source: Sendable {
@@ -13,7 +23,10 @@ public struct ModelSpec: Sendable {
         public let baseURL: URL
 
         public func url(for file: File) -> URL {
-            baseURL.appending(path: file.name)
+            if let remotePath = file.remotePath, let root = URL(string: "/", relativeTo: baseURL) {
+                return root.appending(path: remotePath).absoluteURL
+            }
+            return baseURL.appending(path: file.name)
         }
     }
 
@@ -99,6 +112,25 @@ public struct ModelSpec: Sendable {
                  sha256: "20accd02388482eb3a46bd615631adfdc85e1eb2c7db9ea3f02a40ffe6b81547"),
         ],
         sources: huggingFace("csukuangfj/sherpa-onnx-whisper-turbo")
+    )
+
+    /// 会议模式的说话人分离：pyannote 分段模型（MIT）+ 3D-Speaker CAM++ 中英文声纹模型（Apache-2.0）。
+    /// 两个文件在 Hugging Face 的不同仓库里，按各自的 remotePath 下载。
+    public static let speakerDiarization = ModelSpec(
+        directoryName: "speaker-diarization-pyannote3-campplus-zh-en",
+        files: [
+            File(name: "segmentation.int8.onnx", size: 1_540_506,
+                 sha256: "d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d",
+                 remotePath: "csukuangfj/sherpa-onnx-pyannote-segmentation-3-0/resolve/main/model.int8.onnx"),
+            File(name: "embedding.onnx", size: 28_281_164,
+                 sha256: "aa3cfc16963a10586a9393f5035d6d6b57e98d358b347f80c2a30bf4f00ceba2",
+                 remotePath: "csukuangfj/speaker-embedding-models/resolve/main/"
+                    + "3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx"),
+        ],
+        sources: [
+            Source(name: "Hugging Face", baseURL: URL(string: "https://huggingface.co")!),
+            Source(name: "HF-Mirror", baseURL: URL(string: "https://hf-mirror.com")!),
+        ]
     )
 }
 

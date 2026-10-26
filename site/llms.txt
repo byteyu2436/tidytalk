@@ -11,9 +11,9 @@ Key facts:
 - AI tidying is optional and only cleans up what was said: it removes fillers ("um", "嗯、那个"), keeps the corrected version when the speaker changes their mind, adds punctuation, and never summarizes, answers, or adds content. Providers: Ollama, LM Studio, Apple Intelligence, or any OpenAI-compatible API (DeepSeek, OpenAI). With tidying off it outputs the raw transcript.
 - Output language: tidy and translate into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, or Spanish.
 - Live captions: press Control + Option + C to caption audio the Mac is playing (videos, lectures, video calls) using a Core Audio process tap; optional translation as you listen; Control + Option + V tidies and pastes what was just said.
-- File and link transcription: audio or video files (up to 3 hours) and YouTube or Bilibili links, with timestamps; export as TXT, SRT, or Markdown.
+- File and link transcription: audio or video files (up to 3 hours) and YouTube or Bilibili links, with timestamps; export as TXT, SRT, or Markdown. Each transcription is kept on the Mac with its downloaded audio and cover image, and can be played back, edited, or deleted.
 - Personal vocabulary, replacements, snippets, custom rules, voice rewrite of selected text, Chinese–English spacing, and clipboard restore after pasting. Words you correct after pasting are suggested for the vocabulary.
-- Privacy: no account, no analytics. Recent results are kept in memory only. Network use: the one-time model download, an optional daily update check, the AI service you configure, and links you ask it to transcribe.
+- Privacy: no account, no analytics. Recent results are kept in memory only; meeting recordings, transcripts, and file or link transcriptions are saved only on the Mac. Network use: the one-time model download, an optional daily update check, the AI service you configure, and links you ask it to transcribe.
 - Price: free. Cloud AI services bill you directly through your own API key.
 
 ## Links

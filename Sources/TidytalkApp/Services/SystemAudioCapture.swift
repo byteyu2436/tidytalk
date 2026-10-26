@@ -359,6 +359,36 @@ final class SystemAudioCapture {
             handler()
         }
     }
+
+    /// 和 `observeOutputDevice` 一样，但可以移除：返回的对象调用 `cancel()` 或被释放时停止监听（会议模式每场会议挂一次）。
+    static func observeOutputDeviceChanges(_ handler: @escaping @Sendable () -> Void) -> OutputDeviceObservation {
+        OutputDeviceObservation(handler)
+    }
+}
+
+/// 默认输出设备变化的监听，`cancel()` 或释放时移除。
+@MainActor
+final class OutputDeviceObservation {
+    private static var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
+                                                           mScope: kAudioObjectPropertyScopeGlobal,
+                                                           mElement: kAudioObjectPropertyElementMain)
+    private var block: AudioObjectPropertyListenerBlock?
+
+    fileprivate init(_ handler: @escaping @Sendable () -> Void) {
+        let block: AudioObjectPropertyListenerBlock = { _, _ in handler() }
+        if AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &Self.address, .main, block)
+            == noErr {
+            self.block = block
+        }
+    }
+
+    func cancel() {
+        guard let block else { return }
+        AudioObjectRemovePropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &Self.address, .main, block)
+        self.block = nil
+    }
+
+    isolated deinit { cancel() }
 }
 
 /// 记住已经见过的进程对象，只在 listenerQueue 这一个串行队列上使用。

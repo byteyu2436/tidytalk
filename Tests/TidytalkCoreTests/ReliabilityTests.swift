@@ -157,11 +157,15 @@ import Testing
         #expect(ExternalCommand(url: URL(string: "tidytalk://captions")!) == .captions(.toggle))
         #expect(ExternalCommand(url: URL(string: "tidytalk://captions/start")!) == .captions(.start))
         #expect(ExternalCommand(url: URL(string: "tidytalk:toggle")!) == .toggle)
+        #expect(ExternalCommand(url: URL(string: "tidytalk://meeting")!) == .meeting(.toggle))
+        #expect(ExternalCommand(url: URL(string: "tidytalk://meeting/start")!) == .meeting(.start))
+        #expect(ExternalCommand(url: URL(string: "tidytalk://Meeting/Stop")!) == .meeting(.stop))
     }
 
     @Test func rejectsUnknown() {
         #expect(ExternalCommand(url: URL(string: "tidytalk://delete")!) == nil)
         #expect(ExternalCommand(url: URL(string: "https://toggle")!) == nil)
         #expect(ExternalCommand(url: URL(string: "tidytalk://captions/pause")!) == nil)
+        #expect(ExternalCommand(url: URL(string: "tidytalk://meeting/pause")!) == nil)
     }
 }

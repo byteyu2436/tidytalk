@@ -6,14 +6,17 @@ import Foundation
 /// - `tidytalk://start`、`tidytalk://stop`：只开始、只结束
 /// - `tidytalk://cancel`：取消这次录音
 /// - `tidytalk://captions`：开关实时字幕；`tidytalk://captions/start`、`tidytalk://captions/stop`
+/// - `tidytalk://meeting`：开始或结束会议记录；`tidytalk://meeting/start`、`tidytalk://meeting/stop`
 public enum ExternalCommand: Equatable, Sendable {
     case toggle
     case start
     case stop
     case cancel
-    case captions(Captions)
+    case captions(Switch)
+    case meeting(Switch)
 
-    public enum Captions: Equatable, Sendable {
+    /// 开关类命令：切换、只打开、只关闭。
+    public enum Switch: Equatable, Sendable {
         case toggle, start, stop
     }
 
@@ -34,13 +37,21 @@ public enum ExternalCommand: Equatable, Sendable {
         case "stop": self = .stop
         case "cancel": self = .cancel
         case "captions":
-            switch words.dropFirst().first {
-            case nil, "toggle": self = .captions(.toggle)
-            case "start": self = .captions(.start)
-            case "stop": self = .captions(.stop)
-            default: return nil
-            }
+            guard let action = Self.switchAction(words.dropFirst().first) else { return nil }
+            self = .captions(action)
+        case "meeting":
+            guard let action = Self.switchAction(words.dropFirst().first) else { return nil }
+            self = .meeting(action)
         default: return nil
+        }
+    }
+
+    private static func switchAction(_ word: String?) -> Switch? {
+        switch word {
+        case nil, "toggle": .toggle
+        case "start": .start
+        case "stop": .stop
+        default: nil
         }
     }
 }

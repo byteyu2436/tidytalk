@@ -156,9 +156,17 @@ enum YTDLP {
                                               ofItemAtPath: executable.path)
     }
 
-    /// 只下载链接里的音频，返回文件位置和标题。`onProgress` 回报 0...1 的下载进度。
+    /// 下载结果：音频文件、标题、上传者，以及封面图（网站没有时为 nil）。
+    struct Download: Equatable {
+        var file: URL
+        var title: String
+        var uploader: String?
+        var thumbnail: URL?
+    }
+
+    /// 只下载链接里的音频（和封面图），返回文件位置和标题。`onProgress` 回报 0...1 的下载进度。
     static func downloadAudio(from link: String, into directory: URL,
-                              onProgress: @escaping @Sendable (Double) -> Void) async throws -> (file: URL, title: String) {
+                              onProgress: @escaping @Sendable (Double) -> Void) async throws -> Download {
         let process = Process()
         process.executableURL = executable
         process.arguments = [
@@ -166,7 +174,9 @@ enum YTDLP {
             // 优先下载系统能直接解码的 M4A 音频
             "-f", "bestaudio[ext=m4a]/bestaudio[acodec^=mp4a]/best[ext=mp4]/bestaudio/best",
             "-o", directory.appending(path: "audio.%(ext)s").path,
-            "--print", "after_move:title", "--print", "after_move:filepath",
+            // 封面图在卡片上显示；下载不到时 yt-dlp 只给警告，不影响音频
+            "--write-thumbnail", "-o", "thumbnail:" + directory.appending(path: "thumbnail.%(ext)s").path,
+            "--print", "after_move:title", "--print", "after_move:uploader", "--print", "after_move:filepath",
             "--", link,
         ]
         let stdout = Pipe(), stderr = Pipe()
@@ -226,16 +236,32 @@ enum YTDLP {
         await withCheckedContinuation { continuation in readers.notify(queue: .global()) { continuation.resume() } }
         try Task.checkCancellation()
 
-        let lines = output.lines.filter { !$0.isEmpty }
-        guard process.terminationStatus == 0, lines.count >= 2, let path = lines.last,
-              FileManager.default.fileExists(atPath: path)
+        guard process.terminationStatus == 0, var result = parse(output.lines),
+              FileManager.default.fileExists(atPath: result.file.path)
         else {
             // yt-dlp 的错误信息形如 "ERROR: [youtube] xxx: Video unavailable"
             let message = errors.lines.last(where: { $0.hasPrefix("ERROR") })?
                 .replacingOccurrences(of: "ERROR: ", with: "") ?? ""
             throw Failure.downloadFailed(message)
         }
-        return (URL(fileURLWithPath: path), lines[lines.count - 2])
+        result.thumbnail = thumbnail(in: directory)
+        return result
+    }
+
+    /// 解析 `--print` 输出的最后三行：标题、上传者（没有时是 NA）、文件路径。
+    static func parse(_ lines: [String]) -> Download? {
+        let lines = lines.filter { !$0.isEmpty }
+        guard lines.count >= 3, let path = lines.last, path.hasPrefix("/") else { return nil }
+        let uploader = lines[lines.count - 2]
+        return Download(file: URL(fileURLWithPath: path), title: lines[lines.count - 3],
+                        uploader: uploader == "NA" || uploader.isEmpty ? nil : uploader)
+    }
+
+    /// 下载目录里的封面图（扩展名由网站决定：jpg、webp、png）。
+    static func thumbnail(in directory: URL) -> URL? {
+        let files = (try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+        return files.first { $0.lastPathComponent.hasPrefix("thumbnail.")
+            && ["jpg", "jpeg", "webp", "png"].contains($0.pathExtension.lowercased()) }
     }
 
     /// 进度行形如 "[download]  42.3% of 3.21MiB at 1.2MiB/s ETA 00:02"。

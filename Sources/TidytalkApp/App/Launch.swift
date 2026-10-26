@@ -28,7 +28,7 @@ public enum Launch {
             }
             exit(0)
         }
-        if MainActor.assumeIsolated({ SnapshotCommand.runIfRequested() || DownloadCommand.runIfRequested() || RecordTestCommand.runIfRequested() || IndicatorCaptureCommand.runIfRequested() || SettingsCaptureCommand.runIfRequested() || MenuDumpCommand.runIfRequested() || OnboardingCaptureCommand.runIfRequested() || ListenTestCommand.runIfRequested() || CaptionCaptureCommand.runIfRequested() || SiteCaptionCaptureCommand.runIfRequested() || TranscribeTestCommand.runIfRequested() || TranscribeCaptureCommand.runIfRequested() }) { exit(0) }
+        if MainActor.assumeIsolated({ SnapshotCommand.runIfRequested() || DownloadCommand.runIfRequested() || RecordTestCommand.runIfRequested() || IndicatorCaptureCommand.runIfRequested() || SettingsCaptureCommand.runIfRequested() || MenuDumpCommand.runIfRequested() || OnboardingCaptureCommand.runIfRequested() || ListenTestCommand.runIfRequested() || CaptionCaptureCommand.runIfRequested() || SiteCaptionCaptureCommand.runIfRequested() || TranscribeTestCommand.runIfRequested() || MeetingTestCommand.runIfRequested() || MainWindowCaptureCommand.runIfRequested() }) { exit(0) }
         #endif
 
         // 不认识的 -- 参数（包括正式版里没有的开发命令）：直接退出，不启动应用，以免在终端下多开一份

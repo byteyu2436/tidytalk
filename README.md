@@ -22,8 +22,9 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 - **Choose your speech model.** SenseVoice is the default. Switch to Qwen3-ASR for the best accuracy and recognition of your vocabulary, or to Fun-ASR-Nano, Whisper, or the speech recognition built into macOS. All of them run on your Mac.
 - **Local AI or cloud, your choice.** Pick Ollama, LM Studio, Cloud, or Apple Intelligence right in Settings; local models and Apple Intelligence need no API key. Any OpenAI-compatible service, such as DeepSeek or OpenAI, works too, or turn tidying off and get the raw transcript.
 - **Speak one language, write another.** Set an output language and the text is translated as it's tidied.
+- **Meeting recording.** Press ⌃⌥M to record your microphone and your Mac's audio together. Afterwards Tidytalk shows who said what, tells several people on the other end apart, marks moments when people talk at once, and can write an AI summary with decisions and to-dos. Everything is saved only on your Mac.
 - **Live captions.** Press ⌃⌥C to caption whatever your Mac is playing, such as videos, lectures, or meetings, recognized on your Mac too. Translate as you listen, or press ⌃⌥V to tidy and paste what was just said at the cursor.
-- **Transcribe files and links.** Drop in an audio or video file, or paste a YouTube or Bilibili link, and get timestamped text to export as TXT, SRT subtitles, or Markdown.
+- **Transcribe files and links.** Drop in an audio or video file, or paste a YouTube or Bilibili link, and get timestamped text to export as TXT, SRT subtitles, or Markdown. Each transcription is saved as a card on your Mac, with the downloaded audio and cover image, ready to play back, edit, or delete.
 - **Leaves your clipboard alone.** After pasting, the clipboard is restored, including images and files.
 - **And more:** personal vocabulary (words you correct after pasting are suggested for it), replacements, snippets, custom rules, hands-free recording, voice rewrite of selected text, and Chinese–English spacing.
 
@@ -68,8 +69,9 @@ Recording and speech recognition always happen on your Mac, and your voice is ne
 | Tidy up text turned off | Stays on your Mac | Stays on your Mac (raw transcript) |
 | Cloud AI (DeepSeek, OpenAI, and others) | Stays on your Mac | Sent to the AI service you chose |
 
-- No account and no tracking in the app. Apart from the AI service you set up, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
+- No account and no tracking in the app. Apart from the AI service you set up and links you ask it to transcribe, it only goes online to download the speech model once and to check for updates at launch (at most once a day), which you can turn off.
 - Settings are stored in `~/.tidytalk.json`, readable only by you. Your API key is kept in the macOS Keychain.
+- Meeting text and recordings, and file and link transcriptions (including downloaded audio and cover images), are saved only on your Mac, and you can delete them one by one.
 - Recent results and live captions are kept in memory only and cleared when you turn captions off or quit. With caption translation on, caption text is sent to your AI service (or stays on your Mac with a local model).
 - The code is fully open source, so you can verify all of this yourself.
 

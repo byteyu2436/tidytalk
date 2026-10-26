@@ -113,6 +113,7 @@
           <li><a href="#external-control">从其他应用控制</a></li>
           <li><a href="#speech-models">识别模型</a></li>
           <li><a href="#live-captions">实时字幕</a></li>
+          <li><a href="#meetings">会议记录</a></li>
           <li><a href="#transcribe">转写文件或链接</a></li>
           <li><a href="#tidying">整理效果</a></li>
           <li><a href="#strength-and-mode">整理强度和模式</a></li>
@@ -195,7 +196,7 @@
         <li><strong>Whisper Turbo</strong>（约 1&nbsp;GB）：约 99 种语言，适合小语种；中文会漏字。</li>
         <li><strong>Apple 系统识别</strong>：macOS 自带，不用下载；按系统语言识别，中英文混说效果一般。</li>
       </ul>
-      <p>点"下载并使用"后可以继续用：下载完成前一直用当前的模型，下载好后自动换用。说话输入、实时字幕和转写文件都使用这里选的模型。</p>
+      <p>点右边的下载按钮后可以继续用：下载完成前一直用当前的模型，下载好后自动换用。说话输入、实时字幕和转写文件都使用这里选的模型。</p>
 
       <h2 id="live-captions">实时字幕</h2>
       <p>收听电脑播放的声音（视频、网课、视频会议），在屏幕底部显示字幕。只录电脑输出的声音，不录麦克风；声音同样只在本机识别。</p>
@@ -209,12 +210,23 @@
 
       <p>一步步的设置方法见<a href="/zh/guides/live-translated-captions/">在 Mac 上给视频和会议加实时翻译字幕</a>。</p>
 
-      <h2 id="transcribe">转写文件或链接</h2>
-      <p>在菜单栏菜单里选"转写文件或链接…"：</p>
+      <h2 id="meetings">会议记录</h2>
+      <p>按 <kbd>⌃⌥M</kbd>（Control + Option + M），或在菜单栏菜单、Tidytalk 主窗口的工具栏里开始。会同时录下你的麦克风和电脑里播放的声音（会议另一端的人），再按一次结束。</p>
       <ul>
-        <li>把音频或视频文件（MP3、M4A、WAV、MP4、MOV 等，最长 3 小时）拖进窗口，或点"选择文件…"。</li>
-        <li>也可以粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35&nbsp;MB）并按发布页公布的校验值核对，之后每两周自动更新；之后只下载链接里的音频，转写完就删除。仅限你有权使用的内容。</li>
-        <li>按停顿切成一句句，带时间显示。可以拷贝全文，或导出成纯文本（.txt）、字幕（.srt）或 Markdown。</li>
+        <li><strong>会议中</strong>：说完一句就出现一句粗稿，"我"和"对方"用两种颜色。说话输入照常可以用。会议记录和实时字幕不能同时开。</li>
+        <li><strong>会议结束后</strong>：在这台 Mac 上分说话人、重新识别一遍（一小时的会议大约 5 分钟）。对方分成"说话人 1、2、3"，点名字可以改名；几个人同时说话的段落标"同时在说"，这段文字是混在一起识别的。分得不对时可以指定对方有几个人，重新分。</li>
+        <li><strong>不戴耳机</strong>：麦克风会录进扬声器里对方的声音。Tidytalk 会打开系统的回声消除，会后再去掉和对方同一时间、内容几乎一样的句子。</li>
+        <li><strong>AI 总结</strong>：整理成概要、讨论要点、决定、待办和待定问题。选 Ollama、LM Studio 或 Apple 智能时文字不离开这台 Mac，选云端服务时会议文字会发送给该服务。</li>
+        <li><strong>保存在哪里</strong>：文字和录音只保存在这台 Mac 上（<code>~/Library/Application Support/Tidytalk/Meetings</code>），一小时约 30&nbsp;MB，可以逐个删除，或只删录音、保留文字。</li>
+        <li>区分说话人需要下载一个约 29&nbsp;MB 的模型；没有下载时只分"我"和"对方"。需要麦克风和录制系统音频两项权限。</li>
+      </ul>
+
+      <h2 id="transcribe">转写文件或链接</h2>
+      <p>在菜单栏菜单里选"转写文件或链接…"，或在 Tidytalk 主窗口里选"转写"。页面分"文件"和"链接"两个标签：</p>
+      <ul>
+        <li><strong>文件</strong>：把音频或视频文件（MP3、M4A、WAV、MP4、MOV 等，最长 3 小时）拖进页面，或点一下拖放区选择文件。只记下原文件的位置，不复制。</li>
+        <li><strong>链接</strong>：粘贴视频链接（YouTube、B 站等）。第一次转写链接时，会先从 yt-dlp 的官方 GitHub 下载这个开源工具（约 35&nbsp;MB）并按发布页公布的校验值核对，之后每两周自动更新；之后只下载链接里的音频和封面图，保存在这台 Mac 上，可以随时删除。仅限你有权使用的内容。</li>
+        <li>每次转写都保存成一张卡片。点开可以回放、修改某一句、拷贝全文，或导出成纯文本（.txt）、字幕（.srt）或 Markdown；链接下载的音频可以另存，也可以只删音频、保留文字。</li>
         <li>使用"设置 › 识别模型"里选的模型，在本机识别。</li>
       </ul>
 
@@ -340,7 +352,7 @@ security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>这几行依次删除语音识别模型（SenseVoice 约 240&nbsp;MB，其他模型各约 1&nbsp;GB）和 yt-dlp、配置文件、钥匙串里的 API Key、联网缓存、系统偏好，以及麦克风、辅助功能和录制系统音频的授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
+      <p>这几行依次删除语音识别模型（SenseVoice 约 240&nbsp;MB，其他模型各约 1&nbsp;GB）、说话人模型、yt-dlp 和会议记录、配置文件、钥匙串里的 API Key、联网缓存、系统偏好，以及麦克风、辅助功能和录制系统音频的授权。打算以后重装、想保留设置的话，可以不删 <code>~/.tidytalk.json</code>。</p>
     </div>
 
     <aside class="page-cta">

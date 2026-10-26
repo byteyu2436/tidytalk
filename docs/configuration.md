@@ -39,7 +39,10 @@
   "caption_language": "zh-Hans",
   "caption_style": "dark",
   "speech_model": "sense_voice",
-  "learn_corrections": true
+  "learn_corrections": true,
+  "meeting_keep_recording": true,
+  "meeting_auto_summary": false,
+  "meeting_source": ""
 }
 ```
 
@@ -76,3 +79,6 @@
 | `caption_style` | 字幕条样式：`dark`（深色）或 `glass`（玻璃） |
 | `speech_model` | 识别模型：`sense_voice`（默认）、`qwen3_asr`、`fun_asr_nano`、`whisper_turbo` 或 `apple`（系统自带）；没下载的模型要先在"设置 › 识别模型"里下载 |
 | `learn_corrections` | 粘贴后发现你手动改了某个词时，提示加入词库 |
+| `meeting_keep_recording` | 会议记录：处理完后保留录音（可以回放、重新分说话人），关闭时只留文字 |
+| `meeting_auto_summary` | 会议记录：处理完后自动生成 AI 总结 |
+| `meeting_source` | 会议记录收听的应用（bundle id，例如 `us.zoom.xos`），空字符串表示电脑的全部声音 |

@@ -20,6 +20,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     var onPasteRecentCaptions: (() -> Void)?
     var onWillPasteHistory: (() -> Void)?
     var onOpenTranscriber: (() -> Void)?
+    var onToggleMeeting: (() -> Void)?
+    var onOpenMainWindow: (() -> Void)?
 
     init(model: AppModel) {
         self.model = model
@@ -47,14 +49,18 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Tidytalk")
         image?.isTemplate = true
-        // 收听电脑声音时在图标右上角加一个橙色圆点
-        button.image = model.isListening && model.phase != .recording ? image.map(Self.withListeningDot) : image
+        // 会议录音时在图标右上角加一个红点，收听电脑声音（实时字幕）时加一个橙点
+        let dot: NSColor? = model.phase == .recording ? nil
+            : model.meetingRecording ? .systemRed : model.isListening ? .systemOrange : nil
+        button.image = dot.flatMap { color in image.map { Self.withDot($0, color: color) } } ?? image
         button.contentTintColor = tint
-        button.toolTip = model.phase == .recording ? String(localized: "Tidytalk：正在录音") : String(localized: "Tidytalk：\(model.readinessDescription)")
+        button.toolTip = model.phase == .recording ? String(localized: "Tidytalk：正在录音")
+            : model.meetingRecording ? String(localized: "Tidytalk：正在记录会议")
+            : String(localized: "Tidytalk：\(model.readinessDescription)")
     }
 
-    /// 在模板图标上叠一个橙点。图片在绘制时才渲染，图标颜色跟随菜单栏的深浅色。
-    private static func withListeningDot(_ symbol: NSImage) -> NSImage {
+    /// 在模板图标上叠一个彩色圆点。图片在绘制时才渲染，图标颜色跟随菜单栏的深浅色。
+    private static func withDot(_ symbol: NSImage, color: NSColor) -> NSImage {
         let size = NSSize(width: max(18, symbol.size.width + 4), height: max(16, symbol.size.height))
         let image = NSImage(size: size, flipped: false) { rect in
             let symbolRect = NSRect(x: (rect.width - symbol.size.width) / 2 - 1,
@@ -69,7 +75,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             tinted.draw(in: symbolRect)
             let dot: CGFloat = 6
             let dotRect = NSRect(x: rect.maxX - dot, y: rect.maxY - dot, width: dot, height: dot)
-            NSColor.systemOrange.setFill()
+            color.setFill()
             NSBezierPath(ovalIn: dotRect).fill()
             return true
         }
@@ -120,8 +126,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(translate)
         menu.addItem(sourceItem())
 
-        // 转写、记录和词库建议
+        // 会议记录
         menu.addItem(.separator())
+        menu.addItem(.sectionHeader(title: String(localized: "会议记录")))
+        let meeting = item(model.meetingRecording ? String(localized: "结束会议记录") : String(localized: "开始会议记录"),
+                           #selector(toggleMeeting), key: "m")
+        meeting.keyEquivalentModifierMask = [.control, .option]
+        menu.addItem(meeting)
+
+        // 主窗口、转写、记录和词库建议
+        menu.addItem(.separator())
+        menu.addItem(item(String(localized: "打开 Tidytalk"), #selector(openMainWindow), key: "o"))
         menu.addItem(item(String(localized: "转写文件或链接…"), #selector(openTranscriber)))
         if config.history { menu.addItem(historyItem()) }
         if !model.correctionSuggestions.isEmpty { menu.addItem(correctionsItem()) }
@@ -292,6 +307,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc private func toggleListening() { onToggleListening?() }
     @objc private func openTranscriber() { onOpenTranscriber?() }
+    @objc private func toggleMeeting() { onToggleMeeting?() }
+    @objc private func openMainWindow() { onOpenMainWindow?() }
     /// 菜单关闭后焦点回到原来的输入框，再粘贴进去。
     @objc private func pasteRecentCaptions() {
         Task {

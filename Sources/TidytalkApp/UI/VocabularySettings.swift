@@ -56,9 +56,10 @@ struct VocabularySettings: View {
                         HStack {
                             Text(verbatim: "\(correction.from) → \(correction.to)")
                             Spacer()
-                            Button("忽略") { model.dismissCorrection(correction) }
-                            Button("加入词库") { accept(correction) }
-                                .buttonStyle(.borderedProminent)
+                            IconButton("xmark", help: "忽略", size: 24) { model.dismissCorrection(correction) }
+                            IconButton("plus", help: "加入词库", size: 24, tint: Theme.Tint.vocabulary, prominent: true) {
+                                accept(correction)
+                            }
                         }
                     }
                 } header: {
@@ -99,18 +100,13 @@ struct VocabularySettings: View {
                         Image(systemName: "arrow.right").foregroundStyle(.secondary)
                         TextField("替换为", text: $row.to, prompt: Text("Claude"))
                             .labelsHidden()
-                        Button {
+                        IconButton("minus.circle", help: "删除这一条", size: 24, destructive: true) {
                             rows.removeAll { $0.id == row.id }
-                        } label: {
-                            Image(systemName: "minus.circle.fill").foregroundStyle(.secondary)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
-                Button {
+                IconButton("plus", help: "添加替换", size: 26, tint: Theme.Tint.vocabulary) {
                     rows.append(ReplacementRow(from: "", to: ""))
-                } label: {
-                    Label("添加替换", systemImage: "plus")
                 }
             } header: {
                 Text("固定替换")
@@ -130,19 +126,13 @@ struct VocabularySettings: View {
                         TextField("输出", text: $row.to, prompt: Text("name@example.com"), axis: .vertical)
                             .labelsHidden()
                             .lineLimit(1...4)
-                        Button {
+                        IconButton("minus.circle", help: "删除这一条", size: 24, destructive: true) {
                             snippetRows.removeAll { $0.id == row.id }
-                        } label: {
-                            Image(systemName: "minus.circle.fill").foregroundStyle(.secondary)
                         }
-                        .buttonStyle(.plain)
-                        .padding(.top, 4)
                     }
                 }
-                Button {
+                IconButton("plus", help: "添加快捷短语", size: 26, tint: Theme.Tint.vocabulary) {
                     snippetRows.append(ReplacementRow(from: "", to: ""))
-                } label: {
-                    Label("添加快捷短语", systemImage: "plus")
                 }
             } header: {
                 Text("快捷短语")
@@ -192,8 +182,8 @@ struct VocabularySettings: View {
                         Text("有未保存的修改").foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button("还原", action: load).disabled(!isDirty)
-                    Button("保存", action: save)
+                    IconButton("arrow.uturn.backward", help: "还原", action: load).disabled(!isDirty)
+                    IconButton("checkmark", help: "保存（⌘S）", tint: Theme.Tint.vocabulary, prominent: true, action: save)
                         .keyboardShortcut("s")
                         .disabled(!isDirty)
                 }

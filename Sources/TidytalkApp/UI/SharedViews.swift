@@ -44,16 +44,16 @@ struct AIConfigEditor: View {
                 endpointFields
             }
 
-            HStack {
-                Button("保存", action: save)
+            HStack(spacing: 4) {
+                IconButton("checkmark", help: "保存", prominent: true, action: save)
                     .disabled(!isDirty)
-                Button("测试连接", action: test)
+                IconButton("network", help: "测试连接", tint: Theme.Tint.ai, action: test)
                     .disabled(testState == .testing || !draft.isConfigured)
-                Spacer()
+                status
+                    .font(.callout)
+                    .padding(.leading, 6)
+                Spacer(minLength: 0)
             }
-
-            status
-                .font(.callout)
         }
         .onAppear { if !loaded || !isDirty { loadDraft() } }
     }
@@ -99,24 +99,29 @@ struct AIConfigEditor: View {
     private var status: some View {
         HStack(spacing: 6) {
             if let error = store.loadError {
-                Label(error, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                StatusIcon(kind: .failed)
+                Text(error).foregroundStyle(Theme.Tint.failed)
             } else {
                 switch testState {
                 case .idle:
                     if isDirty {
                         Text("有未保存的修改").foregroundStyle(.secondary)
                     } else if draft.isLocal {
-                        Label("使用本机模型，文字不会离开这台 Mac", systemImage: "lock.fill").foregroundStyle(.secondary)
+                        Image(systemName: "lock.fill").foregroundStyle(Theme.Tint.local)
+                        Text("使用本机模型，文字不会离开这台 Mac").foregroundStyle(.secondary)
                     }
                 case .saved:
-                    Label("已保存", systemImage: "checkmark").foregroundStyle(.secondary)
+                    StatusIcon(kind: .done)
+                    Text("已保存").foregroundStyle(.secondary)
                 case .testing:
-                    ProgressView().controlSize(.small)
+                    StatusIcon(kind: .progress(nil))
                     Text("正在测试…").foregroundStyle(.secondary)
                 case .success:
-                    Label("连接成功", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                    StatusIcon(kind: .done)
+                    Text("连接成功").foregroundStyle(.secondary)
                 case .failure(let message):
-                    Label(message, systemImage: "xmark.circle.fill").foregroundStyle(.red)
+                    StatusIcon(kind: .failed)
+                    Text(message).foregroundStyle(Theme.Tint.failed)
                 }
             }
         }
@@ -294,31 +299,47 @@ private struct ProviderButtonStyle: ButtonStyle {
 /// 语音识别模型的下载状态和操作。
 struct ModelDownloadView: View {
     let manager: ModelManager
+    /// 下载好以后显示的文字（会议模式的说话人模型用另一句）。
+    var readyTitle: LocalizedStringKey = "语音识别模型已就绪"
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 10) {
             switch manager.status {
             case .ready:
-                Label("语音识别模型已就绪", systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                StatusIcon(kind: .done)
+                Text(readyTitle)
+                Spacer(minLength: 8)
             case .missing:
+                Image(systemName: "arrow.down.circle")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Theme.Tint.speech)
                 Text("需要下载约 \(sizeText)，之后可离线识别。")
                     .foregroundStyle(.secondary)
-                Button("下载模型") { manager.download() }
-                    .buttonStyle(.borderedProminent)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 8)
+                IconButton("arrow.down", help: "下载模型", tint: Theme.Tint.speech, prominent: true) { manager.download() }
             case .downloading(let fraction, _):
-                ProgressView(value: fraction) {
+                StatusIcon(kind: .progress(fraction))
+                VStack(alignment: .leading, spacing: 6) {
                     Text("正在下载… \(Int(fraction * 100))%")
-                        .font(.callout)
+                        .monospacedDigit()
+                    ThinProgress(fraction: fraction, tint: Theme.Tint.progress)
                 }
-                Button("暂停") { manager.cancel() }
+                Spacer(minLength: 8)
+                IconButton("pause.fill", help: "暂停") { manager.cancel() }
             case .verifying:
-                ProgressView { Text("正在校验文件…").font(.callout) }
+                StatusIcon(kind: .progress(nil))
+                Text("正在校验文件…").foregroundStyle(.secondary)
+                Spacer(minLength: 8)
             case .failed(let message):
-                Label(message, systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                Button("继续下载") { manager.download() }
-                    .buttonStyle(.borderedProminent)
+                StatusIcon(kind: .failed)
+                Text(message)
+                    .foregroundStyle(Theme.Tint.failed)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 8)
+                IconButton("arrow.clockwise", help: "继续下载", tint: Theme.Tint.speech, prominent: true) {
+                    manager.download()
+                }
             }
         }
     }
@@ -393,22 +414,20 @@ private struct SpeechModelRow: View {
                 if isSelected {
                     Text("使用中").foregroundStyle(.secondary)
                 } else {
-                    Button("使用") { model.useSpeechModel(speechModel) }
+                    IconButton("checkmark.circle", help: "使用这个模型", size: 26, tint: Theme.Tint.speech) {
+                        model.useSpeechModel(speechModel)
+                    }
                     if manager.canDelete {
-                        Button {
-                            manager.delete()
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                        .buttonStyle(.borderless)
-                        .help(String(localized: "删除下载的文件"))
+                        IconButton("trash", help: "删除下载的文件", size: 26, destructive: true) { manager.delete() }
                     }
                 }
             }
         case .missing:
             // Apple 系统识别的模型由系统下载，按钮叫"启用"
-            Button(speechModel == .apple ? String(localized: "启用")
-                   : isSelected ? String(localized: "下载") : String(localized: "下载并使用")) {
+            IconButton(speechModel == .apple ? "power" : "arrow.down.circle",
+                       helpText: speechModel == .apple ? String(localized: "启用")
+                           : isSelected ? String(localized: "下载") : String(localized: "下载并使用"), size: 26,
+                       tint: Theme.Tint.speech) {
                 model.useSpeechModel(speechModel)
             }
         case .downloading(let fraction, _):
@@ -416,7 +435,7 @@ private struct SpeechModelRow: View {
                 ProgressView(value: fraction).frame(width: 70)
                 Text("\(Int(fraction * 100))%").monospacedDigit().foregroundStyle(.secondary)
                 if manager.spec != nil {
-                    Button("暂停") { manager.cancel() }
+                    IconButton("pause.fill", help: "暂停", size: 26) { manager.cancel() }
                 }
             }
         case .verifying:
@@ -426,12 +445,14 @@ private struct SpeechModelRow: View {
             }
         case .failed:
             if manager.needsRedownload {
-                Button("重新下载") {
+                IconButton("arrow.clockwise", help: "重新下载", size: 26, tint: Theme.Tint.speech) {
                     manager.redownload()
                     model.useSpeechModel(speechModel)
                 }
             } else {
-                Button("继续下载") { model.useSpeechModel(speechModel) }
+                IconButton("arrow.down.circle", help: "继续下载", size: 26, tint: Theme.Tint.speech) {
+                    model.useSpeechModel(speechModel)
+                }
             }
         }
     }
@@ -455,7 +476,7 @@ struct PermissionRow: View {
             }
             Spacer()
             if !granted {
-                Button(actionTitle, action: action)
+                IconButton("lock.open", helpText: actionTitle, size: 26, tint: Theme.warning, action: action)
             }
         }
     }
@@ -470,23 +491,22 @@ struct AccessibilityHelp: View {
     @ViewState private var checking = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        HStack(spacing: 8) {
             Text("打开开关后仍显示未授权？在列表中选中 Tidytalk 点\"−\"删除，再点\"授权\"重新添加。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 8) {
-                Button("重新检测") {
+            Spacer(minLength: 4)
+            if checking {
+                StatusIcon(kind: .progress(nil)).frame(width: 24, height: 24)
+            } else {
+                IconButton("arrow.clockwise", help: "重新检测", size: 24) {
                     checking = true
                     model.refreshPermissions()
                     Task {
                         try? await Task.sleep(for: .milliseconds(400))
                         checking = false
                     }
-                }
-                .controlSize(.small)
-                if checking {
-                    ProgressView().controlSize(.mini)
                 }
             }
         }

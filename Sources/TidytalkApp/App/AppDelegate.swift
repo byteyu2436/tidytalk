@@ -14,9 +14,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var captions: CaptionPanel!
     private var listenHotKey: GlobalHotKey?
     private var pasteHotKey: GlobalHotKey?
+    private var meetingHotKey: GlobalHotKey?
+    private var meetings: MeetingController!
     private var onboardingWindow: NSWindow?
     private var settingsWindow: NSWindow?
-    private var transcribeWindow: NSWindow?
+    private var mainWindow: NSWindow?
+    private let navigation = MainNavigation()
+    private let settingsNavigation = SettingsNavigation()
     private var transcriber: TranscribeController!
     /// 最近一个在前台的其他应用：通过网址被打开时 Tidytalk 可能会被激活，要把焦点还回去，才能粘贴到原来的输入框。
     private var lastFrontApp: NSRunningApplication?
@@ -38,13 +42,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         indicator = IndicatorPanel(model: model)
         controller = DictationController(model: model, indicator: indicator)
         setUpListening()
+        setUpMeetings()
         statusItem = StatusItemController(model: model)
-        statusItem.onToggleListening = { [weak self] in self?.listener.toggle() }
+        statusItem.onToggleListening = { [weak self] in self?.toggleCaptions() }
+        statusItem.onToggleMeeting = { [weak self] in self?.meetings.toggle() }
         statusItem.onListenSourceChanged = { [weak self] in self?.listener.restartIfRunning() }
         statusItem.onSetCaptionTranslation = { [weak self] in self?.listener.setTranslation($0) }
         statusItem.onPasteRecentCaptions = { [weak self] in self?.listener.pasteRecent() }
         statusItem.onWillPasteHistory = { [weak self] in self?.controller.stopCorrectionWatch() }
-        statusItem.onOpenTranscriber = { [weak self] in self?.showTranscriber() }
+        statusItem.onOpenTranscriber = { [weak self] in self?.showMainWindow(.transcribe) }
+        statusItem.onOpenMainWindow = { [weak self] in self?.showMainWindow() }
         statusItem.onOpenSettings = { [weak self] in self?.showSettings() }
         statusItem.onReprocess = { [weak self] entry, style, language in
             self?.controller.reprocess(entry, style: style, language: language)
@@ -69,6 +76,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     /// 退出前收尾：正在等待恢复的剪贴板立即恢复，免得用户原来复制的内容丢失；停止录音和字幕。
     func applicationWillTerminate(_ notification: Notification) {
+        // 正在记录的会议：停下并写完录音文件，下次启动时接着处理
+        meetings.stop()
         PasteService.finishPending()
         controller.externalCancel()
         if model.isListening { listener.stop() }
@@ -79,7 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if !model.onboardingCompleted || model.readiness != .ready {
             showOnboarding()
         } else {
-            showSettings()
+            showMainWindow()
         }
         return false
     }
@@ -90,7 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let closing = notification.object as? NSWindow
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            let stillOpen = [self.onboardingWindow, self.settingsWindow, self.transcribeWindow].contains {
+            let stillOpen = [self.onboardingWindow, self.settingsWindow, self.mainWindow].contains {
                 $0 != nil && $0 !== closing && $0!.isVisible
             }
             if !stillOpen { NSApp.setActivationPolicy(.accessory) }
@@ -122,8 +131,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         listener.onPaste = { [weak self] text in self?.controller.pasteCaptions(text) }
         listenHotKey = GlobalHotKey(keyCode: kVK_ANSI_C, modifiers: controlKey | optionKey) { [weak self] in
-            self?.listener.toggle()
+            self?.toggleCaptions()
         }
+    }
+
+    /// 会议记录和实时字幕都要收听电脑的声音，不能同时开。
+    private func toggleCaptions() {
+        if !model.isListening, model.meetingRecording {
+            controller.showMessage(String(localized: "正在记录会议，结束后才能打开实时字幕"))
+            return
+        }
+        listener.toggle()
+    }
+
+    /// 会议记录：⌃⌥M 开始或结束；录完自动分说话人、精修文字。
+    private func setUpMeetings() {
+        let recognizer: () async -> (any SpeechTranscribing)? = { [weak self] in await self?.controller.readyRecognizer() }
+        let store = MeetingStore()
+        let processor = MeetingProcessor(model: model, store: store, recognizer: recognizer)
+        meetings = MeetingController(model: model, store: store, processor: processor, recognizer: recognizer)
+        meetings.onStart = { [weak self] in
+            guard let self else { return }
+            if model.isListening {
+                listener.stop()
+                controller.showMessage(String(localized: "已关闭实时字幕：会议记录会同时收听电脑的声音"))
+            }
+        }
+        meetings.onError = { [weak self] message in self?.controller.showMessage(message) }
+        meetingHotKey = GlobalHotKey(keyCode: kVK_ANSI_M, modifiers: controlKey | optionKey) { [weak self] in
+            self?.meetings.toggle()
+        }
+        // 上次没录完或没处理完就退出了：录音文件还在，接着处理
+        processor.resumeInterrupted()
     }
 
     /// ⌃⌥V：粘贴刚才那段。
@@ -146,9 +185,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             case .start: controller.externalStart()
             case .stop: controller.externalStop()
             case .cancel: controller.externalCancel()
-            case .captions(.toggle): listener.toggle()
-            case .captions(.start): if !model.isListening { listener.toggle() }
+            case .captions(.toggle): toggleCaptions()
+            case .captions(.start): if !model.isListening { toggleCaptions() }
             case .captions(.stop): if model.isListening { listener.stop() }
+            case .meeting(.toggle): meetings.toggle()
+            case .meeting(.start): meetings.start()
+            case .meeting(.stop): meetings.stop()
             }
         }
     }
@@ -225,20 +267,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         present(onboardingWindow)
     }
 
-    /// 转写文件或链接，和说话输入、实时字幕共用识别模型。
-    private func showTranscriber() {
-        if transcribeWindow == nil {
-            transcriber = TranscribeController(model: model) { [weak self] in await self?.controller.readyRecognizer() }
-            let window = TranscribeWindow.make(controller: transcriber)
+    /// 主窗口：会议、转写、最近记录、词库。`section` 为 nil 时保留上次看的页。
+    private func showMainWindow(_ section: MainNavigation.Section? = nil) {
+        if mainWindow == nil {
+            // 转写和说话输入、实时字幕共用识别模型
+            transcriber = TranscribeController(model: model, store: TranscriptionStore()) { [weak self] in
+                await self?.controller.readyRecognizer()
+            }
+            let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber,
+                                         navigation: navigation) { [weak self] page in self?.showSettings(page) }
             window.delegate = self
-            transcribeWindow = window
+            mainWindow = window
         }
-        present(transcribeWindow)
+        if let section { navigation.section = section }
+        present(mainWindow)
     }
 
-    private func showSettings() {
+    private func showSettings(_ page: MainNavigation.SettingsPage? = nil) {
         if settingsWindow == nil {
-            let window = SettingsWindow.make(model: model,
+            let window = SettingsWindow.make(model: model, meetingStore: meetings.store, navigation: settingsNavigation,
                                              onOpenOnboarding: { [weak self] in self?.showOnboarding() },
                                              onToggleListening: { [weak self] in self?.listener.toggle() },
                                              onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
@@ -248,6 +295,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             window.center()
             settingsWindow = window
         }
+        if let page { settingsNavigation.page = page }
         present(settingsWindow)
     }
 
@@ -255,19 +303,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                      onFinish: @escaping () -> Void = {}) -> NSWindow {
         let view = OnboardingView(model: model, onFinish: onFinish, initialStep: step)
         let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
-        window.title = String(localized: "欢迎使用 Tidytalk")
-        window.styleMask = [.titled, .closable, .fullSizeContentView]
-        // 内容延伸到标题栏下面，标题由页面自己的大标题显示，避免两行标题重叠
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
+        window.styleMask = [.titled, .closable]
+        // 和主窗口一样隐藏标题栏，标题由侧边栏的欢迎语显示
+        AppShell<EmptyView, EmptyView>.configure(window, title: String(localized: "欢迎使用 Tidytalk"))
         window.isReleasedWhenClosed = false
         window.center()
         return window
     }
 
+    /// 打开窗口并放到最前面。
+    ///
+    /// 从菜单栏菜单打开时，菜单还没收起、应用刚从"只在菜单栏"切成普通应用，这时请求激活会被系统忽略，
+    /// 窗口只在 Dock 里出现图标却不到前面。所以等这一轮事件处理完（菜单收起后）再激活，并强制把窗口放到最前。
     private func present(_ window: NSWindow?) {
         NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
-        window?.makeKeyAndOrderFront(nil)
+        DispatchQueue.main.async {
+            NSApp.activate()
+            window?.makeKeyAndOrderFront(nil)
+            window?.orderFrontRegardless()
+        }
     }
 }

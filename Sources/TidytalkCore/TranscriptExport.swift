@@ -1,11 +1,11 @@
 import Foundation
 
 /// 文件转写的一段结果：在音频里的起止时间和文字。
-public struct TranscriptSegment: Equatable, Sendable, Identifiable {
+public struct TranscriptSegment: Codable, Equatable, Sendable, Identifiable {
     public let id: Int
     public let start: TimeInterval
     public let end: TimeInterval
-    public let text: String
+    public var text: String
 
     public init(id: Int, start: TimeInterval, end: TimeInterval, text: String) {
         self.id = id

@@ -108,7 +108,10 @@ public struct AIConfig: Equatable, Sendable {
 ///   "caption_style": "dark",
 ///   "caption_live_translate": true,
 ///   "speech_model": "sense_voice",
-///   "learn_corrections": true
+///   "learn_corrections": true,
+///   "meeting_keep_recording": true,
+///   "meeting_auto_summary": false,
+///   "meeting_source": ""
 /// }
 /// ```
 public struct AppConfig: Equatable, Sendable {
@@ -164,6 +167,12 @@ public struct AppConfig: Equatable, Sendable {
     public var speechModel: SpeechModel
     /// 粘贴后发现用户改了某个词时，提示加入词库。
     public var learnCorrections: Bool
+    /// 会议模式：会后保留录音（可以回听、重新分说话人）。关闭时处理完只留文字。
+    public var meetingKeepRecording: Bool
+    /// 会议模式：会议结束、处理完后自动生成 AI 总结。
+    public var meetingAutoSummary: Bool
+    /// 会议模式收听的应用（bundle id），空字符串表示电脑的全部声音。
+    public var meetingSource: String
 
     public init(cleanupEnabled: Bool = true, ai: AIConfig = .default, typography: Bool = true,
                 vocabulary: [String] = [], replacements: [String: String] = [:],
@@ -176,7 +185,8 @@ public struct AppConfig: Equatable, Sendable {
                 captionTranslate: Bool = false, captionLanguage: OutputLanguage = .captionDefault(),
                 captionStyle: CaptionStyle = .dark, captionLiveTranslate: Bool = true,
                 speechModel: SpeechModel = .senseVoice,
-                learnCorrections: Bool = true) {
+                learnCorrections: Bool = true, meetingKeepRecording: Bool = true, meetingAutoSummary: Bool = false,
+                meetingSource: String = "") {
         self.cleanupEnabled = cleanupEnabled
         self.ai = ai
         self.typography = typography
@@ -205,6 +215,9 @@ public struct AppConfig: Equatable, Sendable {
         self.captionLiveTranslate = captionLiveTranslate
         self.speechModel = speechModel
         self.learnCorrections = learnCorrections
+        self.meetingKeepRecording = meetingKeepRecording
+        self.meetingAutoSummary = meetingAutoSummary
+        self.meetingSource = meetingSource
     }
 
     /// 实际生效的语音改写触发键：和说话的触发键相同时视为关闭。
@@ -251,6 +264,9 @@ public struct AppConfig: Equatable, Sendable {
         static let captionLiveTranslate = "caption_live_translate"
         static let speechModel = "speech_model"
         static let learnCorrections = "learn_corrections"
+        static let meetingKeepRecording = "meeting_keep_recording"
+        static let meetingAutoSummary = "meeting_auto_summary"
+        static let meetingSource = "meeting_source"
         static let service = "service"
         static let off = "off"
         /// 旧版本的按应用风格，已废弃，写回时删除
@@ -311,7 +327,10 @@ public struct AppConfig: Equatable, Sendable {
             captionStyle: (root[Key.captionStyle] as? String).flatMap(CaptionStyle.init(rawValue:)) ?? .dark,
             captionLiveTranslate: (root[Key.captionLiveTranslate] as? Bool) ?? true,
             speechModel: (root[Key.speechModel] as? String).flatMap(SpeechModel.init(rawValue:)) ?? .senseVoice,
-            learnCorrections: (root[Key.learnCorrections] as? Bool) ?? true
+            learnCorrections: (root[Key.learnCorrections] as? Bool) ?? true,
+            meetingKeepRecording: (root[Key.meetingKeepRecording] as? Bool) ?? true,
+            meetingAutoSummary: (root[Key.meetingAutoSummary] as? Bool) ?? false,
+            meetingSource: (root[Key.meetingSource] as? String) ?? ""
         )
     }
 
@@ -353,6 +372,9 @@ public struct AppConfig: Equatable, Sendable {
         root[Key.captionLiveTranslate] = captionLiveTranslate
         root[Key.speechModel] = speechModel.rawValue
         root[Key.learnCorrections] = learnCorrections
+        root[Key.meetingKeepRecording] = meetingKeepRecording
+        root[Key.meetingAutoSummary] = meetingAutoSummary
+        root[Key.meetingSource] = meetingSource
         root[Key.legacyAppStyles] = nil
 
         return try JSONSerialization.data(withJSONObject: root,

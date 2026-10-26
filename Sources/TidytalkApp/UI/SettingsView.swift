@@ -1,47 +1,124 @@
 import AppKit
+import Observation
 import SwiftUI
 import TidytalkCore
 
-/// 设置窗口：使用 macOS 标准的偏好设置样式，标签页以图标形式放在标题栏的工具栏里。
-enum SettingsWindow {
-    static let width: CGFloat = 560
+/// 设置窗口现在显示哪一页（主窗口里的按钮、菜单跳过去）。
+@MainActor
+@Observable
+final class SettingsNavigation {
+    var page: MainNavigation.SettingsPage = .general
+}
 
+extension MainNavigation.SettingsPage {
+    var title: String {
+        switch self {
+        case .general: String(localized: "通用")
+        case .dictation: String(localized: "说话输入")
+        case .models: String(localized: "识别模型")
+        case .ai: String(localized: "配置 AI")
+        case .vocabulary: String(localized: "词库")
+        case .captions: String(localized: "实时字幕")
+        case .meeting: String(localized: "会议")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .general: "gearshape"
+        case .dictation: "mic"
+        case .models: "waveform"
+        case .ai: "sparkles"
+        case .vocabulary: "character.book.closed"
+        case .captions: "captions.bubble"
+        case .meeting: "person.2.wave.2"
+        }
+    }
+
+    /// 功能色：和主窗口、空白页里同一个功能的颜色一样
+    var color: Color {
+        switch self {
+        case .general: Theme.Tint.neutral
+        case .dictation: Theme.Tint.dictation
+        case .models: Theme.Tint.speech
+        case .ai: Theme.Tint.ai
+        case .vocabulary: Theme.Tint.vocabulary
+        case .captions: Theme.Tint.captions
+        case .meeting: Theme.Tint.meeting
+        }
+    }
+}
+
+/// 设置窗口：和主窗口一样，左边是各页的列表，右边是内容面板。
+enum SettingsWindow {
     @MainActor
-    static func make(model: AppModel, onOpenOnboarding: @escaping () -> Void = {},
+    static func make(model: AppModel, meetingStore: MeetingStore, navigation: SettingsNavigation = SettingsNavigation(),
+                     onOpenOnboarding: @escaping () -> Void = {},
                      onToggleListening: @escaping () -> Void = {},
                      onListenSourceChanged: @escaping () -> Void = {},
                      onSetCaptionTranslation: @escaping (Bool) -> Void = { _ in }) -> NSWindow {
-        let tabs = SettingsTabViewController()
-        tabs.tabStyle = .toolbar
-        // 每页高度按内容设定，切换时窗口跟着伸缩，和系统设置的偏好窗口一样
-        tabs.addTabViewItem(item(String(localized: "通用"), symbol: "gearshape", height: 690,
-                                 GeneralSettings(model: model, onOpenOnboarding: onOpenOnboarding)))
-        tabs.addTabViewItem(item(String(localized: "说话输入"), symbol: "mic", height: 530, RecordingSettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "识别模型"), symbol: "waveform", height: 440, ModelSettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "配置 AI"), symbol: "sparkles", height: 640, AISettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "词库"), symbol: "character.book.closed", height: 640, VocabularySettings(model: model)))
-        tabs.addTabViewItem(item(String(localized: "实时字幕"), symbol: "captions.bubble", height: 610,
-                                 ListenSettings(model: model, onToggle: onToggleListening, onSourceChanged: onListenSourceChanged,
-                                                onSetTranslation: onSetCaptionTranslation)))
-
-        let window = FocusFriendlyWindow(contentViewController: tabs)
-        window.styleMask = [.titled, .closable]
-        window.toolbarStyle = .preference
-        if let first = tabs.tabViewItems.first?.viewController { window.setContentSize(first.preferredContentSize) }
+        let view = SettingsRoot(model: model, meetingStore: meetingStore, navigation: navigation,
+                                onOpenOnboarding: onOpenOnboarding, onToggleListening: onToggleListening,
+                                onListenSourceChanged: onListenSourceChanged,
+                                onSetCaptionTranslation: onSetCaptionTranslation)
+        let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+        AppShell<EmptyView, EmptyView>.configure(window, title: String(localized: "设置"))
+        window.setContentSize(NSSize(width: 860, height: 680))
         return window
     }
+}
 
-    @MainActor
-    private static func item(_ title: String, symbol: String, height: CGFloat, _ view: some View) -> NSTabViewItem {
-        let size = NSSize(width: width, height: height)
-        let host = NSHostingController(rootView: view.frame(width: size.width, height: size.height))
-        host.preferredContentSize = size
-        // 工具栏样式的标签页会把当前页的标题显示为窗口标题
-        host.title = title
-        let item = NSTabViewItem(viewController: host)
-        item.label = title
-        item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
-        return item
+struct SettingsRoot: View {
+    let model: AppModel
+    let meetingStore: MeetingStore
+    let navigation: SettingsNavigation
+    var onOpenOnboarding: () -> Void = {}
+    var onToggleListening: () -> Void = {}
+    var onListenSourceChanged: () -> Void = {}
+    var onSetCaptionTranslation: (Bool) -> Void = { _ in }
+
+    var body: some View {
+        AppShell {
+            VStack(alignment: .leading, spacing: 1) {
+                SidebarBrand(subtitle: String(localized: "设置")).padding(.bottom, 10)
+                ForEach(MainNavigation.SettingsPage.allCases) { page in
+                    SidebarRow(symbol: page.symbol, title: page.title, tint: page.color, selected: navigation.page == page) {
+                        navigation.page = page
+                    }
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 10)
+            .padding(.bottom, 10)
+        } content: {
+            VStack(spacing: 0) {
+                PageHeader { PageTitle(title: navigation.page.title) }
+                page
+                    .scrollContentBackground(.hidden)
+                    .id(navigation.page)
+            }
+        }
+        .frame(minWidth: 760, minHeight: 520)
+        .onChange(of: navigation.page) {
+            // 切换页时不自动聚焦输入框
+            (NSApp.keyWindow as? FocusFriendlyWindow)?.clearFocusSoon()
+        }
+    }
+
+    @ViewBuilder
+    private var page: some View {
+        switch navigation.page {
+        case .general: GeneralSettings(model: model, onOpenOnboarding: onOpenOnboarding)
+        case .dictation: RecordingSettings(model: model)
+        case .models: ModelSettings(model: model)
+        case .ai: AISettings(model: model)
+        case .vocabulary: VocabularySettings(model: model)
+        case .captions:
+            ListenSettings(model: model, onToggle: onToggleListening, onSourceChanged: onListenSourceChanged,
+                           onSetTranslation: onSetCaptionTranslation)
+        case .meeting: MeetingSettings(model: model, store: meetingStore)
+        }
     }
 }
 
@@ -68,7 +145,9 @@ struct GeneralSettings: View {
                     HStack {
                         Text("需要在系统设置里允许").foregroundStyle(.orange)
                         Spacer()
-                        Button("打开登录项设置") { LoginItem.openSettings() }
+                        IconButton("arrow.up.forward.app", help: "打开登录项设置", size: 26, tint: Theme.warning) {
+                            LoginItem.openSettings()
+                        }
                     }
                 }
                 if let loginError {
@@ -79,7 +158,9 @@ struct GeneralSettings: View {
                     HStack {
                         Text("当前版本 \(UpdateChecker.currentVersion)").foregroundStyle(.secondary)
                         Spacer()
-                        Button("检查更新") { Task { await UpdateChecker.check(userInitiated: true) } }
+                        IconButton("arrow.clockwise", help: "检查更新", size: 26) {
+                            Task { await UpdateChecker.check(userInitiated: true) }
+                        }
                     }
                 } else {
                     LabeledContent("版本", value: UpdateChecker.currentVersion)
@@ -102,7 +183,7 @@ struct GeneralSettings: View {
                     HStack {
                         Text("已记住 \(model.history.count) 条").foregroundStyle(.secondary)
                         Spacer()
-                        Button("清空") { model.clearHistory() }
+                        IconButton("trash", help: "清空", size: 26, destructive: true) { model.clearHistory() }
                             .disabled(model.history.isEmpty)
                     }
                 }
@@ -116,10 +197,10 @@ struct GeneralSettings: View {
 
             Section("其他") {
                 LabeledContent("设置引导") {
-                    Button("打开", action: onOpenOnboarding)
+                    IconButton("arrow.up.right.square", help: "打开设置引导", size: 26, action: onOpenOnboarding)
                 }
                 LabeledContent("配置文件") {
-                    Button("在编辑器中打开") { model.configStore.openInEditor() }
+                    IconButton("square.and.pencil", help: "在编辑器中打开", size: 26) { model.configStore.openInEditor() }
                 }
             }
         }
@@ -167,12 +248,12 @@ struct GeneralSettings: View {
                     Text("用于实时字幕，第一次收听时 macOS 会询问").font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("打开系统设置") { Permissions.openSystemAudioSettings() }
+                IconButton("arrow.up.forward.app", help: "打开系统设置", size: 26) { Permissions.openSystemAudioSettings() }
             }
         } header: {
             Text("权限")
         } footer: {
-            Text("声音只在这台 Mac 上识别，不会上传。开启整理文字或字幕翻译后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。")
+            Text("声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -353,7 +434,10 @@ struct ListenSettings: View {
         Form {
             Section {
                 LabeledContent {
-                    Button(model.isListening ? String(localized: "停止收听") : String(localized: "开始收听")) { onToggle() }
+                    IconButton(model.isListening ? "stop.fill" : "play.fill",
+                               helpText: model.isListening ? String(localized: "停止收听（⌃⌥C）")
+                                   : String(localized: "开始收听（⌃⌥C）"), size: 26,
+                               tint: model.isListening ? Theme.Tint.recording : Theme.Tint.captions, prominent: true) { onToggle() }
                 } label: {
                     Text(model.isListening ? String(localized: "正在收听") : String(localized: "收听电脑声音"))
                     Text(verbatim: "⌃⌥C")

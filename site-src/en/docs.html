@@ -25,6 +25,7 @@ description: How to install and use Tidytalk: hold-to-talk dictation, speech mod
           <li><a href="#external-control">Control from other apps</a></li>
           <li><a href="#speech-models">Speech models</a></li>
           <li><a href="#live-captions">Live captions</a></li>
+          <li><a href="#meetings">Meeting recording</a></li>
           <li><a href="#transcribe">Transcribe files and links</a></li>
           <li><a href="#tidying">How tidying works</a></li>
           <li><a href="#strength-and-mode">Cleanup strength and mode</a></li>
@@ -107,7 +108,7 @@ description: How to install and use Tidytalk: hold-to-talk dictation, speech mod
         <li><strong>Whisper Turbo</strong> (about 1&nbsp;GB): about 99 languages, good for less common ones. It drops characters in Chinese.</li>
         <li><strong>Apple Speech</strong>: built into macOS, nothing to download. It recognizes your system language and is weaker on mixed Chinese and English.</li>
       </ul>
-      <p>Click "Download &amp; Use" and keep working: the current model is used until the download finishes. Dictation, live captions, and file transcription all use the model you choose.</p>
+      <p>Click the download button and keep working: the current model is used until the download finishes. Dictation, live captions, and file transcription all use the model you choose.</p>
 
       <h2 id="live-captions">Live captions</h2>
       <p>Tidytalk can caption whatever your Mac is playing, such as a video, a lecture, or a video call. It records only the computer's audio, never the microphone, and recognizes it on your Mac.</p>
@@ -120,12 +121,23 @@ description: How to install and use Tidytalk: hold-to-talk dictation, speech mod
       </ul>
       <p>For a step-by-step walkthrough, see <a href="/guides/live-translated-captions/">Live translated captions for videos and meetings</a>.</p>
 
-      <h2 id="transcribe">Transcribe files and links</h2>
-      <p>Choose "Transcribe File or Link…" in the menu bar menu.</p>
+      <h2 id="meetings">Meeting recording</h2>
+      <p>Press <kbd>⌃⌥M</kbd> (Control + Option + M), or start from the menu bar or the toolbar of the Tidytalk window. Tidytalk records your microphone and your Mac's audio (the people on the other end) at the same time. Press it again to stop.</p>
       <ul>
-        <li>Drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) into the window, or click "Choose File…".</li>
-        <li>Or paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35&nbsp;MB) from its official GitHub release, checks it against the checksum published there, and updates it every two weeks. Only the audio is downloaded, and it's deleted after transcription. Use only content you have the right to use.</li>
-        <li>The text is split at pauses with timestamps. Copy it all, or export plain text (.txt), subtitles (.srt), or Markdown.</li>
+        <li><strong>During the meeting:</strong> each sentence appears as a draft as soon as it's spoken, with "Me" and "Others" in two colors. Dictation keeps working. Meeting recording and live captions can't run at the same time.</li>
+        <li><strong>After the meeting:</strong> Tidytalk tells speakers apart and transcribes again on your Mac (about 5 minutes for an hour). The other side is split into Speaker 1, 2, 3, which you can rename. Moments when several people talk at once are marked, and that text is transcribed from the mixed audio. If the split looks wrong, set how many people were on the other side and run it again.</li>
+        <li><strong>Without headphones:</strong> your microphone also picks up the other side from your speakers. Tidytalk turns on the system's echo cancellation and removes your lines that match theirs at the same moment.</li>
+        <li><strong>AI summary:</strong> key points, decisions, to-dos, and open questions. With Ollama, LM Studio, or Apple Intelligence the text stays on your Mac; with a cloud service the meeting text is sent to that service.</li>
+        <li><strong>Where it's stored:</strong> text and recordings stay on your Mac (<code>~/Library/Application Support/Tidytalk/Meetings</code>), about 30&nbsp;MB per hour. Delete a meeting, or just its recording, at any time.</li>
+        <li>Telling speakers apart needs a one-time download of about 29&nbsp;MB. Without it, Tidytalk only separates "Me" and "Others". Needs microphone and system audio recording permission.</li>
+      </ul>
+
+      <h2 id="transcribe">Transcribe files and links</h2>
+      <p>Choose "Transcribe File or Link…" in the menu bar menu, or open Transcribe in the Tidytalk window. The page has two tabs, Files and Links:</p>
+      <ul>
+        <li><strong>Files</strong>: drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) onto the page, or click the drop area to choose one. Tidytalk remembers where the file is and doesn't copy it.</li>
+        <li><strong>Links</strong>: paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35&nbsp;MB) from its official GitHub release, checks it against the checksum published there, and updates it every two weeks. Only the audio and cover image are downloaded. They stay on your Mac and can be deleted anytime. Use only content you have the right to use.</li>
+        <li>Every transcription is saved as a card. Open it to play the audio, fix a line, copy everything, or export plain text (.txt), subtitles (.srt), or Markdown. Downloaded audio can be saved elsewhere, or deleted while keeping the text.</li>
         <li>It uses the speech model from Settings › Speech Model and runs on your Mac.</li>
       </ul>
 
@@ -251,7 +263,7 @@ security delete-generic-password -s app.tidytalk.Tidytalk -a ai.api_key
 rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytalk.Tidytalk
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk</code></pre>
-      <p>These remove the speech models (SenseVoice is about 240&nbsp;MB, other models about 1&nbsp;GB each) and yt-dlp, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
+      <p>These remove the speech models (SenseVoice is about 240&nbsp;MB, other models about 1&nbsp;GB each), the speaker model, yt-dlp, your meetings, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep <code>~/.tidytalk.json</code> if you plan to reinstall and want your settings back.</p>
     </div>
 
     <aside class="page-cta">

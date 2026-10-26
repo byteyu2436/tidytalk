@@ -240,7 +240,7 @@ enum DebugCommands {
     }
 
     /// 读取任意格式的音频并转换为 16 kHz 单声道。
-    private static func loadAudio(_ url: URL) throws -> [Float] {
+    static func loadAudio(_ url: URL) throws -> [Float] {
         let file = try AVAudioFile(forReading: url)
         let target = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(AudioMath.sampleRate),
                                    channels: 1, interleaved: false)!
@@ -512,11 +512,13 @@ enum SettingsCaptureCommand {
         _ = NSApplication.shared
         NSApp.setActivationPolicy(.regular)
 
-        let window = SettingsWindow.make(model: AppModel())
+        if args.contains("--dark") { NSApp.appearance = NSAppearance(named: .darkAqua) }
+        let navigation = SettingsNavigation()
+        let window = SettingsWindow.make(model: AppModel(), meetingStore: MeetingStore(root: FileManager.default.temporaryDirectory.appending(path: "Tidytalk-capture-meetings")),
+                                         navigation: navigation)
         window.center()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate()
-        guard let tabs = window.contentViewController as? NSTabViewController else { return true }
 
         // 焦点检查：打开后、手动聚焦输入框后、点击空白处后
         func focus() -> String {
@@ -540,10 +542,11 @@ enum SettingsCaptureCommand {
             print("点击空白处后：\(focus())")
         }
 
-        for i in tabs.tabViewItems.indices {
-            tabs.selectedTabViewItemIndex = i
+        for page in MainNavigation.SettingsPage.allCases {
+            let i = page.rawValue
+            navigation.page = page
             RunLoop.main.run(until: Date().addingTimeInterval(1.0))
-            print("标签页 \(i)：\(tabs.tabViewItems[i].label) 窗口内容 \(window.contentLayoutRect.size)")
+            print("第 \(i) 页：\(page.title) 窗口内容 \(window.contentLayoutRect.size)")
             // kCGWindowListOptionIncludingWindow，带窗口阴影
             if let image = capture(.null, 1 << 3, UInt32(window.windowNumber), 0)?.takeRetainedValue() {
                 try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
@@ -969,7 +972,8 @@ enum TranscribeTestCommand {
         let speechModel = model.configStore.config.speechModel
         note("model=\(speechModel.rawValue) ready=\(model.models.isReady)")
         nonisolated(unsafe) var loaded: (any SpeechTranscribing)?
-        let controller = TranscribeController(model: model) {
+        let store = TranscriptionStore(root: FileManager.default.temporaryDirectory.appending(path: "Tidytalk-transcribe-test"))
+        let controller = TranscribeController(model: model, store: store) {
             if loaded == nil {
                 let start = Date()
                 loaded = try? SpeechRecognizers.load(speechModel, directory: model.models.directory,
@@ -1013,20 +1017,96 @@ enum TranscribeTestCommand {
             }
         } while controller.stage.isBusy && Date() < deadline
         note("title=\(controller.title)")
+        if let item = store.items.first {
+            note("saved: \(item.kind) state=\(item.state) audio=\(item.audioFile ?? "-") thumbnail=\(item.thumbnailFile ?? "-") uploader=\(item.uploader ?? "-") duration=\(item.duration ?? 0)")
+        }
         note("\n" + TranscriptExport.render(controller.segments, as: .srt))
         return true
     }
 }
-/// 开发用：打开真实的转写窗口截图：空白状态，以及转写一个文件之后的结果。
+/// 开发用：用两段录音模拟一场会议，跑完整的会后处理（分说话人、重新识别、去回声），打印结果。
 ///
-///     open -n Tidytalk.app --args --transcribe-capture <输出目录> <音频文件> [--config <配置文件>]
+///     Tidytalk --meeting-test <麦克风录音> <电脑声音录音> <输出目录> --model sense_voice --config <临时配置>
+///
+/// 说话人模型要先下载到 ~/Library/Application Support/Tidytalk/Models/。
 @MainActor
-enum TranscribeCaptureCommand {
+enum MeetingTestCommand {
+    static func runIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: "--meeting-test"), index + 3 < args.count, args.contains("--config")
+        else { return false }
+        let mic = URL(fileURLWithPath: args[index + 1])
+        let system = URL(fileURLWithPath: args[index + 2])
+        let root = URL(fileURLWithPath: args[index + 3])
+        let speakers = args.firstIndex(of: "--speakers").flatMap { $0 + 1 < args.count ? Int(args[$0 + 1]) : nil }
+        let speechModel = args.firstIndex(of: "--model").flatMap { $0 + 1 < args.count ? SpeechModel(rawValue: args[$0 + 1]) : nil }
+            ?? .senseVoice
+        Task { @MainActor in
+            do {
+                let model = AppModel()
+                guard model.diarizationModels.isReady else {
+                    print("说话人模型没有下载：\(model.diarizationModels.directory.path)")
+                    exit(1)
+                }
+                let directory = speechModel.spec.map(ModelManager.directory(for:)) ?? URL(fileURLWithPath: "/")
+                let loaded = try await Task.detached {
+                    try SpeechRecognizers.load(speechModel, directory: directory, hotwords: [])
+                }.value
+                try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+                let store = MeetingStore(root: root)
+                let processor = MeetingProcessor(model: model, store: store, recognizer: { loaded })
+                let meeting = Meeting(title: "测试会议", startedAt: Date(), state: .processing)
+                try store.create(meeting)
+                for (source, url) in [(MeetingSource.microphone, mic), (.system, system)] {
+                    let writer = try MeetingAudioWriter(url: store.pcmURL(meeting.id, source))
+                    writer.append(try DebugCommands.loadAudio(url))
+                    writer.finish()
+                }
+                let start = Date()
+                processor.process(meeting.id, remoteSpeakers: speakers)
+                while processor.isProcessing(meeting.id) { try await Task.sleep(for: .milliseconds(200)) }
+                let result = store.meeting(meeting.id)!
+                print(String(format: "处理耗时 %.1f 秒，会议 %.1f 秒，状态 %@ %@", Date().timeIntervalSince(start),
+                             result.duration, result.state.rawValue, result.processingError ?? ""))
+                print("说话人：\(result.speakers.map { "\($0.id)=\($0.name)" }.joined(separator: "，"))")
+                for segment in result.segments {
+                    let overlap = segment.isOverlap ? "（同时）" : ""
+                    print(String(format: "%6.1f–%6.1f  %@  %@%@：%@", segment.start, segment.end,
+                                 segment.source == .microphone ? "麦" : "电", result.speakerNames(of: segment), overlap,
+                                 segment.text))
+                }
+                if args.contains("--summarize") {
+                    processor.summarize(meeting.id)
+                    while processor.summarizing.contains(meeting.id) { try await Task.sleep(for: .milliseconds(200)) }
+                    if let error = processor.summaryErrors[meeting.id] { print("总结失败：\(error)") }
+                    if let summary = store.meeting(meeting.id)?.summary {
+                        print("总结（\(summary.service)\(summary.isPartial ? "，不完整" : "")）：\n\(summary.markdown)")
+                    }
+                }
+                print("录音：\(result.hasRecording ? "已保存" : "无")，\(FileManager.default.fileExists(atPath: store.audioURL(meeting.id, .system).path) ? "system.m4a 存在" : "system.m4a 不存在")")
+            } catch {
+                print("失败：\(error.localizedDescription)")
+            }
+            exit(0)
+        }
+        RunLoop.main.run(until: Date().addingTimeInterval(1800))
+        return true
+    }
+}
+
+/// 开发用：截取主窗口的每一页（会议列表、会议详情的原始记录和 AI 总结、转写、最近记录、词库）。
+///
+///     Tidytalk --main-window-capture <输出目录> --meetings <会议目录> --config <临时配置>
+///
+/// 会议目录里的会议没有总结时，给第一场加一份示例总结，用来看排版。
+@MainActor
+enum MainWindowCaptureCommand {
     private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
 
     static func runIfRequested() -> Bool {
         let args = CommandLine.arguments
-        guard let index = args.firstIndex(of: "--transcribe-capture"), index + 2 < args.count,
+        guard let index = args.firstIndex(of: "--main-window-capture"), index + 1 < args.count,
+              let rootIndex = args.firstIndex(of: "--meetings"), rootIndex + 1 < args.count, args.contains("--config"),
               let symbol = dlsym(dlopen(nil, RTLD_NOW), "CGWindowListCreateImage")
         else { return false }
         let capture = unsafeBitCast(symbol, to: CreateImage.self)
@@ -1034,34 +1114,168 @@ enum TranscribeCaptureCommand {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         _ = NSApplication.shared
         NSApp.setActivationPolicy(.regular)
+
+        if args.contains("--dark") { NSApp.appearance = NSAppearance(named: .darkAqua) }
         let model = AppModel()
-        nonisolated(unsafe) var loaded: (any SpeechTranscribing)?
-        let controller = TranscribeController(model: model) {
-            if loaded == nil {
-                loaded = try? SpeechRecognizers.load(model.configStore.config.speechModel,
-                                                     directory: model.models.directory, hotwords: [])
+        let store = MeetingStore(root: URL(fileURLWithPath: args[rootIndex + 1]))
+        if let first = store.meetings.first, first.summary == nil {
+            store.update(first.id) {
+                $0.summary = MeetingSummary(markdown: """
+                ## 概要
+                会议确定新版本推迟到**下周四**发布，测试分工已经明确，市场部需要在下周二前拿到功能介绍文档。
+
+                ## 讨论要点
+                - 原定下周三发布时间偏紧（我）
+                - 上线后需要提前准备报警规则和回滚方案（我）
+
+                ## 决定
+                - 发布推迟到下周四
+                - 前端测试由小王负责，后端测试由小李负责
+
+                ## 待办
+                - [ ] 小王：前端测试
+                - [ ] 小李：后端测试
+                - [ ] 我：下周二前把功能介绍文档给市场部
+
+                ## 待定问题
+                - 团队建设活动的具体地点
+                """, createdAt: Date(), service: "api.deepseek.com · deepseek-chat")
             }
-            return loaded
         }
-        let window = TranscribeWindow.make(controller: controller)
+        let processor = MeetingProcessor(model: model, store: store, recognizer: { nil })
+        let meetings = MeetingController(model: model, store: store, processor: processor, recognizer: { nil })
+        let transcriptions = TranscriptionStore(root: FileManager.default.temporaryDirectory
+            .appending(path: "Tidytalk-capture-transcriptions-\(UUID().uuidString)"))
+        seedTranscriptions(transcriptions)
+        let transcriber = TranscribeController(model: model, store: transcriptions) { nil }
+        let navigation = MainNavigation()
+        let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber, navigation: navigation) { _ in }
+        window.setContentSize(NSSize(width: 1040, height: 680))
+        window.center()
         window.makeKeyAndOrderFront(nil)
+        NSApp.activate()
+
         func shot(_ name: String) {
-            RunLoop.main.run(until: Date().addingTimeInterval(0.8))
+            RunLoop.main.run(until: Date().addingTimeInterval(1.0))
             if let image = capture(.null, 1 << 3, UInt32(window.windowNumber), 0)?.takeRetainedValue() {
                 try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
                     .write(to: dir.appending(path: "\(name).png"))
             }
         }
-        shot("transcribe-empty")
-        controller.transcribe(file: URL(fileURLWithPath: args[index + 2]))
-        let deadline = Date().addingTimeInterval(120)
-        repeat {
-            RunLoop.main.run(until: Date().addingTimeInterval(0.2))
-        } while controller.stage != .finished && Date() < deadline
-        shot("transcribe-result")
+        shot("meetings-empty")
+        if let first = store.meetings.first {
+            navigation.meeting = first.id
+            shot("meeting-transcript")
+            navigation.meetingTab = .summary
+            shot("meeting-summary")
+            navigation.meetingTab = .transcript
+        }
+        navigation.meeting = nil
+        for section in [MainNavigation.Section.transcribe, .history, .vocabulary] {
+            navigation.section = section
+            shot("section-\(section.rawValue)")
+        }
+        navigation.section = .transcribe
+        navigation.transcribeTab = .link
+        shot("transcribe-link")
+        if let link = transcriptions.items(of: .link).first {
+            navigation.transcription = link.id
+            shot("transcription-link-detail")
+        }
+        navigation.transcription = nil
+        navigation.transcribeTab = .file
+        if let file = transcriptions.items(of: .file).first {
+            navigation.transcription = file.id
+            shot("transcription-file-detail")
+        }
+        navigation.transcription = nil
+        // 录制界面：用第一场会议的前几段当实时文字
+        if var live = store.meetings.first {
+            live.segments = Array(live.segments.prefix(4))
+            meetings.simulateRecording(live, elapsed: 754)
+            navigation.section = .meetings
+            navigation.meeting = live.id
+            shot("meeting-live")
+        }
         return true
     }
-}
 
+    /// 截图用的转写记录：两个链接（一个带封面图和音频）、两个文件。
+    private static func seedTranscriptions(_ store: TranscriptionStore) {
+        let lines = ["大家好，今天我们来聊一聊怎么用 SwiftUI 做一个菜单栏应用。",
+                     "首先要把应用设成只在菜单栏显示，不在 Dock 里出现图标。",
+                     "然后用 NSStatusItem 放一个图标，点一下弹出菜单。",
+                     "菜单里的内容可以随时更新，比如显示最近的几条记录。",
+                     "需要窗口的时候，再临时切换成普通应用，把窗口放到最前面。",
+                     "最后记得处理好快捷键和权限，第一次打开时引导用户授权。"]
+        func segments(_ texts: [String]) -> [TranscriptSegment] {
+            texts.enumerated().map { TranscriptSegment(id: $0.offset, start: Double($0.offset) * 9.5 + 1,
+                                                       end: Double($0.offset) * 9.5 + 9, text: $0.element) }
+        }
+        var link = Transcription(kind: .link, title: "用 SwiftUI 做一个菜单栏应用", createdAt: Date().addingTimeInterval(-600),
+                                 state: .finished, model: "SenseVoice", link: "https://www.youtube.com/watch?v=demo",
+                                 segments: segments(lines))
+        link.uploader = "Tidytalk"
+        link.duration = 754
+        link.audioFile = "audio.wav"
+        link.thumbnailFile = "thumbnail.png"
+        try? store.create(link)
+        let directory = store.directory(for: link.id)
+        writeSilence(to: directory.appending(path: "audio.wav"), seconds: 60)
+        link.audioSize = (try? directory.appending(path: "audio.wav").resourceValues(forKeys: [.fileSizeKey]).fileSize).map(Int64.init)
+        try? store.save(link)
+        writeThumbnail(to: directory.appending(path: "thumbnail.png"))
+
+        var other = Transcription(kind: .link, title: "B 站：十分钟讲清楚语音识别", createdAt: Date().addingTimeInterval(-90_000),
+                                  state: .finished, model: "Paraformer", link: "https://www.bilibili.com/video/BV1demo",
+                                  segments: segments(Array(lines.reversed())))
+        other.uploader = "声学小课堂"
+        other.duration = 612
+        try? store.create(other)
+
+        let audio = store.root.appending(path: "周会录音.wav")
+        writeSilence(to: audio, seconds: 30)
+        var file = Transcription(kind: .file, title: "周会录音", createdAt: Date().addingTimeInterval(-3600), state: .finished,
+                                 model: "SenseVoice", sourcePath: audio.path, segments: segments(lines))
+        file.duration = 1830
+        try? store.create(file)
+        var video = Transcription(kind: .file, title: "产品演示", createdAt: Date().addingTimeInterval(-200_000),
+                                  state: .finished, model: "SenseVoice", sourcePath: "/Users/demo/Movies/产品演示.mov",
+                                  segments: segments(Array(lines.prefix(3))))
+        video.duration = 245
+        video.isPartial = true
+        try? store.create(video)
+    }
+
+    /// 16 kHz 单声道的静音 WAV。
+    private static func writeSilence(to url: URL, seconds: Int) {
+        let samples = 16_000 * seconds
+        var data = Data()
+        func append<T: FixedWidthInteger>(_ value: T) { withUnsafeBytes(of: value.littleEndian) { data.append(contentsOf: $0) } }
+        data.append(contentsOf: Array("RIFF".utf8)); append(UInt32(36 + samples * 2))
+        data.append(contentsOf: Array("WAVEfmt ".utf8)); append(UInt32(16)); append(UInt16(1)); append(UInt16(1))
+        append(UInt32(16_000)); append(UInt32(32_000)); append(UInt16(2)); append(UInt16(16))
+        data.append(contentsOf: Array("data".utf8)); append(UInt32(samples * 2))
+        data.append(Data(count: samples * 2))
+        try? data.write(to: url)
+    }
+
+    /// 一张渐变的示例封面图。
+    private static func writeThumbnail(to url: URL) {
+        let size = NSSize(width: 640, height: 360)
+        let image = NSImage(size: size, flipped: false) { rect in
+            NSGradient(colors: [NSColor(srgbRed: 0.26, green: 0.29, blue: 0.62, alpha: 1),
+                                NSColor(srgbRed: 0.55, green: 0.36, blue: 0.75, alpha: 1)])?.draw(in: rect, angle: -30)
+            let text = NSAttributedString(string: "SwiftUI", attributes: [
+                .font: NSFont.systemFont(ofSize: 64, weight: .bold), .foregroundColor: NSColor.white])
+            text.draw(at: NSPoint(x: 48, y: 48))
+            return true
+        }
+        if let tiff = image.tiffRepresentation, let rep = NSBitmapImageRep(data: tiff),
+           let png = rep.representation(using: .png, properties: [:]) {
+            try? png.write(to: url)
+        }
+    }
+}
 
 #endif

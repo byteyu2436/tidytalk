@@ -50,7 +50,8 @@ final class DictationController {
         }
         recognizers.canReleaseCurrent = { [weak self] in
             guard let self else { return true }
-            return !recorder.isRecording && !isProcessing
+            // 会议录音和会后处理也在用这个识别器
+            return !recorder.isRecording && !isProcessing && !model.meetingActive
         }
         corrections.onCorrections = { [weak self] found in
             guard let self else { return }

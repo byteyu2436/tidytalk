@@ -25,8 +25,18 @@ CJK = re.compile(r"[\u4e00-\u9fff\uff00-\uffef]")
 LITERAL = r'"((?:[^"\\\n]|\\.)*)"'
 PATTERNS = [
     re.compile(r"String\(localized:\s*" + LITERAL),
-    re.compile(r"\b(?:Text|Button|Toggle|Picker|Section|Label|LabeledContent|TextField|SecureField|Link|Menu)\(\s*"
-               + LITERAL),
+    re.compile(r"\b(?:Text|Button|Toggle|Picker|Section|Label|LabeledContent|TextField|SecureField|Link|Menu"
+               r"|ContentUnavailableView)\(\s*" + LITERAL),
+    # 其他接受 LocalizedStringKey 的地方：.help("…")、默认参数（readyTitle: LocalizedStringKey = "…"）、
+    # 会议空状态里的 feature("图标", "标题", "说明")
+    re.compile(r"\.help\(\s*" + LITERAL),
+    re.compile(r"LocalizedStringKey\s*=\s*" + LITERAL),
+    # 中间可以有一个颜色参数：feature("图标", Theme.Tint.meeting, "标题", "说明")
+    re.compile(r"\bfeature\(\s*\"[^\"]*\",\s*(?:[^\",]+,\s*)?" + LITERAL),
+    re.compile(r"\bfeature\(\s*\"[^\"]*\",\s*(?:[^\",]+,\s*)?\"[^\"]*\",\s*" + LITERAL),
+    # 自己写的控件里 LocalizedStringKey 类型的参数：IconButton(help:)、SearchField(prompt:)
+    re.compile(r"\bhelp:\s*" + LITERAL),
+    re.compile(r"\bprompt:\s*" + LITERAL),
 ]
 # 插值表达式按结尾判断是不是整数
 INTEGER = re.compile(r"(\.count|limit|^code|^Int\(.*\))$", re.IGNORECASE)
