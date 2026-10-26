@@ -20,10 +20,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
   # 发布新版本时：Pages 只允许 main 分支发布，标签上不能直接部署，
   # 所以让 main 分支重新跑一遍这个流程（用 GITHUB_TOKEN 触发 workflow_dispatch 是允许的）
@@ -40,6 +36,11 @@ jobs:
   deploy:
     if: github.event_name != 'release'
     runs-on: ubuntu-latest
+    # 同一时间只部署一次，但不取消正在进行的部署：推送后马上发版时，推送的那次和发版后重新生成的那次
+    # 都要跑完（被取消的运行会让提交显示失败的红叉）。只管部署这一步，发版时触发重新生成的那一步不受影响
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
