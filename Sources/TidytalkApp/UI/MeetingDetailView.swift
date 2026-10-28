@@ -123,7 +123,7 @@ struct MeetingDetailView: View {
                 .foregroundStyle(Theme.text)
                 .onSubmit { saveTitle() }
                 .onChange(of: title) { saveTitle() }
-            HStack(spacing: 6) {
+            ChipRow {
                 StatusChip(kind: status(meeting), text: statusText(meeting))
                 PropertyChip(symbol: "calendar", text: meeting.startedAt.formatted(date: .abbreviated, time: .shortened))
                 PropertyChip(symbol: "clock", text: MeetingFormat.duration(meeting.duration))

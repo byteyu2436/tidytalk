@@ -116,7 +116,7 @@ struct TranscriptionDetailView: View {
                 .textFieldStyle(.plain)
                 .font(Theme.title)
                 .foregroundStyle(Theme.text)
-            HStack(spacing: 6) {
+            ChipRow {
                 StatusChip(kind: TranscribeFormat.status(item, stage: isLive ? controller.stage : nil),
                            text: statusText(item))
                 if let link = item.link, let url = URL(string: link) {

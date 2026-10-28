@@ -516,6 +516,45 @@ struct PropertyChip: View {
     }
 }
 
+/// 一排属性标签：从左往右排，这一行放不下就换到下一行，不截断（英文界面、窗口较窄时）。
+struct ChipRow: Layout {
+    var spacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let used = arrange(subviews, width: proposal.width ?? .infinity).reduce(CGRect.zero) { $0.union($1) }
+        return used.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (subview, frame) in zip(subviews, arrange(subviews, width: bounds.width)) {
+            subview.place(at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+                          proposal: ProposedViewSize(frame.size))
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, width: CGFloat) -> [CGRect] {
+        Self.frames(for: subviews.map { $0.sizeThatFits(.unspecified) }, width: width, spacing: spacing)
+    }
+
+    /// 每个标签按自己需要的宽度排；比一整行还宽的缩到一行宽。
+    static func frames(for sizes: [CGSize], width: CGFloat, spacing: CGFloat) -> [CGRect] {
+        var frames: [CGRect] = []
+        var origin = CGPoint.zero
+        var rowHeight: CGFloat = 0
+        for var size in sizes {
+            size.width = min(size.width, width)
+            if origin.x > 0, origin.x + size.width > width {
+                origin = CGPoint(x: 0, y: origin.y + rowHeight + spacing)
+                rowHeight = 0
+            }
+            frames.append(CGRect(origin: origin, size: size))
+            origin.x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return frames
+    }
+}
+
 /// 页面里的提示条：处理进度、出错、需要下载模型。
 struct Callout<Content: View>: View {
     var symbol: String?
