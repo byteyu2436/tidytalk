@@ -26,8 +26,8 @@ description: Dictate on your Mac without sending your voice or text anywhere. Sp
           </tbody>
         </table>
       </div>
-      <p>Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240&nbsp;MB. Recent results are kept in memory only and cleared when you quit. Settings, including any API key, are stored in <code>~/.tidytalk.json</code>, readable only by you.</p>
-      <p>The only other network request is the update check: at launch, at most once a day, Tidytalk reads the latest version number from GitHub. You can turn it off in Settings › General.</p>
+      <p>Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240&nbsp;MB. Recent results are kept in memory only and cleared when you quit. Settings are stored in <code>~/.tidytalk.json</code>, readable only by you, and your API key is kept in the macOS Keychain.</p>
+      <p>Apart from the AI service you set up, Tidytalk only goes online to download models, check for updates (at launch, at most once a day, which you can turn off in Settings › General), and transcribe links. Each case is listed in the <a href="/privacy/">privacy policy</a>.</p>
 
       <h2 id="ollama">Set up Ollama</h2>
       <ol>
@@ -35,15 +35,15 @@ description: Dictate on your Mac without sending your voice or text anywhere. Sp
         <li>Download a model in Terminal, for example:
           <pre><code>ollama pull qwen2.5:7b</code></pre>
         </li>
-        <li>In Tidytalk, open Settings › Set Up AI, and choose <strong>Ollama</strong> at the top. Check that the model name matches the one you pulled, then click "Save".</li>
-        <li>Click "Test Connection". When it says "Connected", you're done.</li>
+        <li>In Tidytalk, open Settings › Set Up AI, and choose <strong>Ollama</strong> at the top. Check that the model name matches the one you pulled, then click the checkmark button to save.</li>
+        <li>Click the purple network icon next to it to test the connection. When it says "Connected", you're done.</li>
       </ol>
 
       <h2 id="lm-studio">Set up LM Studio</h2>
       <ol>
         <li>Install <a href="https://lmstudio.ai">LM Studio</a>, download a model, and load it.</li>
         <li>Start LM Studio's local server.</li>
-        <li>In Tidytalk, choose <strong>LM Studio</strong> at the top of Settings › Set Up AI, enter the name of the loaded model, save, and click "Test Connection".</li>
+        <li>In Tidytalk, choose <strong>LM Studio</strong> at the top of Settings › Set Up AI, enter the name of the loaded model, save, and click the purple network icon to test the connection.</li>
       </ol>
       <p>Local models don't need an API key, and Tidytalk gives them a 60-second timeout instead of 12 seconds.</p>
 

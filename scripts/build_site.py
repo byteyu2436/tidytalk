@@ -84,7 +84,7 @@ UI = {
                                    ("Private and offline", "/use-cases/offline/"),
                                    ("Transcribe recordings", "/use-cases/transcribe/")],
         "footer_links_project": [("GitHub", GITHUB), ("Report an issue", f"{GITHUB}/issues"),
-                                 ("MIT License", f"{GITHUB}/blob/main/LICENSE")],
+                                 ("Privacy", "/privacy/"), ("MIT License", f"{GITHUB}/blob/main/LICENSE")],
         "footer_note": 'Tidytalk is open source under the MIT License. Speech recognition uses '
                        '<a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> and '
                        '<a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>.',
@@ -123,7 +123,7 @@ UI = {
                                    ("完全离线", "/zh/use-cases/offline/"),
                                    ("转写录音和视频", "/zh/use-cases/transcribe/")],
         "footer_links_project": [("GitHub", GITHUB), ("反馈问题", f"{GITHUB}/issues"),
-                                 ("MIT 许可证", f"{GITHUB}/blob/main/LICENSE")],
+                                 ("隐私说明", "/zh/privacy/"), ("MIT 许可证", f"{GITHUB}/blob/main/LICENSE")],
         "footer_note": 'Tidytalk 以 MIT 许可证开源。语音识别使用 '
                        '<a href="https://github.com/FunAudioLLM/SenseVoice">SenseVoice</a> 和 '
                        '<a href="https://github.com/k2-fsa/sherpa-onnx">sherpa-onnx</a>。',

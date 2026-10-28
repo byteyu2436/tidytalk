@@ -42,9 +42,9 @@ final class MainNavigation {
         }
     }
 
-    /// 设置窗口的页（主窗口里的按钮跳过去）。顺序和设置窗口侧边栏一致。
+    /// 设置的各页，顺序和设置侧边栏一致。词库不在这里：主窗口本来就有「词库」页。
     enum SettingsPage: Int, CaseIterable, Identifiable {
-        case general = 0, dictation, models, ai, vocabulary, captions, meeting
+        case general = 0, dictation, models, ai, captions, meeting
 
         var id: Int { rawValue }
     }
@@ -62,18 +62,69 @@ final class MainNavigation {
     var transcription: UUID?
     var transcribeTab: TranscribeTab = .file
     var transcribeSearch = ""
+
+    /// 正在看的设置页；nil 表示在看会议、转写这些页。设置和这些页在同一个窗口里（和 Linear 一样），
+    /// 打开设置时侧边栏换成设置的各页。
+    private(set) var settings: SettingsPage?
+    /// 上次看的设置页：再打开设置（⌘,）时回到这一页。
+    private(set) var lastSettingsPage: SettingsPage = .general
+
+    func openSettings(_ page: SettingsPage? = nil) {
+        let page = page ?? lastSettingsPage
+        settings = page
+        lastSettingsPage = page
+    }
+
+    func closeSettings() {
+        settings = nil
+    }
+
+    /// 回到某一页（从设置里按 ⌘1–⌘4、菜单栏菜单打开转写页时）。
+    func show(_ section: Section) {
+        settings = nil
+        self.section = section
+    }
 }
 
-/// 主窗口：左边是功能列表，右边是对应的页面。设置仍然是单独的窗口（Mac 的习惯）。
+/// 设置里几处要由应用处理的操作（打开引导、开关字幕……）。
+struct SettingsActions {
+    var onOpenOnboarding: () -> Void = {}
+    var onToggleListening: () -> Void = {}
+    var onListenSourceChanged: () -> Void = {}
+    var onSetCaptionTranslation: (Bool) -> Void = { _ in }
+}
+
+/// 主窗口：左边是功能列表，右边是对应的页面。设置也在这个窗口里：点左下角的「设置」（或 ⌘,），
+/// 侧边栏换成设置的各页，「‹ 设置」或 ⌘[ 回来。
 struct MainView: View {
     let model: AppModel
     let meetings: MeetingController
     let transcriber: TranscribeController
     let navigation: MainNavigation
-    var onOpenSettings: (MainNavigation.SettingsPage) -> Void = { _ in }
+    var settingsActions = SettingsActions()
+
+    private var onOpenSettings: (MainNavigation.SettingsPage) -> Void {
+        { [navigation] page in navigation.openSettings(page) }
+    }
 
     var body: some View {
         AppShell {
+            if navigation.settings != nil {
+                SettingsSidebar(navigation: navigation)
+            } else {
+                sidebar
+            }
+        } content: {
+            if let page = navigation.settings {
+                SettingsContent(page: page, model: model, meetingStore: meetings.store, actions: settingsActions)
+            } else {
+                detail
+            }
+        }
+        .frame(minWidth: 900, minHeight: 580)
+    }
+
+    private var sidebar: some View {
             VStack(alignment: .leading, spacing: 1) {
                 SidebarBrand().padding(.bottom, 10)
                 ForEach(Array(MainNavigation.Section.allCases.enumerated()), id: \.element) { index, section in
@@ -84,17 +135,13 @@ struct MainView: View {
                     .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: .command)
                 }
                 Spacer()
-                // 设置放在菜单最下面，点了打开设置窗口（不是主窗口里的一页）
+                // 设置放在菜单最下面，点了侧边栏换成设置的各页
                 SidebarRow(symbol: "gearshape", title: String(localized: "设置"), trailing: "⌘,", selected: false) {
-                    onOpenSettings(.general)
+                    navigation.openSettings()
                 }
             }
             .padding(.horizontal, 10)
             .padding(.bottom, 10)
-        } content: {
-            detail
-        }
-        .frame(minWidth: 900, minHeight: 580)
     }
 
     /// 再点一次当前的页回到列表（和 Linear 一样）。
@@ -252,10 +299,9 @@ struct HistoryRow: View {
 enum MainWindow {
     @MainActor
     static func make(model: AppModel, meetings: MeetingController, transcriber: TranscribeController,
-                     navigation: MainNavigation,
-                     onOpenSettings: @escaping (MainNavigation.SettingsPage) -> Void) -> NSWindow {
+                     navigation: MainNavigation, settings: SettingsActions = SettingsActions()) -> NSWindow {
         let view = MainView(model: model, meetings: meetings, transcriber: transcriber, navigation: navigation,
-                            onOpenSettings: onOpenSettings)
+                            settingsActions: settings)
         let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         AppShell<EmptyView, EmptyView>.configure(window, title: "Tidytalk")

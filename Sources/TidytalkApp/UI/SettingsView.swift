@@ -3,13 +3,6 @@ import Observation
 import SwiftUI
 import TidytalkCore
 
-/// 设置窗口现在显示哪一页（主窗口里的按钮、菜单跳过去）。
-@MainActor
-@Observable
-final class SettingsNavigation {
-    var page: MainNavigation.SettingsPage = .general
-}
-
 extension MainNavigation.SettingsPage {
     var title: String {
         switch self {
@@ -17,7 +10,6 @@ extension MainNavigation.SettingsPage {
         case .dictation: String(localized: "说话输入")
         case .models: String(localized: "识别模型")
         case .ai: String(localized: "配置 AI")
-        case .vocabulary: String(localized: "词库")
         case .captions: String(localized: "实时字幕")
         case .meeting: String(localized: "会议")
         }
@@ -29,7 +21,6 @@ extension MainNavigation.SettingsPage {
         case .dictation: "mic"
         case .models: "waveform"
         case .ai: "sparkles"
-        case .vocabulary: "character.book.closed"
         case .captions: "captions.bubble"
         case .meeting: "person.2.wave.2"
         }
@@ -42,81 +33,105 @@ extension MainNavigation.SettingsPage {
         case .dictation: Theme.Tint.dictation
         case .models: Theme.Tint.speech
         case .ai: Theme.Tint.ai
-        case .vocabulary: Theme.Tint.vocabulary
         case .captions: Theme.Tint.captions
         case .meeting: Theme.Tint.meeting
         }
     }
 }
 
-/// 设置窗口：和主窗口一样，左边是各页的列表，右边是内容面板。
-enum SettingsWindow {
-    @MainActor
-    static func make(model: AppModel, meetingStore: MeetingStore, navigation: SettingsNavigation = SettingsNavigation(),
-                     onOpenOnboarding: @escaping () -> Void = {},
-                     onToggleListening: @escaping () -> Void = {},
-                     onListenSourceChanged: @escaping () -> Void = {},
-                     onSetCaptionTranslation: @escaping (Bool) -> Void = { _ in }) -> NSWindow {
-        let view = SettingsRoot(model: model, meetingStore: meetingStore, navigation: navigation,
-                                onOpenOnboarding: onOpenOnboarding, onToggleListening: onToggleListening,
-                                onListenSourceChanged: onListenSourceChanged,
-                                onSetCaptionTranslation: onSetCaptionTranslation)
-        let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
-        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        AppShell<EmptyView, EmptyView>.configure(window, title: String(localized: "设置"))
-        window.setContentSize(NSSize(width: 860, height: 680))
-        return window
+/// 打开设置后主窗口的侧边栏：最上面「‹ 设置」回到原来的页，下面是设置的各页。
+struct SettingsSidebar: View {
+    let navigation: MainNavigation
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            SettingsBackRow { navigation.closeSettings() }
+                .padding(.bottom, 10)
+            ForEach(MainNavigation.SettingsPage.allCases) { page in
+                SidebarRow(symbol: page.symbol, title: page.title, tint: page.color,
+                           selected: navigation.settings == page) {
+                    navigation.openSettings(page)
+                }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 10)
+        .padding(.bottom, 10)
+        .background {
+            // 在设置里按 ⌘1–⌘4 也直接回到对应的页
+            ForEach(Array(MainNavigation.Section.allCases.enumerated()), id: \.element) { index, section in
+                Button(section.title) { navigation.show(section) }
+                    .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: .command)
+                    .opacity(0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+        }
     }
 }
 
-struct SettingsRoot: View {
-    let model: AppModel
-    let meetingStore: MeetingStore
-    let navigation: SettingsNavigation
-    var onOpenOnboarding: () -> Void = {}
-    var onToggleListening: () -> Void = {}
-    var onListenSourceChanged: () -> Void = {}
-    var onSetCaptionTranslation: (Bool) -> Void = { _ in }
+/// 「‹ 设置」：点一下（或 ⌘[）回到打开设置前的页。
+private struct SettingsBackRow: View {
+    let action: () -> Void
+    @ViewState private var hovering = false
 
     var body: some View {
-        AppShell {
-            VStack(alignment: .leading, spacing: 1) {
-                SidebarBrand(subtitle: String(localized: "设置")).padding(.bottom, 10)
-                ForEach(MainNavigation.SettingsPage.allCases) { page in
-                    SidebarRow(symbol: page.symbol, title: page.title, tint: page.color, selected: navigation.page == page) {
-                        navigation.page = page
-                    }
-                }
-                Spacer()
+        Button(action: action) {
+            HStack(spacing: 9) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(hovering ? Theme.text : Theme.secondaryText)
+                    .frame(width: 18)
+                Text("设置")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Theme.text)
+                Spacer(minLength: 4)
+                KeyHint("⌘[").opacity(hovering ? 1 : 0)
             }
-            .padding(.horizontal, 10)
-            .padding(.bottom, 10)
-        } content: {
-            VStack(spacing: 0) {
-                PageHeader { PageTitle(title: navigation.page.title) }
-                page
-                    .scrollContentBackground(.hidden)
-                    .id(navigation.page)
-            }
+            .padding(.horizontal, 8)
+            .frame(height: 30)
+            .background(hovering ? Theme.hover : .clear,
+                        in: RoundedRectangle(cornerRadius: Theme.radius, style: .continuous))
+            .contentShape(Rectangle())
         }
-        .frame(minWidth: 760, minHeight: 520)
-        .onChange(of: navigation.page) {
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+        .keyboardShortcut("[", modifiers: .command)
+        .help("返回（⌘[）")
+    }
+}
+
+/// 打开设置后主窗口右边的内容：当前这一页的设置。
+struct SettingsContent: View {
+    let page: MainNavigation.SettingsPage
+    let model: AppModel
+    let meetingStore: MeetingStore
+    let actions: SettingsActions
+
+    var body: some View {
+        VStack(spacing: 0) {
+            PageHeader { PageTitle(title: page.title) }
+            content
+                .scrollContentBackground(.hidden)
+                .id(page)
+        }
+        .onChange(of: page) {
             // 切换页时不自动聚焦输入框
             (NSApp.keyWindow as? FocusFriendlyWindow)?.clearFocusSoon()
         }
     }
 
     @ViewBuilder
-    private var page: some View {
-        switch navigation.page {
-        case .general: GeneralSettings(model: model, onOpenOnboarding: onOpenOnboarding)
+    private var content: some View {
+        switch page {
+        case .general: GeneralSettings(model: model, onOpenOnboarding: actions.onOpenOnboarding)
         case .dictation: RecordingSettings(model: model)
         case .models: ModelSettings(model: model)
         case .ai: AISettings(model: model)
-        case .vocabulary: VocabularySettings(model: model)
         case .captions:
-            ListenSettings(model: model, onToggle: onToggleListening, onSourceChanged: onListenSourceChanged,
-                           onSetTranslation: onSetCaptionTranslation)
+            ListenSettings(model: model, onToggle: actions.onToggleListening,
+                           onSourceChanged: actions.onListenSourceChanged,
+                           onSetTranslation: actions.onSetCaptionTranslation)
         case .meeting: MeetingSettings(model: model, store: meetingStore)
         }
     }
@@ -245,7 +260,7 @@ struct GeneralSettings: View {
                     .foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("录制系统音频")
-                    Text("用于实时字幕，第一次收听时 macOS 会询问").font(.caption).foregroundStyle(.secondary)
+                    Text("用于实时字幕和会议记录，第一次用时 macOS 会询问").font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
                 IconButton("arrow.up.forward.app", help: "打开系统设置", size: 26) { Permissions.openSystemAudioSettings() }
@@ -253,7 +268,8 @@ struct GeneralSettings: View {
         } header: {
             Text("权限")
         } footer: {
-            Text("声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。")
+            // 结尾的链接打开官网的隐私说明（英文界面的译文里是英文页的地址）
+            Text("声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。[完整的隐私说明](https://tidytalk.zayen.dev/zh/privacy/)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

@@ -749,8 +749,8 @@
 "配置文件" = "Configuration File";
 "在编辑器中打开" = "Open in Editor";
 "录制系统音频" = "System Audio Recording";
-"用于实时字幕，第一次收听时 macOS 会询问" = "For live captions. macOS asks the first time you listen";
-"声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。" = "Audio is recognized only on this Mac and never uploaded. Meetings and transcriptions, including audio downloaded from links, are saved on this Mac, and you can delete them anytime. With tidying, caption translation, or meeting summaries on, text is sent to the AI service you set up; local models and Apple Intelligence stay offline.";
+"用于实时字幕和会议记录，第一次用时 macOS 会询问" = "For live captions and meeting notes. macOS asks the first time";
+"声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。[完整的隐私说明](https://tidytalk.zayen.dev/zh/privacy/)" = "Audio is recognized only on this Mac and never uploaded. Meetings and transcriptions, including audio downloaded from links, are saved on this Mac, and you can delete them anytime. With tidying, caption translation, or meeting summaries on, text is sent to the AI service you set up; local models and Apple Intelligence stay offline. [Full privacy policy](https://tidytalk.zayen.dev/privacy/)";
 "AI 服务" = "AI Service";
 "收听电脑声音" = "Listen to Computer Audio";
 "收听" = "Listening";
@@ -983,3 +983,7 @@
 "在这台 Mac 上识别" = "Transcribed on this Mac";
 "正在转写" = "Transcribing";
 "删除这一条" = "Delete This Row";
+"返回（⌘[）" = "Back (⌘[)";
+"帮助" = "Help";
+"使用指南" = "User Guide";
+"隐私说明" = "Privacy Policy";

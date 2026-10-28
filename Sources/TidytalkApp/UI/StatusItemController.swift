@@ -146,6 +146,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         if UpdateChecker.isConfigured {
             menu.addItem(item(String(localized: "检查更新…"), #selector(checkForUpdates)))
         }
+        menu.addItem(helpItem())
         menu.addItem(.separator())
         menu.addItem(item(String(localized: "退出 Tidytalk"), #selector(quit), key: "q"))
     }
@@ -440,5 +441,18 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     @objc private func openConfigFile() { model.configStore.openInEditor() }
 
     @objc private func openSettings() { onOpenSettings?() }
+
+    /// 帮助：官网上的使用指南和隐私说明。
+    private func helpItem() -> NSMenuItem {
+        let help = NSMenuItem(title: String(localized: "帮助"), action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        submenu.addItem(item(String(localized: "使用指南"), #selector(openGuide)))
+        submenu.addItem(item(String(localized: "隐私说明"), #selector(openPrivacy)))
+        help.submenu = submenu
+        return help
+    }
+
+    @objc private func openGuide() { HelpLinks.open(HelpLinks.guide) }
+    @objc private func openPrivacy() { HelpLinks.open(HelpLinks.privacy) }
     @objc private func quit() { NSApp.terminate(nil) }
 }

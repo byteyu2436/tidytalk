@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v0.3.1",
+    "name": "Tidytalk 0.3.1",
+    "date": "2026-10-26",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.3.1",
+    "body": "- 改善用 AirPods 等蓝牙耳机时经常录不到声音的问题（#1）：麦克风停下会自动重新打开，没录到声音时会说明原因。\n- 麦克风还没准备好时指示器会提示；设置里可以一键改用 Mac 自带的麦克风。\n- 更新提示里的说明可以滚动，按钮不会再被挤出屏幕。\n\n完整更新内容：https://tidytalk.zayen.dev/zh/changelog/#v0.3.1\n需要 macOS 26 和 Apple 芯片。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"。\n\n- Better recording with AirPods and other Bluetooth headsets (#1): the microphone is reopened automatically when it stops, and Tidytalk tells you when nothing was recorded.\n- The indicator shows when the microphone isn't ready yet, and Settings can switch to the Mac's microphone in one click.\n- Release notes in the update prompt now scroll, so its buttons stay on screen.\n\nFull changes: https://tidytalk.zayen.dev/changelog/#v0.3.1\nRequires macOS 26 on Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security.\n\nSHA-256 (Tidytalk-0.3.1.dmg): `7e50ee86ec555b620654f2955649706030f49ca74d5e59ef976fa2511bc32226`\n"
+  },
+  {
     "tag": "v0.3.0",
     "name": "Tidytalk 0.3.0",
     "date": "2026-10-26",

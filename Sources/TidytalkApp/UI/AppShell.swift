@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// 主窗口和设置窗口共用的外框：左边是侧边栏（窗口底色），右边的内容放在带细边框的圆角面板里。
+/// 主窗口（包括设置）的外框：左边是侧边栏（窗口底色），右边的内容放在带细边框的圆角面板里。
 /// 标题栏隐藏，红绿灯按钮浮在侧边栏左上角。
 struct AppShell<Sidebar: View, Content: View>: View {
     static var sidebarWidth: CGFloat { 220 }

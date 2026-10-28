@@ -75,6 +75,8 @@ Recording and speech recognition always happen on your Mac, and your voice is ne
 - Recent results and live captions are kept in memory only and cleared when you turn captions off or quit. With caption translation on, caption text is sent to your AI service (or stays on your Mac with a local model).
 - The code is fully open source, so you can verify all of this yourself.
 
+The full [privacy policy](https://tidytalk.zayen.dev/privacy/) lists every time Tidytalk goes online, what it stores on your Mac, and what each permission is for.
+
 ## Documentation
 
 The detailed docs are currently in Chinese:

@@ -66,7 +66,7 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 
 没有这张证书时（例如其他人自己编译），使用本地临时签名，签名身份固定为 bundle id（`app.tidytalk.Tidytalk`），重新编译后辅助功能权限仍然有效。临时签名只适合本机开发：任何同 bundle id 的临时签名程序都能继承这些权限，所以 `make-dmg.sh` 找不到证书时会拒绝打包（确实需要时设 `ALLOW_ADHOC=1`）。
 
-应用平时只在菜单栏显示图标；打开引导或设置窗口时会临时出现在 Dock 中，关闭窗口后隐藏。应用运行时再次从启动台或 Spotlight 打开它，会弹出设置窗口。
+应用平时只在菜单栏显示图标；打开引导或主窗口时会临时出现在 Dock 中，关闭窗口后隐藏。应用运行时再次从启动台或 Spotlight 打开它，会打开主窗口。设置也在主窗口里：左下角的"设置"或 ⌘, 打开，侧边栏换成设置的各页，"‹ 设置"或 ⌘[ 回来。
 
 ## 发布
 
@@ -133,7 +133,7 @@ python3 -m http.server 8765 --directory site   # 打开 http://localhost:8765/
 ```bash
 DEV_TOOLS=1 scripts/install.sh
 open -n /Applications/Tidytalk.app --args --check-permissions /tmp/permissions.txt
-open -n /Applications/Tidytalk.app --args --settings-capture /tmp/settings     # 截取设置窗口每一页
+open -n /Applications/Tidytalk.app --args --settings-capture /tmp/settings     # 截取主窗口里设置的每一页
 open -n /Applications/Tidytalk.app --args --onboarding-capture /tmp/onboarding # 截取引导的每一步
 ```
 
@@ -155,7 +155,7 @@ open -n /Applications/Tidytalk.app --args --onboarding-capture /tmp/onboarding #
 | `Sources/TidytalkCore` | 与系统无关的纯逻辑：按键状态机、整理提示词与结果校验、词库与替换、整理模式、中英文排版、长音频切分、配置与模型清单 |
 | `Sources/TidytalkApp/Services` | 本地识别（sherpa-onnx）、录音、全局按键监听、粘贴、AI 接口、配置文件、钥匙串、模型下载、检查更新 |
 | `Sources/TidytalkApp/App` | 应用入口（`Launch`）、全局状态、录音到粘贴的主流程、开发命令 |
-| `Sources/TidytalkApp/UI` | 指示器、菜单栏图标、首次启动引导、设置窗口 |
+| `Sources/TidytalkApp/UI` | 指示器、菜单栏图标、首次启动引导、主窗口和设置 |
 | `Sources/Tidytalk` | 可执行文件，只有调用 `Launch.run()` 的 main.swift |
 | `Vendor/CSherpaOnnx.xcframework`、`Vendor/OnnxRuntime.xcframework` | `fetch-deps.sh` 生成的预编译动态库（不进仓库），Package.swift 里是 binaryTarget |
 | `Tests/TidytalkCoreTests` | `TidytalkCore` 的单元测试 |

@@ -17,10 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var meetingHotKey: GlobalHotKey?
     private var meetings: MeetingController!
     private var onboardingWindow: NSWindow?
-    private var settingsWindow: NSWindow?
     private var mainWindow: NSWindow?
     private let navigation = MainNavigation()
-    private let settingsNavigation = SettingsNavigation()
     private var transcriber: TranscribeController!
     /// 最近一个在前台的其他应用：通过网址被打开时 Tidytalk 可能会被激活，要把焦点还回去，才能粘贴到原来的输入框。
     private var lastFrontApp: NSRunningApplication?
@@ -99,7 +97,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let closing = notification.object as? NSWindow
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            let stillOpen = [self.onboardingWindow, self.settingsWindow, self.mainWindow].contains {
+            let stillOpen = [self.onboardingWindow, self.mainWindow].contains {
                 $0 != nil && $0 !== closing && $0!.isVisible
             }
             if !stillOpen { NSApp.setActivationPolicy(.accessory) }
@@ -252,10 +250,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         edit.addItem(withTitle: String(localized: "全选"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         main.addItem(withTitle: String(localized: "编辑"), action: nil, keyEquivalent: "").submenu = edit
 
+        // 帮助：官网上的使用指南和隐私说明（设成 helpMenu 后系统会在最上面加搜索框）
+        let help = NSMenu(title: String(localized: "帮助"))
+        help.addItem(withTitle: String(localized: "使用指南"), action: #selector(openGuide), keyEquivalent: "?").target = self
+        help.addItem(withTitle: String(localized: "隐私说明"), action: #selector(openPrivacy), keyEquivalent: "").target = self
+        main.addItem(withTitle: String(localized: "帮助"), action: nil, keyEquivalent: "").submenu = help
+        NSApp.helpMenu = help
+
         return main
     }
 
     @objc private func openSettingsFromMenu() { showSettings() }
+    @objc private func openGuide() { HelpLinks.open(HelpLinks.guide) }
+    @objc private func openPrivacy() { HelpLinks.open(HelpLinks.privacy) }
 
     private func showOnboarding() {
         if onboardingWindow == nil {
@@ -267,36 +274,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         present(onboardingWindow)
     }
 
-    /// 主窗口：会议、转写、最近记录、词库。`section` 为 nil 时保留上次看的页。
+    /// 主窗口：会议、转写、最近记录、词库，以及设置。`section` 为 nil 时保留上次看的页（包括正在看的设置）。
     private func showMainWindow(_ section: MainNavigation.Section? = nil) {
         if mainWindow == nil {
             // 转写和说话输入、实时字幕共用识别模型
             transcriber = TranscribeController(model: model, store: TranscriptionStore()) { [weak self] in
                 await self?.controller.readyRecognizer()
             }
+            let settings = SettingsActions(
+                onOpenOnboarding: { [weak self] in self?.showOnboarding() },
+                onToggleListening: { [weak self] in self?.listener.toggle() },
+                onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
+                onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) })
             let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber,
-                                         navigation: navigation) { [weak self] page in self?.showSettings(page) }
+                                         navigation: navigation, settings: settings)
             window.delegate = self
             mainWindow = window
         }
-        if let section { navigation.section = section }
+        if let section { navigation.show(section) }
         present(mainWindow)
     }
 
+    /// 设置在主窗口里：打开主窗口并切到设置（`page` 为 nil 时回到上次看的设置页）。
     private func showSettings(_ page: MainNavigation.SettingsPage? = nil) {
-        if settingsWindow == nil {
-            let window = SettingsWindow.make(model: model, meetingStore: meetings.store, navigation: settingsNavigation,
-                                             onOpenOnboarding: { [weak self] in self?.showOnboarding() },
-                                             onToggleListening: { [weak self] in self?.listener.toggle() },
-                                             onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
-                                             onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) })
-            window.isReleasedWhenClosed = false
-            window.delegate = self
-            window.center()
-            settingsWindow = window
-        }
-        if let page { settingsNavigation.page = page }
-        present(settingsWindow)
+        navigation.openSettings(page)
+        showMainWindow()
     }
 
     static func makeOnboardingWindow(model: AppModel, step: OnboardingView.Step? = nil,

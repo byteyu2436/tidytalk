@@ -516,10 +516,10 @@ enum IndicatorCaptureCommand {
     }
 }
 
-/// 开发用：打开真实的设置窗口并截图每个标签页（只截本进程窗口，无需屏幕录制权限）。
+/// 开发用：打开主窗口里的设置，截图每一页（只截本进程窗口，无需屏幕录制权限）。
 /// 加上 `--fake-bluetooth-mic` 时假装系统默认的麦克风是 AirPods，查看说话输入页的蓝牙提示。
 ///
-///     Tidytalk --settings-capture <输出目录> [--dark] [--fake-bluetooth-mic]
+///     Tidytalk --settings-capture <输出目录> [--dark] [--fake-bluetooth-mic] [--size 宽x高]
 @MainActor
 enum SettingsCaptureCommand {
     private typealias CreateImage = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
@@ -552,9 +552,18 @@ enum SettingsCaptureCommand {
                                  transport: kAudioDeviceTransportTypeBuiltIn),
             ]
         }
-        let navigation = SettingsNavigation()
-        let window = SettingsWindow.make(model: AppModel(), meetingStore: MeetingStore(root: FileManager.default.temporaryDirectory.appending(path: "Tidytalk-capture-meetings")),
-                                         navigation: navigation)
+        // 设置在主窗口里：打开主窗口，切到设置
+        let model = AppModel()
+        let temp = FileManager.default.temporaryDirectory
+        let store = MeetingStore(root: temp.appending(path: "Tidytalk-capture-meetings"))
+        let processor = MeetingProcessor(model: model, store: store, recognizer: { nil })
+        let meetings = MeetingController(model: model, store: store, processor: processor, recognizer: { nil })
+        let transcriber = TranscribeController(model: model,
+                                               store: TranscriptionStore(root: temp.appending(path: "Tidytalk-capture-transcriptions"))) { nil }
+        let navigation = MainNavigation()
+        navigation.openSettings(.general)
+        let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber, navigation: navigation)
+        window.setContentSize(CaptureSize.content(default: NSSize(width: 1080, height: 700)))
         window.center()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate()
@@ -583,7 +592,7 @@ enum SettingsCaptureCommand {
 
         for page in MainNavigation.SettingsPage.allCases {
             let i = page.rawValue
-            navigation.page = page
+            navigation.openSettings(page)
             RunLoop.main.run(until: Date().addingTimeInterval(1.0))
             print("第 \(i) 页：\(page.title) 窗口内容 \(window.contentLayoutRect.size)")
             // kCGWindowListOptionIncludingWindow，带窗口阴影
@@ -1171,7 +1180,7 @@ enum MeetingTestCommand {
 
 /// 开发用：截取主窗口的每一页（会议列表、会议详情的原始记录和 AI 总结、转写、最近记录、词库）。
 ///
-///     Tidytalk --main-window-capture <输出目录> --meetings <会议目录> --config <临时配置>
+///     Tidytalk --main-window-capture <输出目录> --meetings <会议目录> --config <临时配置> [--size 宽x高]
 ///
 /// 会议目录里的会议没有总结时，给第一场加一份示例总结，用来看排版。
 @MainActor
@@ -1224,8 +1233,8 @@ enum MainWindowCaptureCommand {
         seedTranscriptions(transcriptions)
         let transcriber = TranscribeController(model: model, store: transcriptions) { nil }
         let navigation = MainNavigation()
-        let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber, navigation: navigation) { _ in }
-        window.setContentSize(NSSize(width: 1040, height: 680))
+        let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber, navigation: navigation)
+        window.setContentSize(CaptureSize.content(default: NSSize(width: 1040, height: 680)))
         window.center()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate()
@@ -1277,17 +1286,25 @@ enum MainWindowCaptureCommand {
 
     /// 截图用的转写记录：两个链接（一个带封面图和音频）、两个文件。
     private static func seedTranscriptions(_ store: TranscriptionStore) {
-        let lines = ["大家好，今天我们来聊一聊怎么用 SwiftUI 做一个菜单栏应用。",
-                     "首先要把应用设成只在菜单栏显示，不在 Dock 里出现图标。",
-                     "然后用 NSStatusItem 放一个图标，点一下弹出菜单。",
-                     "菜单里的内容可以随时更新，比如显示最近的几条记录。",
-                     "需要窗口的时候，再临时切换成普通应用，把窗口放到最前面。",
-                     "最后记得处理好快捷键和权限，第一次打开时引导用户授权。"]
+        // 英文界面截图用英文内容
+        let english = !(Bundle.main.preferredLocalizations.first?.hasPrefix("zh") ?? true)
+        let lines = english ? ["Hi everyone, today we're building a menu bar app with SwiftUI.",
+                               "First, set the app to live in the menu bar only, with no icon in the Dock.",
+                               "Then add an icon with NSStatusItem that opens a menu when you click it.",
+                               "The menu can change at any time, for example to show your recent items.",
+                               "When you need a window, switch to a regular app and bring the window to the front.",
+                               "Finally, handle shortcuts and permissions, and walk people through access on first launch."]
+            : ["大家好，今天我们来聊一聊怎么用 SwiftUI 做一个菜单栏应用。",
+               "首先要把应用设成只在菜单栏显示，不在 Dock 里出现图标。",
+               "然后用 NSStatusItem 放一个图标，点一下弹出菜单。",
+               "菜单里的内容可以随时更新，比如显示最近的几条记录。",
+               "需要窗口的时候，再临时切换成普通应用，把窗口放到最前面。",
+               "最后记得处理好快捷键和权限，第一次打开时引导用户授权。"]
         func segments(_ texts: [String]) -> [TranscriptSegment] {
             texts.enumerated().map { TranscriptSegment(id: $0.offset, start: Double($0.offset) * 9.5 + 1,
                                                        end: Double($0.offset) * 9.5 + 9, text: $0.element) }
         }
-        var link = Transcription(kind: .link, title: "用 SwiftUI 做一个菜单栏应用", createdAt: Date().addingTimeInterval(-600),
+        var link = Transcription(kind: .link, title: english ? "Building a menu bar app with SwiftUI" : "用 SwiftUI 做一个菜单栏应用", createdAt: Date().addingTimeInterval(-600),
                                  state: .finished, model: "SenseVoice", link: "https://www.youtube.com/watch?v=demo",
                                  segments: segments(lines))
         link.uploader = "Tidytalk"
@@ -1301,21 +1318,21 @@ enum MainWindowCaptureCommand {
         try? store.save(link)
         writeThumbnail(to: directory.appending(path: "thumbnail.png"))
 
-        var other = Transcription(kind: .link, title: "B 站：十分钟讲清楚语音识别", createdAt: Date().addingTimeInterval(-90_000),
+        var other = Transcription(kind: .link, title: english ? "Speech recognition in ten minutes" : "B 站：十分钟讲清楚语音识别", createdAt: Date().addingTimeInterval(-90_000),
                                   state: .finished, model: "Paraformer", link: "https://www.bilibili.com/video/BV1demo",
                                   segments: segments(Array(lines.reversed())))
-        other.uploader = "声学小课堂"
+        other.uploader = english ? "Acoustics 101" : "声学小课堂"
         other.duration = 612
         try? store.create(other)
 
-        let audio = store.root.appending(path: "周会录音.wav")
+        let audio = store.root.appending(path: english ? "Weekly sync.wav" : "周会录音.wav")
         writeSilence(to: audio, seconds: 30)
-        var file = Transcription(kind: .file, title: "周会录音", createdAt: Date().addingTimeInterval(-3600), state: .finished,
+        var file = Transcription(kind: .file, title: english ? "Weekly sync" : "周会录音", createdAt: Date().addingTimeInterval(-3600), state: .finished,
                                  model: "SenseVoice", sourcePath: audio.path, segments: segments(lines))
         file.duration = 1830
         try? store.create(file)
-        var video = Transcription(kind: .file, title: "产品演示", createdAt: Date().addingTimeInterval(-200_000),
-                                  state: .finished, model: "SenseVoice", sourcePath: "/Users/demo/Movies/产品演示.mov",
+        var video = Transcription(kind: .file, title: english ? "Product demo" : "产品演示", createdAt: Date().addingTimeInterval(-200_000),
+                                  state: .finished, model: "SenseVoice", sourcePath: english ? "/Users/demo/Movies/Product demo.mov" : "/Users/demo/Movies/产品演示.mov",
                                   segments: segments(Array(lines.prefix(3))))
         video.duration = 245
         video.isPartial = true
@@ -1350,6 +1367,16 @@ enum MainWindowCaptureCommand {
            let png = rep.representation(using: .png, properties: [:]) {
             try? png.write(to: url)
         }
+    }
+}
+
+/// 截图命令的窗口大小：`--size 宽x高`（点）。官网的配图用小一点的窗口，缩小后文字还看得清。
+enum CaptureSize {
+    static func content(default size: NSSize) -> NSSize {
+        let args = CommandLine.arguments
+        guard let i = args.firstIndex(of: "--size"), i + 1 < args.count else { return size }
+        let parts = args[i + 1].split(separator: "x").compactMap { Double($0) }
+        return parts.count == 2 ? NSSize(width: parts[0], height: parts[1]) : size
     }
 }
 

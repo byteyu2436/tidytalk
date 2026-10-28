@@ -1,0 +1,106 @@
+<!--
+path: /zh/privacy/
+alternate: /privacy/
+type: page
+breadcrumb: 隐私说明
+title: Tidytalk 隐私说明：存什么、何时联网、文字发给谁
+description: Tidytalk 不需要账号，没有统计和追踪，声音只在你的 Mac 上识别。这里写明 Tidytalk 在本机存什么、什么时候联网、哪些文字会发给你配置的 AI 服务。
+-->
+  <main id="main" class="page container">
+    <header class="page-head">
+      <h1>隐私说明</h1>
+      <p class="lead">Tidytalk 不需要账号，没有统计、追踪、广告和崩溃上报。声音始终在你的 Mac 上识别。这一页写明 Tidytalk 在本机存了什么、什么时候联网，以及哪些文字会发给谁。</p>
+      <p class="updated">{{updated}}</p>
+    </header>
+
+    <div class="prose">
+      <h2 id="summary">简单来说</h2>
+      <ul>
+        <li><strong>声音不上传。</strong>说话输入、实时字幕、会议记录、文件转写，都在这台 Mac 上识别。</li>
+        <li><strong>文字只发给你自己选的 AI 服务。</strong>选本机模型（Ollama、LM Studio）或 Apple 智能时，文字也不离开这台 Mac；关闭"整理文字"时直接输出识别结果。</li>
+        <li><strong>开发者看不到你的声音、文字和使用情况。</strong>Tidytalk 没有自己的服务器。</li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>AI 服务</th><th>声音</th><th>文字</th></tr></thead>
+          <tbody>
+            <tr><td>本机模型（Ollama、LM Studio）或 Apple 智能</td><td>留在本机</td><td>留在本机</td></tr>
+            <tr><td>关闭"整理文字"</td><td>留在本机</td><td>留在本机（识别原文）</td></tr>
+            <tr><td>云端 AI 服务（例如 DeepSeek、OpenAI）</td><td>留在本机</td><td>发送给你选的服务</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="audio">声音</h2>
+      <ul>
+        <li><strong>说话输入</strong>：只在你按住快捷键（或双击开始免按住录音）时录音。录音只放在内存里，识别完就丢掉，不写入磁盘。</li>
+        <li><strong>实时字幕</strong>：收听电脑播放的声音。声音和字幕文字只在内存里，关掉字幕或退出 Tidytalk 就清空。</li>
+        <li><strong>会议记录</strong>：同时录下麦克风和电脑的声音，录音和文字保存在这台 Mac 上（见<a href="#storage">下面</a>），可以只删录音、保留文字，也可以整场删除；设置里可以关掉"会后保留录音"。</li>
+        <li><strong>文件和链接转写</strong>：在本机识别。</li>
+      </ul>
+
+      <h2 id="ai">会发给 AI 服务的文字</h2>
+      <p>只有在你打开对应的功能、并在"设置 › 配置 AI"里选了服务以后才会发送：</p>
+      <ul>
+        <li><strong>整理文字</strong>：识别出的文字，以及词库里的常用词和自定义规则（让 AI 照着写）。</li>
+        <li><strong>语音改写</strong>：你选中的文字和你说的修改要求。</li>
+        <li><strong>字幕翻译</strong>：每一句字幕，加上前面几句作为上下文。</li>
+        <li><strong>会议总结</strong>：整场会议的文字和说话人的名字。默认不会自动总结，点紫色的"生成总结"按钮时才发送，按钮上方写明会发给哪个服务。</li>
+      </ul>
+      <p>发给云端服务的文字，按那个服务自己的隐私政策处理。API Key 存在 macOS 钥匙串里，只发给你填写的接口地址。</p>
+
+      <h2 id="network">什么时候联网</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>什么时候</th><th>连到哪里</th><th>做什么</th></tr></thead>
+          <tbody>
+            <tr><td>第一次下载识别模型或说话人模型</td><td>Hugging Face；下载不了时改用 HF-Mirror</td><td>下载模型文件</td></tr>
+            <tr><td>启动时检查更新（每天最多一次），或手动检查</td><td>GitHub（api.github.com）</td><td>读取最新的版本号和更新说明；可以在"设置 › 通用"里关闭自动检查</td></tr>
+            <tr><td>第一次转写链接，之后每 14 天</td><td>GitHub 上 yt-dlp 的发布页</td><td>下载开源工具 yt-dlp 和它的校验值</td></tr>
+            <tr><td>转写一个链接</td><td>链接所在的视频网站</td><td>由 yt-dlp 下载音频和封面图</td></tr>
+            <tr><td>用 AI 服务时</td><td>你填写的接口地址（本机模型是这台 Mac 上的 Ollama 或 LM Studio）</td><td>发送<a href="#ai">上面</a>列出的文字</td></tr>
+            <tr><td>用"Apple 系统识别"时</td><td>Apple</td><td>macOS 可能下载语言资源，由系统管理</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>下载文件和检查更新时，对方能看到你的 IP 地址，这是联网本身决定的。除了这张表里的情况，Tidytalk 不联网。</p>
+
+      <h2 id="storage">保存在这台 Mac 上的内容</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>位置</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><code>~/.tidytalk.json</code></td><td>设置、AI 接口地址、词库、快捷短语、自定义规则。只有你自己能读写</td></tr>
+            <tr><td>钥匙串里的 <code>app.tidytalk.Tidytalk</code></td><td>API Key</td></tr>
+            <tr><td><code>~/Library/Application Support/Tidytalk/</code></td><td>识别模型、说话人模型、yt-dlp；会议记录（<code>Meetings/</code>，文字和录音）；转写记录（<code>Transcriptions/</code>，文字，以及链接下载的音频和封面图）。转写本机文件时只记下原文件的位置，不复制</td></tr>
+            <tr><td>系统偏好设置里的 <code>app.tidytalk.Tidytalk</code></td><td>窗口位置、是否看过设置引导、上次检查更新的时间</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>会议和转写的文件只有当前用户能读写。最近 20 次说话输入的结果和实时字幕只放在内存里，退出 Tidytalk 就清空。</p>
+      <p>会议和转写可以在主窗口里逐条删除；想全部删掉，按<a href="/zh/docs/#uninstall">使用指南的"卸载"一节</a>操作。</p>
+
+      <h2 id="permissions">权限</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>权限</th><th>用来做什么</th></tr></thead>
+          <tbody>
+            <tr><td>麦克风</td><td>说话输入、会议记录</td></tr>
+            <tr><td>辅助功能</td><td>监听快捷键；把文字粘贴到光标处；语音改写时读取选中的文字；粘贴后一分半钟内比较输入框里你改过的词，用来提示加入词库（不保存，可以在词库页关掉）</td></tr>
+            <tr><td>录制系统音频</td><td>实时字幕、会议记录</td></tr>
+            <tr><td>语音识别</td><td>只在选了"Apple 系统识别"时用</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>粘贴时会临时借用剪贴板，目标应用读完后马上恢复原来的内容（文字、图片、文件都会恢复）。</p>
+
+      <h2 id="website">官网</h2>
+      <p>tidytalk.zayen.dev 托管在 GitHub Pages 上，不设置 Cookie。访问量用 Cloudflare Web Analytics 统计：它不用 Cookie，也不追踪个人，只记录汇总的数据，例如看了哪些页面、从哪个网站点过来、浏览器和国家或地区。GitHub 和 Cloudflare 会按各自的隐私政策（<a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub</a>、<a href="https://www.cloudflare.com/privacypolicy/">Cloudflare</a>）处理访问日志（例如 IP 地址）。下载安装包、检查更新也都经过 GitHub。</p>
+
+      <h2 id="open-source">可以自己核实</h2>
+      <p>Tidytalk 以 MIT 许可证开源，上面写的每一项都能在<a href="https://github.com/byteyu2436/tidytalk">源代码</a>里找到。</p>
+
+      <h2 id="changes">变更和联系</h2>
+      <p>这份说明会随版本更新，改动记在<a href="/zh/changelog/">更新日志</a>和 GitHub 的提交记录里。有疑问请<a href="https://github.com/byteyu2436/tidytalk/issues">在 GitHub 上提 issue</a>。</p>
+    </div>
+  </main>
