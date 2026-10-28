@@ -33,6 +33,10 @@ enum Permissions {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")
     }
 
+    static func openSpeechRecognitionSettings() {
+        open("x-apple.systempreferences:com.apple.preference.security?Privacy_SpeechRecognition")
+    }
+
     /// 系统设置 › 隐私与安全性 › 录屏与系统录音 里的"仅系统录音"。
     static func openSystemAudioSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AudioCapture")

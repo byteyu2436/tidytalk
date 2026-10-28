@@ -3,7 +3,8 @@ import AppKit
 import SwiftUI
 import TidytalkCore
 
-/// 一条转写：标题、来源、音频（可以回放、另存），以及带时间的文字。点时间从那里开始播放，双击文字可以修改。
+/// 一条转写（设计稿「详情 · 转写」）：标题和属性、处理进度或出错提示、音频（可以回放、另存），以及带时间的文字。
+/// 点时间从那里开始播放，双击文字可以修改。正在转写时页头右边只有一个红色的停止按钮。
 struct TranscriptionDetailView: View {
     let id: UUID
     let controller: TranscribeController
@@ -21,18 +22,13 @@ struct TranscriptionDetailView: View {
             VStack(spacing: 0) {
                 headerBar(item, segments: segments)
                 ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 18) {
-                            header(item)
+                    PageBody {
+                        header(item)
+                        banners(item)
+                        if item.state != .failed || store.audioURL(item) != nil {
                             MediaCard(item: item, store: store, player: player, isLive: isLive)
-                            banners(item)
-                            transcript(item, segments: segments)
                         }
-                        .frame(maxWidth: Theme.readableWidth, alignment: .leading)
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 28)
-                        .padding(.top, 22)
-                        .padding(.bottom, 32)
+                        transcript(item, segments: segments)
                     }
                     .onChange(of: segments.count) {
                         // 转写过程中跟着最新的一句往下滚
@@ -44,24 +40,26 @@ struct TranscriptionDetailView: View {
             .onChange(of: isLive) { player.load(isLive ? nil : store.audioURL(item)) }
             .onChange(of: item.audioFile) { player.load(isLive ? nil : store.audioURL(item)) }
             .onDisappear { player.stop() }
+            .onChange(of: navigation.exportRequest) {
+                guard !item.segments.isEmpty, let (url, format) = ExportPanel.run(name: item.exportName) else { return }
+                do {
+                    try TranscriptExport.render(item.segments, as: format, title: item.exportName)
+                        .write(to: url, atomically: true, encoding: .utf8)
+                } catch {
+                    NSAlert(error: error).runModal()
+                }
+            }
             .confirmationDialog("删除这条转写？", isPresented: $confirmDelete) {
                 Button("删除", role: .destructive) {
                     player.stop()
-                    navigation.transcription = nil
+                    navigation.closeRecord()
                     store.delete(id)
                 }
             } message: {
                 Text(TranscribeFormat.deleteMessage(item))
             }
         } else {
-            VStack(spacing: 0) {
-                PageHeader {
-                    Breadcrumb(parent: String(localized: "转写"), title: String(localized: "已删除")) {
-                        navigation.transcription = nil
-                    }
-                }
-                EmptyState(symbol: "trash", tint: Theme.Tint.neutral, title: String(localized: "这条转写已删除"))
-            }
+            RecordGoneView(navigation: navigation)
         }
     }
 
@@ -69,26 +67,25 @@ struct TranscriptionDetailView: View {
 
     private func headerBar(_ item: Transcription, segments: [TranscriptSegment]) -> some View {
         PageHeader {
-            Breadcrumb(parent: String(localized: "转写"), title: TranscribeFormat.title(item)) {
-                navigation.transcription = nil
+            Breadcrumb(parent: navigation.section.title, title: TranscribeFormat.title(item)) {
+                navigation.closeRecord()
             }
         } trailing: {
             if isLive {
-                IconButton("stop.fill", help: "停止转写，保留已经识别的部分", tint: Theme.Tint.recording, prominent: true) {
+                IconButton("square", help: "停止转写，保留已经识别的部分", tint: Theme.Tint.recording, prominent: true) {
                     controller.cancel()
                 }
             } else {
-                IconButton("doc.on.doc", help: "拷贝全文") {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(TranscriptExport.render(segments, as: .text), forType: .string)
-                }
-                .disabled(segments.isEmpty)
-                IconMenu(symbol: "square.and.arrow.up", help: "导出") {
-                    ForEach(TranscriptExport.Format.allCases, id: \.self) { format in
-                        Button(format.title) { export(item, as: format) }
+                if !segments.isEmpty {
+                    IconButton("doc.on.doc", help: "拷贝全文") {
+                        Clipboard.copy(TranscriptExport.render(segments, as: .text))
+                    }
+                    IconMenu(symbol: "square.and.arrow.up", help: "导出") {
+                        ForEach(TranscriptExport.Format.allCases, id: \.self) { format in
+                            Button(format.title) { export(item, as: format) }
+                        }
                     }
                 }
-                .disabled(segments.isEmpty)
                 IconMenu(symbol: "ellipsis", help: "更多") {
                     if let link = item.link, let url = URL(string: link) {
                         Button("在浏览器中打开") { NSWorkspace.shared.open(url) }
@@ -112,13 +109,17 @@ struct TranscriptionDetailView: View {
 
     private func header(_ item: Transcription) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            TextField("标题", text: Binding(get: { item.title }, set: { value in store.update(id) { $0.title = value } }))
+            // 标题太长时换行，最多三行
+            TextField("标题", text: Binding(get: { item.title }, set: { value in store.update(id) { $0.title = value } }),
+                      axis: .vertical)
                 .textFieldStyle(.plain)
+                .lineLimit(1...3)
                 .font(Theme.title)
+                .tracking(Theme.titleTracking)
                 .foregroundStyle(Theme.text)
-            ChipRow {
-                StatusChip(kind: TranscribeFormat.status(item, stage: isLive ? controller.stage : nil),
-                           text: statusText(item))
+            ChipRow(spacing: 8) {
+                let status = statusChip(item)
+                PropertyChip(symbol: status.symbol, text: status.text, tint: status.color)
                 if let link = item.link, let url = URL(string: link) {
                     let brand = SiteBrand.style(item.host)
                     Button {
@@ -133,9 +134,9 @@ struct TranscriptionDetailView: View {
                     PropertyChip(symbol: "person", text: uploader)
                 }
                 if let duration = item.duration {
-                    PropertyChip(symbol: "clock", text: MeetingFormat.duration(duration))
+                    PropertyChip(symbol: "timer", text: MeetingFormat.duration(duration))
                 }
-                PropertyChip(symbol: "calendar", text: item.createdAt.formatted(date: .abbreviated, time: .shortened))
+                PropertyChip(symbol: "calendar", text: TranscribeFormat.chipDate(item.createdAt))
                 // 绿色：在这台 Mac 上识别
                 PropertyChip(symbol: "lock", text: item.model, tint: Theme.Tint.local)
                     .help("在这台 Mac 上识别")
@@ -143,33 +144,53 @@ struct TranscriptionDetailView: View {
         }
     }
 
-    private func statusText(_ item: Transcription) -> String {
-        if isLive { return String(localized: "正在转写") }
+    private func statusChip(_ item: Transcription) -> (symbol: String, text: String, color: Color) {
+        if isLive { return ("rays", String(localized: "正在转写"), Theme.Tint.progress) }
         switch item.state {
-        case .transcribing: return String(localized: "正在转写")
-        case .failed: return String(localized: "转写失败")
-        case .finished: return item.isPartial ? String(localized: "只转写了前面一部分") : String(localized: "已完成")
+        case .transcribing: return ("rays", String(localized: "正在转写"), Theme.Tint.progress)
+        case .failed: return ("exclamationmark.circle", String(localized: "转写失败"), Theme.danger)
+        case .finished:
+            return item.isPartial ? ("pause.circle", String(localized: "只转写了前面一部分"), Theme.Tint.progress)
+                : ("checkmark.circle", String(localized: "已完成"), Theme.Tint.local)
         }
     }
 
     @ViewBuilder
     private func banners(_ item: Transcription) -> some View {
         if isLive {
-            Callout(symbol: "circle.dotted", tint: Theme.Tint.progress) {
-                Text(controller.stage.description).foregroundStyle(Theme.secondaryText)
-                Spacer()
+            AlertBar(symbol: "rays", tint: Theme.Tint.progress, spinning: true, title: controller.stage.description,
+                     message: controller.stage == .fetchingInfo
+                         ? String(localized: "视频网站有时要十几秒才回应。拿到标题和封面后会先显示出来。") : nil) {
                 ThinProgress(fraction: controller.stage.fraction, tint: Theme.Tint.progress).frame(width: 160)
             }
         } else if item.state == .failed {
-            let reason = item.error ?? ""
-            Callout(symbol: "exclamationmark.triangle.fill", tint: Theme.Tint.failed) {
-                Text(String(localized: "没有转写完：\(reason)")).foregroundStyle(Theme.text)
+            let reason = item.error ?? String(localized: "转写失败")
+            AlertBar(symbol: "exclamationmark.triangle", tint: Theme.danger,
+                     title: String(localized: "没有转写完：\(reason)"),
+                     message: item.kind == .link ? String(localized: "可以换一个链接，或者把视频下载下来拖进“转写”页。")
+                         : String(localized: "可以换一个文件再试。")) {
+                IconButton("arrow.clockwise", help: "重新转写", outlined: true) { retry(item) }
+                    .disabled(controller.isBusy)
             }
         } else if item.isPartial {
-            Callout(symbol: "info.circle") {
-                Text("中途停止了，下面是前面一部分的文字。").foregroundStyle(Theme.secondaryText)
-            }
+            AlertBar(symbol: "info.circle", title: String(localized: "中途停止了，下面是前面一部分的文字。"))
         }
+    }
+
+    /// 重新转写一次：成功开始后删掉这条失败的记录。
+    private func retry(_ item: Transcription) {
+        let newID: UUID?
+        if let link = item.link {
+            newID = controller.transcribe(link: link)
+        } else if let path = item.sourcePath {
+            newID = controller.transcribe(file: URL(fileURLWithPath: path))
+        } else {
+            newID = nil
+        }
+        guard let newID else { return }
+        let section = navigation.section
+        store.delete(item.id)
+        navigation.openTranscription(newID, from: section)
     }
 
     // MARK: - 文字
@@ -177,13 +198,21 @@ struct TranscriptionDetailView: View {
     @ViewBuilder
     private func transcript(_ item: Transcription, segments: [TranscriptSegment]) -> some View {
         if segments.isEmpty {
-            if !isLive {
-                Text("没有识别到说话的内容").font(Theme.body).foregroundStyle(Theme.tertiaryText)
+            if item.state == .failed {
+                EmptyState(symbol: "doc.text", tint: Theme.secondaryText, title: String(localized: "没有文字"),
+                           message: item.kind == .link ? String(localized: "没能下载音频，所以还没有识别。")
+                               : String(localized: "没能读出这个文件的声音。"), fill: false)
+                    .padding(.top, 40)
+            } else if !isLive {
+                Text("没有识别到说话的内容").font(Theme.body).foregroundStyle(Theme.secondaryText)
             }
         } else {
             let active = player.hasStarted ? segments.last(where: { $0.start <= player.currentTime + 0.05 })?.id : nil
-            VStack(alignment: .leading, spacing: 10) {
-                SectionHeader(title: String(localized: "文字"), count: segments.count)
+            VStack(alignment: .leading, spacing: Theme.titleGap) {
+                HStack(spacing: 8) {
+                    Text("文字").font(Theme.heading).foregroundStyle(Theme.text)
+                    Text(verbatim: String(segments.count)).font(Theme.caption).foregroundStyle(Theme.secondaryText)
+                }
                 LazyVStack(alignment: .leading, spacing: 1) {
                     ForEach(segments) { segment in
                         TranscriptionRow(segment: segment, active: active == segment.id,
@@ -193,7 +222,6 @@ struct TranscriptionDetailView: View {
                             .id(segment.id)
                     }
                 }
-                .padding(.horizontal, -8)
             }
         }
     }
@@ -226,10 +254,13 @@ struct MediaCard: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
-            TranscriptionArtwork(item: item, store: store)
-                .frame(width: item.thumbnailFile == nil ? 64 : 128, height: 72)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.radius, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: Theme.radius, style: .continuous).strokeBorder(Theme.border))
+            TranscriptionArtwork(item: item, store: store, placeholder: isLive && item.thumbnailFile == nil)
+                // 链接还在读信息时先留出封面的位置，拿到封面后不跳动
+                .frame(width: item.thumbnailFile != nil || (isLive && item.kind == .link) ? 128 : 64, height: 72)
+                // 还没拿到封面图：占位图上闪光，表示还在加载
+                .shimmering(isLive && item.thumbnailFile == nil)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Theme.border))
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Text(fileName)
@@ -239,17 +270,18 @@ struct MediaCard: View {
                         .truncationMode(.middle)
                     Spacer(minLength: 8)
                     if audio != nil {
-                        IconButton("folder", help: "在访达中显示", size: 24, tint: Theme.Tint.meeting) {
+                        IconButton("folder", help: "在访达中显示", size: 28, tint: Theme.Tint.meeting) {
                             TranscribeFormat.reveal(item, in: store)
                         }
                         if item.kind == .link {
-                            IconButton("square.and.arrow.down", help: "把音频存储到…", size: 24, tint: Theme.Tint.speech) { saveAudio() }
+                            IconButton("square.and.arrow.down", help: "把音频存储到…", size: 28, tint: Theme.Tint.speech) { saveAudio() }
                         }
                     }
                 }
+                .frame(minHeight: 28)
                 Text(detail)
                     .font(Theme.small)
-                    .foregroundStyle(Theme.tertiaryText)
+                    .foregroundStyle(Theme.secondaryText)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 if player.isReady {
@@ -298,7 +330,7 @@ struct MediaCard: View {
     }
 }
 
-/// 播放按钮、当前时间和可以拖动的进度条。
+/// 播放按钮、当前时间和可以拖动的进度条（设计稿：黑色圆形播放键 24，进度条高 4）。
 struct PlayerBar: View {
     let player: MediaPlayer
 
@@ -308,23 +340,47 @@ struct PlayerBar: View {
                 player.toggle()
             } label: {
                 Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(Theme.accentForeground)
                     .frame(width: 24, height: 24)
-                    .background(Theme.Tint.speech, in: Circle())
+                    .background(Theme.accent, in: Circle())
             }
             .buttonStyle(.plain)
             .help(player.isPlaying ? String(localized: "暂停") : String(localized: "播放"))
             Text(MeetingFormat.clock(player.currentTime))
-                .font(Theme.small.monospacedDigit())
-                .foregroundStyle(Theme.secondaryText)
-            Slider(value: Binding(get: { player.currentTime }, set: { player.seek(to: $0) }),
-                   in: 0...max(1, player.duration))
-                .controlSize(.mini)
+                .font(Theme.smallMedium.monospacedDigit())
+                .foregroundStyle(Theme.text)
+            ScrubBar(value: player.currentTime, total: player.duration, height: 4) { player.seek(to: $0) }
             Text(MeetingFormat.clock(player.duration))
                 .font(Theme.small.monospacedDigit())
-                .foregroundStyle(Theme.tertiaryText)
+                .foregroundStyle(Theme.secondaryText)
         }
+    }
+}
+
+/// 可以点、可以拖的进度条：浅灰的轨道，播过的部分是主色。
+struct ScrubBar: View {
+    let value: TimeInterval
+    let total: TimeInterval
+    var height: CGFloat = 6
+    let onSeek: (TimeInterval) -> Void
+
+    var body: some View {
+        GeometryReader { proxy in
+            let fraction = total > 0 ? min(1, max(0, value / total)) : 0
+            ZStack(alignment: .leading) {
+                Capsule().fill(Theme.subtle)
+                Capsule().fill(Theme.accent).frame(width: proxy.size.width * fraction)
+            }
+            .frame(height: height)
+            .frame(maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { drag in
+                guard total > 0, proxy.size.width > 0 else { return }
+                onSeek(total * min(1, max(0, drag.location.x / proxy.size.width)))
+            })
+        }
+        .frame(height: 16)
     }
 }
 
@@ -344,9 +400,9 @@ struct TranscriptionRow: View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             Button(action: onPlay) {
                 Text(TranscriptExport.clock(segment.start))
-                    .font(Theme.small.monospacedDigit())
-                    .foregroundStyle(active ? Theme.Tint.speech : hovering && canPlay ? Theme.text : Theme.tertiaryText)
-                    .frame(width: 52, alignment: .trailing)
+                    .font((active ? Theme.smallMedium : Theme.small).monospacedDigit())
+                    .foregroundStyle(active ? Theme.Tint.speech : hovering && canPlay ? Theme.text : Theme.secondaryText)
+                    .frame(width: 40, alignment: .leading)
             }
             .buttonStyle(.plain)
             .disabled(!canPlay)
@@ -357,15 +413,15 @@ struct TranscriptionRow: View {
                 Text(segment.text)
                     .font(Theme.reading)
                     .foregroundStyle(Theme.text)
-                    .lineSpacing(4)
+                    .lineSpacing(8)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture(count: 2) { if onEdit != nil { startEditing() } }
                 HStack(spacing: 2) {
                     if onEdit != nil {
-                        IconButton("pencil", help: "编辑这一句", size: 22, action: startEditing)
+                        IconButton("pencil", help: "编辑这一句", size: 24, action: startEditing)
                     }
-                    IconButton("doc.on.doc", help: "拷贝这一句", size: 22) {
+                    IconButton("doc.on.doc", help: "拷贝这一句", size: 24) {
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(segment.text, forType: .string)
                     }
@@ -373,11 +429,10 @@ struct TranscriptionRow: View {
                 .opacity(hovering ? 1 : 0)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 5)
-        .background(editing ? Theme.accent.opacity(0.07) : active ? Theme.Tint.speech.opacity(0.1)
-                    : hovering ? Theme.hover : .clear,
-                    in: RoundedRectangle(cornerRadius: Theme.radius, style: .continuous))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(editing ? Theme.accent.opacity(0.07) : active ? Theme.subtle : hovering ? Theme.hover : .clear,
+                    in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .onHover { hovering = $0 }
     }
 

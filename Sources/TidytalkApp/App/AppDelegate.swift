@@ -37,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             }
         }
         NSApp.mainMenu = makeMainMenu()
+        model.configStore.config.appearance.apply()
         indicator = IndicatorPanel(model: model)
         controller = DictationController(model: model, indicator: indicator)
         setUpListening()
@@ -44,11 +45,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         statusItem = StatusItemController(model: model)
         statusItem.onToggleListening = { [weak self] in self?.toggleCaptions() }
         statusItem.onToggleMeeting = { [weak self] in self?.meetings.toggle() }
-        statusItem.onListenSourceChanged = { [weak self] in self?.listener.restartIfRunning() }
-        statusItem.onSetCaptionTranslation = { [weak self] in self?.listener.setTranslation($0) }
+        statusItem.onOpenLibrary = { [weak self] in
+            self?.navigation.libraryFilter = .dictation
+            self?.showMainWindow(.library)
+        }
         statusItem.onPasteRecentCaptions = { [weak self] in self?.listener.pasteRecent() }
         statusItem.onWillPasteHistory = { [weak self] in self?.controller.stopCorrectionWatch() }
-        statusItem.onOpenTranscriber = { [weak self] in self?.showMainWindow(.transcribe) }
+        statusItem.onOpenTranscriber = { [weak self] in
+            self?.showMainWindow(.transcribe)
+            self?.navigation.linkFieldRequest += 1
+        }
         statusItem.onOpenMainWindow = { [weak self] in self?.showMainWindow() }
         statusItem.onOpenSettings = { [weak self] in self?.showSettings() }
         statusItem.onReprocess = { [weak self] entry, style, language in
@@ -229,36 +235,126 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     /// 窗口里的输入框要靠主菜单才能响应 Cmd+C / Cmd+V 等快捷键。
+    /// 打开主窗口时屏幕顶部的应用菜单：Tidytalk、文件、编辑、显示、窗口、帮助，常用操作都有快捷键。
     private func makeMainMenu() -> NSMenu {
         let main = NSMenu()
+        func add(_ menu: NSMenu, _ title: String, _ action: Selector?, _ key: String = "",
+                 _ modifiers: NSEvent.ModifierFlags = .command, target: AnyObject? = nil) {
+            let item = menu.addItem(withTitle: title, action: action, keyEquivalent: key)
+            item.keyEquivalentModifierMask = modifiers
+            item.target = target
+        }
 
         let appMenu = NSMenu()
-        let settings = appMenu.addItem(withTitle: String(localized: "设置…"), action: #selector(openSettingsFromMenu), keyEquivalent: ",")
-        settings.target = self
+        add(appMenu, String(localized: "关于 Tidytalk"), #selector(openAbout), target: self)
+        if UpdateChecker.isConfigured {
+            add(appMenu, String(localized: "检查更新…"), #selector(checkForUpdatesFromMenu), target: self)
+        }
         appMenu.addItem(.separator())
-        appMenu.addItem(withTitle: String(localized: "关闭窗口"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
-        appMenu.addItem(withTitle: String(localized: "退出 Tidytalk"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        add(appMenu, String(localized: "设置…"), #selector(openSettingsFromMenu), ",", target: self)
+        appMenu.addItem(.separator())
+        add(appMenu, String(localized: "退出 Tidytalk"), #selector(NSApplication.terminate(_:)), "q")
         main.addItem(withTitle: "Tidytalk", action: nil, keyEquivalent: "").submenu = appMenu
 
+        let file = NSMenu(title: String(localized: "文件"))
+        add(file, String(localized: "开始或结束会议记录"), #selector(toggleMeetingFromMenu), "m", [.control, .option], target: self)
+        add(file, String(localized: "转写文件…"), #selector(transcribeFileFromMenu), "o", target: self)
+        add(file, String(localized: "转写链接…"), #selector(transcribeLinkFromMenu), "l", target: self)
+        file.addItem(.separator())
+        add(file, String(localized: "导出…"), #selector(exportFromMenu), "e", [.command, .shift], target: self)
+        add(file, String(localized: "关闭窗口"), #selector(NSWindow.performClose(_:)), "w")
+        main.addItem(withTitle: String(localized: "文件"), action: nil, keyEquivalent: "").submenu = file
+
         let edit = NSMenu(title: String(localized: "编辑"))
-        edit.addItem(withTitle: String(localized: "撤销"), action: Selector(("undo:")), keyEquivalent: "z")
-        edit.addItem(withTitle: String(localized: "重做"), action: Selector(("redo:")), keyEquivalent: "Z")
+        add(edit, String(localized: "撤销"), Selector(("undo:")), "z")
+        add(edit, String(localized: "重做"), Selector(("redo:")), "Z")
         edit.addItem(.separator())
-        edit.addItem(withTitle: String(localized: "剪切"), action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        edit.addItem(withTitle: String(localized: "拷贝"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        edit.addItem(withTitle: String(localized: "粘贴"), action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        edit.addItem(withTitle: String(localized: "全选"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        add(edit, String(localized: "剪切"), #selector(NSText.cut(_:)), "x")
+        add(edit, String(localized: "拷贝"), #selector(NSText.copy(_:)), "c")
+        add(edit, String(localized: "粘贴"), #selector(NSText.paste(_:)), "v")
+        add(edit, String(localized: "全选"), #selector(NSText.selectAll(_:)), "a")
+        edit.addItem(.separator())
+        add(edit, String(localized: "在资料库里搜索"), #selector(searchFromMenu), "f", target: self)
         main.addItem(withTitle: String(localized: "编辑"), action: nil, keyEquivalent: "").submenu = edit
+
+        // 显示：和侧边栏一样的四页（⌘1–⌘4），返回（⌘[）
+        let view = NSMenu(title: String(localized: "显示"))
+        for (index, section) in MainNavigation.Section.allCases.enumerated() {
+            let item = view.addItem(withTitle: section.title, action: #selector(showSectionFromMenu(_:)),
+                                    keyEquivalent: String(index + 1))
+            item.target = self
+            item.tag = index
+        }
+        view.addItem(.separator())
+        add(view, String(localized: "返回"), #selector(goBackFromMenu), "[", target: self)
+        main.addItem(withTitle: String(localized: "显示"), action: nil, keyEquivalent: "").submenu = view
+
+        let window = NSMenu(title: String(localized: "窗口"))
+        add(window, String(localized: "最小化"), #selector(NSWindow.performMiniaturize(_:)), "m")
+        add(window, String(localized: "缩放"), #selector(NSWindow.performZoom(_:)))
+        main.addItem(withTitle: String(localized: "窗口"), action: nil, keyEquivalent: "").submenu = window
+        NSApp.windowsMenu = window
 
         // 帮助：官网上的使用指南和隐私说明（设成 helpMenu 后系统会在最上面加搜索框）
         let help = NSMenu(title: String(localized: "帮助"))
-        help.addItem(withTitle: String(localized: "使用指南"), action: #selector(openGuide), keyEquivalent: "?").target = self
-        help.addItem(withTitle: String(localized: "隐私说明"), action: #selector(openPrivacy), keyEquivalent: "").target = self
+        add(help, String(localized: "使用指南"), #selector(openGuide), "?", target: self)
+        add(help, String(localized: "键盘快捷键"), #selector(openShortcuts), target: self)
+        add(help, String(localized: "隐私说明"), #selector(openPrivacy), target: self)
+        help.addItem(.separator())
+        add(help, String(localized: "反馈问题…"), #selector(openIssues), target: self)
         main.addItem(withTitle: String(localized: "帮助"), action: nil, keyEquivalent: "").submenu = help
         NSApp.helpMenu = help
 
         return main
     }
+
+    @objc private func openAbout() { showSettings(.about) }
+    @objc private func openShortcuts() { showSettings(.shortcuts) }
+    @objc private func openIssues() { HelpLinks.open(HelpLinks.issues) }
+    @objc private func checkForUpdatesFromMenu() { Task { await UpdateChecker.check(userInitiated: true) } }
+    @objc private func toggleMeetingFromMenu() { meetings.toggle() }
+
+    @objc private func showSectionFromMenu(_ sender: NSMenuItem) {
+        guard MainNavigation.Section.allCases.indices.contains(sender.tag) else { return }
+        showMainWindow(MainNavigation.Section.allCases[sender.tag])
+    }
+
+    /// 返回：设置里回到原来的页，详情页回到列表。
+    @objc private func goBackFromMenu() {
+        if navigation.settings != nil {
+            navigation.closeSettings()
+        } else {
+            navigation.closeRecord()
+        }
+    }
+
+    /// 导出正在看的会议或转写（详情页里接着弹出存储面板）。
+    @objc private func exportFromMenu() {
+        guard navigation.meeting != nil || navigation.transcription != nil else { NSSound.beep(); return }
+        navigation.exportRequest += 1
+    }
+
+    @objc private func searchFromMenu() {
+        showMainWindow(.library)
+        navigation.searchRequest += 1
+    }
+
+    @objc private func transcribeLinkFromMenu() {
+        showMainWindow(.transcribe)
+        navigation.linkFieldRequest += 1
+    }
+
+    /// 选一个音频或视频文件转写，然后打开它的转写详情。
+    @objc private func transcribeFileFromMenu() {
+        showMainWindow(.transcribe)
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.audio, .movie, .audiovisualContent]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url, let transcriber else { return }
+        transcriber.clearFailure()
+        if let id = transcriber.transcribe(file: url) { navigation.openTranscription(id) }
+    }
+
 
     @objc private func openSettingsFromMenu() { showSettings() }
     @objc private func openGuide() { HelpLinks.open(HelpLinks.guide) }
@@ -285,7 +381,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 onOpenOnboarding: { [weak self] in self?.showOnboarding() },
                 onToggleListening: { [weak self] in self?.listener.toggle() },
                 onListenSourceChanged: { [weak self] in self?.listener.restartIfRunning() },
-                onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) })
+                onSetCaptionTranslation: { [weak self] in self?.listener.setTranslation($0) },
+                onReprocess: { [weak self] entry, style, language in
+                    self?.controller.reprocess(entry, style: style, language: language)
+                })
             let window = MainWindow.make(model: model, meetings: meetings, transcriber: transcriber,
                                          navigation: navigation, settings: settings)
             window.delegate = self
@@ -304,10 +403,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     static func makeOnboardingWindow(model: AppModel, step: OnboardingView.Step? = nil,
                                      onFinish: @escaping () -> Void = {}) -> NSWindow {
         let view = OnboardingView(model: model, onFinish: onFinish, initialStep: step)
-        let window = FocusFriendlyWindow(contentViewController: NSHostingController(rootView: view))
+        let host = NSHostingController(rootView: view)
+        // 窗口固定 860×600，不跟着每一步内容的大小变
+        host.sizingOptions = []
+        let window = FocusFriendlyWindow(contentViewController: host)
         window.styleMask = [.titled, .closable]
         // 和主窗口一样隐藏标题栏，标题由侧边栏的欢迎语显示
         AppShell<EmptyView, EmptyView>.configure(window, title: String(localized: "欢迎使用 Tidytalk"))
+        window.setContentSize(NSSize(width: 860, height: 600))
         window.isReleasedWhenClosed = false
         window.center()
         return window

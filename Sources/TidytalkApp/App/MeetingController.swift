@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 import TidytalkCore
@@ -21,6 +22,17 @@ final class MeetingController {
     private(set) var levels: [MeetingSource: Float] = [:]
     /// 录音中出现的问题（麦克风断开、收不到电脑声音）。
     private(set) var warning: String?
+    /// 说完了、还在排队识别的那几路（开会中的页面上显示“正在识别……”）
+    private(set) var queued: Set<MeetingSource> = []
+
+    /// 会议收听的来源：全部应用，或者设置里选的那个应用的名字。
+    var listenSourceName: String {
+        let id = model.configStore.config.meetingSource
+        guard !id.isEmpty, let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: id) else {
+            return String(localized: "全部应用")
+        }
+        return FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
+    }
     /// 已经录了多久，每秒更新。
     private(set) var elapsed: TimeInterval = 0
 
@@ -64,11 +76,22 @@ final class MeetingController {
 
     #if DEBUG || TIDYTALK_DEV_TOOLS
     /// 开发用：截图时显示录制界面（不真的录音）。
-    func simulateRecording(_ meeting: Meeting, elapsed: TimeInterval) {
+    func simulateRecording(_ meeting: Meeting, elapsed: TimeInterval, levels: [MeetingSource: Float]? = nil,
+                           warning: String? = nil, queued: Set<MeetingSource> = []) {
         current = meeting
         phase = .recording
         self.elapsed = elapsed
-        levels = [.microphone: 0.55, .system: 0.3]
+        self.levels = levels ?? [.microphone: 0.55, .system: 0.3]
+        self.warning = warning
+        self.queued = queued
+    }
+
+    func simulateIdle() {
+        current = nil
+        phase = .idle
+        levels = [:]
+        warning = nil
+        queued = []
     }
     #endif
 
@@ -97,7 +120,10 @@ final class MeetingController {
             recorder.onLevel = { [weak self] source, level in
                 guard let self else { return }
                 levels[source] = level
-                if source == .system, level > 0.02 { heardSystemSound = true }
+                if source == .system, level > 0.02, !heardSystemSound {
+                    heardSystemSound = true
+                    model.noteSystemAudio(heard: true)
+                }
             }
             try recorder.start(micDevice: config.microphone, appBundleID: config.meetingSource)
             self.recorder = recorder
@@ -112,6 +138,7 @@ final class MeetingController {
         elapsed = 0
         heardSystemSound = false
         pending = []
+        queued = []
         phase = .recording
         model.meetingRecording = true
         startClock()
@@ -151,6 +178,7 @@ final class MeetingController {
             guard let self, current?.id == id, phase == .recording, !heardSystemSound,
                   AudioProcesses.somethingElseIsPlaying() else { return }
             warning = String(localized: "收不到电脑的声音：请在\"系统设置 › 隐私与安全性 › 录制系统音频\"里允许 Tidytalk")
+            model.noteSystemAudio(heard: false)
             Permissions.openSystemAudioSettings()
         }
     }
@@ -161,6 +189,7 @@ final class MeetingController {
         guard current != nil else { return }
         pending.append(sentence)
         pending.sort { $0.start < $1.start }
+        queued = Set(pending.map(\.source))
         work()
     }
 
@@ -193,6 +222,7 @@ final class MeetingController {
                 let raw = await recognizer.transcribe(sentence.samples)
                 guard current != nil else { return }
                 append(sentence, text: raw)
+                queued = Set(pending.map(\.source))
             }
         }
     }

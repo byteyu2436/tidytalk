@@ -172,26 +172,8 @@
 /* OnboardingView.swift:21 */
 "下载语音识别模型" = "Download Speech Model";
 
-/* OnboardingView.swift:80 */
-"按住%@说话，松开后文字出现在光标处。" = "Hold %@ and speak. Let go, and your words appear at the cursor.";
-
-/* OnboardingView.swift:115 */
-"用于录音。声音只在这台 Mac 上识别，不会上传。" = "Used for recording. Your voice is recognized on this Mac and never uploaded.";
-
-/* OnboardingView.swift:118 */
-"已授权" = "Allowed";
-
-/* OnboardingView.swift:120 */
-"麦克风权限已关闭，请在系统设置中打开。" = "Microphone access is off. Turn it on in System Settings.";
-
 /* OnboardingView.swift:121 */
 "打开系统设置" = "Open System Settings";
-
-/* OnboardingView.swift:133 */
-"用于监听%@键，并把文字输入到光标处。" = "Used to detect the %@ key and type text at the cursor.";
-
-/* OnboardingView.swift:138 */
-"点击下方按钮，在系统设置中打开 Tidytalk 的开关。" = "Click the button below, then turn on Tidytalk in System Settings.";
 
 /* OnboardingView.swift:151 */
 
@@ -203,16 +185,8 @@
 /* OnboardingView.swift:162 */
 "在这台 Mac 上识别语音，支持中文、英文、日文、韩文和粤语，自动判断语言。" = "Recognizes speech on this Mac. Supports Chinese, English, Japanese, Korean, and Cantonese, and detects the language automatically.";
 
-/* OnboardingView.swift:171 */
-"下载完成后即可使用" = "Ready once the download finishes";
-
 /* OnboardingView.swift:177 */
 "上一步" = "Back";
-
-/* OnboardingView.swift:190 */
-"跳过" = "Skip";
-
-"下一步（回车）" = "Next (Return)";
 
 "完成（回车）" = "Done (Return)";
 
@@ -241,52 +215,38 @@
 "自动检查更新" = "Check for updates automatically";
 
 /* SettingsView.swift:75 */
-"当前版本 %@" = "Version %@";
 
 /* SettingsView.swift:77 */
 "检查更新" = "Check for Updates";
 
 /* SettingsView.swift:80 */
-"版本" = "Version";
 
 /* SettingsView.swift:83 */
-"启动与更新" = "Startup & Updates";
 
 /* SettingsView.swift:87 */
-"中英文排版规范" = "Chinese–English spacing";
 
 /* SettingsView.swift:92 */
-"排版" = "Typography";
 
 /* SettingsView.swift:94 */
-"在中文与英文、数字之间加空格，统一使用全角标点。" = "Adds spaces between Chinese and English or numbers, and uses full-width punctuation.";
 
 /* SettingsView.swift:100 */
-"记住最近的结果" = "Remember recent results";
 
 /* SettingsView.swift:109 */
-"已记住 %lld 条" = "%lld remembered";
 
 /* SettingsView.swift:111 */
 "清空" = "Clear";
 
 /* SettingsView.swift:116 */
-"历史记录" = "History";
 
 /* SettingsView.swift:118 */
-"可以在菜单栏的\"最近记录\"里再次粘贴。退出后清空。" = "Paste recent results again from \"Recent\" in the menu bar. Cleared when you quit.";
 
 /* SettingsView.swift:143 */
-"按住说话，松开结束，按 Esc 取消。" = "Hold to talk, let go to finish, or press Esc to cancel.";
 
 /* SettingsView.swift:145 */
-"双击可免按住录音，再按一次结束。" = " Double-tap for hands-free recording; press again to finish.";
 
 /* SettingsView.swift:148 */
-"选中文字后按住%@说出修改要求，即可改写。" = " Select text, then hold %@ and say how to change it.";
 
 /* SettingsView.swift:151 */
-"使用 Fn 时，请在\"系统设置 › 键盘\"里把\"按下 🌐 键时\"设为\"无操作\"。" = " When using Fn, set \"Press 🌐 key to\" to \"Do Nothing\" in System Settings › Keyboard.";
 
 /* SettingsView.swift:160 */
 "按住说话" = "Hold to Talk";
@@ -301,7 +261,6 @@
 "关闭" = "Off";
 
 /* SettingsView.swift:179 */
-"按住%@" = "Hold %@";
 
 /* SettingsView.swift:184 */
 "快捷键" = "Shortcuts";
@@ -322,17 +281,14 @@
 "播放提示音" = "Play sounds";
 
 /* SettingsView.swift:214 */
-"未连接时使用系统默认麦克风。" = "Uses the system default when it isn't connected.";
 
 /* SettingsView.swift:219 */
 
 /* SettingsView.swift:250 */
-"整理后翻译成 %@。" = " Then translated into %@.";
 
 /* SettingsView.swift:265 */
 
 /* SettingsView.swift:267 */
-"用 AI 去掉口头禅，修正口误和标点。关闭后直接输出识别结果。" = "AI removes filler words and fixes slips and punctuation. When off, you get the raw transcript.";
 
 /* SettingsView.swift:273 */
 "整理强度" = "Cleanup Strength";
@@ -344,19 +300,13 @@
 "输出语言" = "Output Language";
 
 /* SettingsView.swift:296 */
-"整理方式" = "Tidying";
-
-/* SettingsView.swift:314 */
-"授权" = "Allow";
 
 /* SettingsView.swift:315 */
-"用于录音" = "Used for recording";
 
 /* SettingsView.swift:326 */
 "辅助功能" = "Accessibility";
 
 /* SettingsView.swift:327 */
-"用于监听%@键和粘贴文字" = "Used to detect the %@ key and paste text";
 
 /* SettingsView.swift:337 */
 
@@ -391,17 +341,11 @@
 /* SharedViews.swift:90 */
 "有未保存的修改" = "Unsaved changes";
 
-/* SharedViews.swift:92 */
-"使用本机模型，文字不会离开这台 Mac" = "Using a local model — text never leaves this Mac";
-
 /* SharedViews.swift:95 */
 "已保存" = "Saved";
 
 /* SharedViews.swift:98 */
 "正在测试…" = "Testing…";
-
-/* SharedViews.swift:100 */
-"连接成功" = "Connected";
 
 /* SharedViews.swift:149 */
 "网络不可用" = "No network connection";
@@ -415,17 +359,8 @@
 /* SharedViews.swift:152 */
 "连接失败：%@" = "Connection failed: %@";
 
-/* SharedViews.swift:167 */
-"语音识别模型已就绪" = "Speech model ready";
-
-/* SharedViews.swift:170 */
-"需要下载约 %@，之后可离线识别。" = "About %@ to download. After that, recognition works offline.";
-
 /* SharedViews.swift:172 */
 "下载模型" = "Download Model";
-
-/* SharedViews.swift:176 */
-"正在下载… %lld%%" = "Downloading… %lld%%";
 
 /* SharedViews.swift:179 */
 "暂停" = "Pause";
@@ -449,7 +384,6 @@
 "Tidytalk：%@" = "Tidytalk: %@";
 
 /* StatusItemController.swift:75 */
-"输出语言：%@" = "Output Language: %@";
 
 /* StatusItemController.swift:86 */
 
@@ -457,10 +391,8 @@
 "检查更新…" = "Check for Updates…";
 
 /* StatusItemController.swift:102 */
-"最近记录" = "Recent";
 
 /* StatusItemController.swift:106 */
-"暂无记录" = "No Recent Results";
 
 /* StatusItemController.swift:119 */
 "拷贝识别原文" = "Copy Raw Transcript";
@@ -469,10 +401,8 @@
 "加入词库…" = "Add to Vocabulary…";
 
 /* StatusItemController.swift:133 */
-"清空记录" = "Clear Recent";
 
 /* StatusItemController.swift:137 */
-"退出后清空" = "Cleared when you quit";
 
 /* StatusItemController.swift:161 */
 "重新整理" = "Re-tidy";
@@ -498,62 +428,17 @@
 /* StatusItemController.swift:242 */
 "取消" = "Cancel";
 
-/* VocabularySettings.swift:58 */
-"例如：\nClaude\nSenseVoice\n张伟" = "For example:\nClaude\nSenseVoice\nJane Doe";
-
 /* VocabularySettings.swift:65 */
 "常用词" = "Common Words";
-
-/* VocabularySettings.swift:67 */
-"每行一个人名、产品名或术语，AI 会把读音相近的词纠正成这些写法。" = "One name, product, or term per line. AI corrects similar-sounding words to these spellings.";
-
-/* VocabularySettings.swift:75 */
-"识别成" = "Recognized as";
-
-/* VocabularySettings.swift:75 */
-"克劳德" = "cloud";
-
-/* VocabularySettings.swift:78 */
-"替换为" = "Replace with";
-
-/* VocabularySettings.swift:91 */
-"添加替换" = "Add Replacement";
 
 /* VocabularySettings.swift:94 */
 "固定替换" = "Replacements";
 
-/* VocabularySettings.swift:96 */
-"识别出左边的词时，替换成右边的写法。" = "Replaces the word on the left with the one on the right.";
-
-/* VocabularySettings.swift:104 */
-"说出" = "Say";
-
-/* VocabularySettings.swift:104 */
-"我的邮箱" = "my email";
-
-/* VocabularySettings.swift:108 */
-"输出" = "Output";
-
-/* VocabularySettings.swift:123 */
-"添加快捷短语" = "Add Snippet";
-
 /* VocabularySettings.swift:126 */
 "快捷短语" = "Snippets";
 
-/* VocabularySettings.swift:128 */
-"只说出左边的短语时，直接输出右边的内容，适合邮箱、地址等。" = "Say just the phrase on the left to insert the text on the right — handy for emails and addresses.";
-
-/* VocabularySettings.swift:140 */
-"例如：\n金额一律用阿拉伯数字\n称呼对方统一用\"您\"\n产品名写作 Tidytalk" = "For example:\nWrite amounts as digits\nAlways address people formally\nWrite the product name as Tidytalk";
-
 /* VocabularySettings.swift:147 */
 "自定义规则" = "Custom Rules";
-
-/* VocabularySettings.swift:149 */
-"每行一条写法要求，AI 整理和改写时会遵守。最多 %lld 条。" = "One writing rule per line, followed when AI tidies or rewrites. Up to %lld rules.";
-
-/* VocabularySettings.swift:162 */
-"还原" = "Revert";
 
 /* AppConfig.swift:156 */
 "配置文件不是有效的 JSON 对象" = "The config file isn't a valid JSON object";
@@ -644,8 +529,6 @@
 
 "本机运行" = "Local";
 
-"DeepSeek 等" = "Online";
-
 /* 实时字幕 */
 "无法收听电脑声音" = "Can't listen to the computer's audio";
 "语音检测模型加载失败" = "Couldn't load the voice detection model";
@@ -653,16 +536,12 @@
 "正在收听…" = "Listening…";
 "正在收听" = "Listening";
 "继续" = "Resume";
-"开始收听" = "Start Listening";
 "停止收听" = "Stop Listening";
-"字幕" = "Captions";
 "收听来源" = "Listen To";
 "全部声音" = "All Audio";
 "文字大小" = "Text Size";
 "没有声音 10 秒后隐藏" = "Hide after 10 seconds of silence";
 "实时字幕" = "Live Captions";
-"没有应用在播放声音" = "No apps are playing sound";
-"收听来源：%@" = "Listen To: %@";
 "小" = "Small";
 "中" = "Medium";
 "大" = "Large";
@@ -673,7 +552,6 @@
 "翻译字幕" = "Translate Captions";
 "翻译成" = "Translate To";
 "翻译" = "Translation";
-"需要先在\"配置 AI\"里选好服务。" = "Choose a service in Set Up AI first.";
 
 /* 粘贴刚才那段 */
 "先按 ⌃⌥C 打开实时字幕" = "Press ⌃⌥C to turn on Live Captions first";
@@ -702,32 +580,22 @@
 "无法下载这个链接" = "Couldn't download this link";
 "这个链接的音频格式暂不支持" = "This link's audio format isn't supported yet";
 "识别模型" = "Speech Model";
-"所有模型都在这台 Mac 上运行，声音不会上传。还没下载的模型，下载完成后自动换用，期间继续用当前的模型。" = "All models run on this Mac and your audio is never uploaded. A model you haven't downloaded is used once its download finishes; until then the current model keeps working.";
 "使用这台 Mac 自带的 Apple 智能，不需要 API Key，文字不会离开这台 Mac。" = "Uses Apple Intelligence built into this Mac. No API key needed, and your text never leaves your Mac.";
 "Apple 智能" = "Apple Intelligence";
 "系统自带" = "Built in";
 "默认" = "Default";
-"使用中" = "In Use";
 "删除下载的文件" = "Delete downloaded files";
 "下载并使用" = "Download & Use";
-"校验中…" = "Verifying…";
 "转写文件或链接…" = "Transcribe File or Link…";
-"发现 %lld 处改动" = "%lld Edits Found";
 "忽略" = "Ignore";
-"全部加入词库" = "Add All to Vocabulary";
-"以后识别出左边的写法时，改成右边的" = "Future transcripts change the left spelling to the right";
 "转写" = "Transcribe";
-"第一次转写链接时，会先从 GitHub 下载开源的下载工具 yt-dlp（约 35 MB）。仅限你有权使用的内容。" = "The first time you transcribe a link, Tidytalk downloads the open-source tool yt-dlp (about 35 MB) from GitHub. Use only content you have the right to use.";
 "拷贝全文" = "Copy All";
 "导出" = "Export";
 "正在下载 yt-dlp…" = "Downloading yt-dlp…";
+"正在读取视频信息…" = "Getting video info…";
 "正在下载音频 %lld%%" = "Downloading audio %lld%%";
 "正在读取音频…" = "Reading audio…";
 "正在识别 %@/%@" = "Recognizing %1$@/%2$@";
-"发现的改动" = "Edits Found";
-"这些是粘贴后你手动改掉的词。加入词库后，以后识别出左边的写法时会改成右边的。" = "These are words you changed by hand after pasting. Once added, future transcripts change the left spelling to the right.";
-"发现我改过的词时提示加入词库" = "Suggest words I correct for my vocabulary";
-"粘贴后，如果你在同一个输入框里把某个词改成了别的写法，会在菜单栏和这里列出来，确认后才加入。" = "If you change a word in the same text field after pasting, it's listed in the menu bar and here. Nothing is added until you confirm.";
 "Apple 系统识别" = "Apple Speech";
 "速度快，中文、英文、日文、韩文、粤语，中英文混说效果好。" = "Fast. Chinese, English, Japanese, Korean, and Cantonese, great with mixed Chinese and English.";
 "支持约 99 种语言，适合小语种。中文会漏字，中文请用其他模型。" = "About 99 languages, good for less common ones. It drops characters in Chinese, so use another model for Chinese.";
@@ -738,29 +606,16 @@
 "最准确，支持 30 种语言和 22 种中文方言，能认出词库里的人名和术语。速度较慢，20 秒的话约需 4 秒。" = "Most accurate, 30 languages and 22 Chinese dialects, and recognizes names and terms from your vocabulary. Slower: about 4 seconds for 20 seconds of speech.";
 "中文、英文、日文，准确度接近 Qwen3-ASR，速度稍快。词库对它帮助不大。" = "Chinese, English, and Japanese. Nearly as accurate as Qwen3-ASR and a bit faster. Your vocabulary helps it little.";
 
-/* 界面整理 */
-"去掉\"嗯、那个\"，修正口误和标点。选 Ollama、LM Studio 或 Apple 智能时不联网。可以跳过，直接输出识别结果。" = "Removes \"um\" and \"like\" and fixes slips and punctuation. Ollama, LM Studio, and Apple Intelligence stay offline. You can skip this and get the raw transcript.";
-"没有 API Key？获取 DeepSeek API Key" = "No API key? Get a DeepSeek API key";
-"以后可以在\"设置 › 识别模型\"里换用其他模型。" = "You can switch to another model later in Settings › Speech Model.";
 "说话输入" = "Dictation";
 "其他" = "More";
 "设置引导" = "Setup Guide";
-"打开" = "Open";
-"配置文件" = "Configuration File";
 "在编辑器中打开" = "Open in Editor";
 "录制系统音频" = "System Audio Recording";
-"用于实时字幕和会议记录，第一次用时 macOS 会询问" = "For live captions and meeting notes. macOS asks the first time";
-"声音只在这台 Mac 上识别，不会上传。会议记录、转写记录（包括链接下载的音频）保存在这台 Mac 上，可以随时删除。开启整理文字、字幕翻译或会议总结后，文字会发送给你配置的 AI 服务；选本机模型或 Apple 智能则不联网。[完整的隐私说明](https://tidytalk.zayen.dev/zh/privacy/)" = "Audio is recognized only on this Mac and never uploaded. Meetings and transcriptions, including audio downloaded from links, are saved on this Mac, and you can delete them anytime. With tidying, caption translation, or meeting summaries on, text is sent to the AI service you set up; local models and Apple Intelligence stay offline. [Full privacy policy](https://tidytalk.zayen.dev/privacy/)";
 "AI 服务" = "AI Service";
-"收听电脑声音" = "Listen to Computer Audio";
 "收听" = "Listening";
-"每句说完后，用\"配置 AI\"里的服务翻译，译文显示在原文下面。" = "Each sentence is translated with your Set Up AI service and shown under the original.";
-"翻译成%@" = "Translate to %@";
 
 /* 边听边翻译 */
 "边听边翻译" = "Translate as You Listen";
-"用\"配置 AI\"里的服务翻译，译文显示在原文下面。边听边翻译时，正在说的这句也会先翻出来，随说话内容更新，会多调用几次 AI 服务。" = "Translated with your Set Up AI service and shown under the original. With live translation, the sentence being spoken is translated too and updates as it goes, which calls the AI service a few more times.";
-"只收听某个应用时，其他声音不会出现在字幕里。收听时按 ⌃⌥V，或点字幕条上某一句旁边的\"粘贴\"，可以把听到的话整理后粘贴到光标处。" = "Pick an app to caption only its audio. While listening, press ⌃⌥V, or click Paste next to a sentence in the captions, to tidy and paste what was said at the cursor.";
 "从这句开始粘贴到最新" = "Paste from this sentence onward";
 
 /* 剪贴板回执、关闭思考、外部控制、边录边识别、本地纠正词库 */
@@ -796,9 +651,6 @@
 "正在分辨你这边的说话人" = "Telling apart the speakers on your side";
 "正在分辨对方的说话人" = "Telling apart the other speakers";
 "正在识别（%@/%lld）" = "Transcribing (%@/%lld)";
-"用 Apple 智能在这台 Mac 上总结，文字不会离开这台 Mac" = "Summarized on this Mac with Apple Intelligence. The text never leaves your Mac.";
-"用本机的大模型总结，文字不会离开这台 Mac" = "Summarized by a local model. The text never leaves your Mac.";
-"会议文字会发送给 %@ 来总结" = "The meeting text will be sent to %@ to summarize.";
 "这场会议还没有文字，无法总结" = "This meeting has no text to summarize yet";
 "收不到电脑的声音，会议只录到你自己的声音" = "Can't hear your Mac's audio. Only your own voice is being recorded.";
 "麦克风断开了，会议只录到电脑的声音" = "The microphone disconnected. Only your Mac's audio is being recorded.";
@@ -818,36 +670,24 @@
 "正在检查有没有漏掉的话" = "Checking for missed speech";
 "%@ 生成于 %@" = "%@ · generated %@";
 "AI 总结" = "AI Summary";
-"下载说话人模型（约 %@）后，可以区分对方的多个人" = "Download the speaker model (about %@) to tell apart the other speakers";
 "不到 1 分钟" = "Under 1 min";
 "会后保留录音" = "Keep recordings after the meeting";
-"会后整理失败，下面是会议中识别的文字：%@" = "Couldn't finish processing. Showing the text transcribed during the meeting: %@";
 "会议" = "Meetings";
 "会议标题" = "Meeting title";
-"会议的文字和录音只保存在这台 Mac 上（~/Library/Application Support/Tidytalk/Meetings），在 Tidytalk 主窗口里可以逐个删除。" = "Meeting text and recordings stay on this Mac (~/Library/Application Support/Tidytalk/Meetings). Delete them one by one in the Tidytalk window.";
 "会议结束后自动生成总结" = "Summarize automatically after each meeting";
-"会议结束后，在这台 Mac 上把对方分成说话人 1、2、3，你可以给他们改名；几个人同时说话的地方会标出来。没有下载时只分\"我\"和\"对方\"。" = "After a meeting, Tidytalk tells the other speakers apart on this Mac as Speaker 1, 2, 3, and you can rename them. Moments when several people talk at once are marked. Without this model, it only separates \"Me\" and \"Others\".";
-"会议记录占用" = "Space used by meetings";
 "删除会议…" = "Delete Meeting…";
 "删除会议和录音" = "Delete Meeting and Recording";
 "删除录音，保留文字" = "Delete Recording, Keep Text";
 "区分说话人" = "Speakers";
 "原始记录" = "Transcript";
 "同时在说" = "talking at once";
-"同时录你的麦克风（用\"说话输入\"里选的麦克风）和电脑里会议的声音。只收听某个会议应用时，其他应用的声音不会录进去。保留录音可以回放每一句、重新分说话人，一小时约 30 MB；关掉后处理完只留文字。" = "Records your microphone (the one chosen in Dictation) and the meeting audio on your Mac. When listening to one meeting app, sound from other apps isn't recorded. Keeping recordings lets you replay any line and redo speaker detection, about 30 MB per hour. When off, only the text is kept after processing.";
 "在访达中显示" = "Show in Finder";
 "处理失败" = "Processing failed";
-"好" = "OK";
-"存储" = "Storage";
 "对方 %@ 个人" = "%@ Other Speakers";
 "开始会议记录（⌃⌥M）" = "Start Meeting Recording (⌃⌥M)";
-"开始或结束" = "Start or stop";
-"开始说话后，文字会出现在这里。说完一句才显示，会后还会分说话人、精修一遍。" = "Text appears here as each sentence ends. After the meeting, Tidytalk tells speakers apart and refines the text.";
-"总结失败：%@" = "Couldn't summarize: %@";
 "总结需要 AI 服务。可以用本机的 Ollama、LM Studio 或 Apple 智能，文字不会离开这台 Mac。" = "Summaries need an AI service. With Ollama, LM Studio, or Apple Intelligence, the text never leaves your Mac.";
 "把这场会议整理成要点、决定和待办" = "Turn this meeting into key points, decisions, and to-dos";
 "文字、总结和录音都会删除，不能恢复。" = "The text, summary, and recording will be deleted. This can't be undone.";
-"最近 20 次的结果会显示在这里，只保存在内存里，退出 Tidytalk 后清空。" = "Your last 20 results appear here. They're kept in memory only and cleared when you quit Tidytalk.";
 "有部分内容没有写完" = "Part of the summary is incomplete";
 "正在下载说话人模型 %lld%%" = "Downloading the speaker model %lld%%";
 "正在整理文字…" = "Processing the text…";
@@ -862,23 +702,17 @@
 "自动判断人数" = "Detect Automatically";
 "设置" = "Settings";
 "说话人模型已就绪" = "Speaker model is ready";
-"还没有说话输入的记录" = "No dictation results yet";
 "这场会议没有识别到说话的内容" = "No speech was recognized in this meeting";
 "重新分对方的说话人" = "Redo Speaker Detection";
 "重新整理这场会议" = "Process This Meeting Again";
 "重新生成" = "Regenerate";
 "%@ 人" = "%@ people";
 "今天" = "Today";
-"搜索会议" = "Search meetings";
 "昨天" = "Yesterday";
 "更多" = "More";
 "正在听" = "Listening";
 "正在记录会议" = "Recording the meeting";
 "几个人同时在说话，这段文字是混在一起识别出来的" = "Several people were talking at once, so this text was transcribed from the mixed audio";
-"回放这一句" = "Play this sentence";
-"会议已删除" = "This meeting was deleted";
-"已生成 AI 总结" = "AI summary available";
-"开始说话后，文字会出现在这里。" = "Text appears here once people start talking.";
 "没有识别到说话的内容" = "No speech recognized";
 "重新分" = "Redo";
 "会按录音重新识别对方的话，你手动改过的文字和说话人会被替换。" = "Tidytalk will transcribe the other side again from the recording. Your edits to text and speakers will be replaced.";
@@ -894,44 +728,20 @@
 "删除总结" = "Delete Summary";
 "会议记录和录音不受影响，之后可以重新生成。" = "The transcript and recording stay. You can generate a new summary later.";
 "用 Markdown 写：## 开头是小节标题，- 开头是列表，- [ ] 开头是待办。" = "Written in Markdown: ## starts a section, - starts a list item, - [ ] starts a to-do.";
-"重命名…" = "Rename…";
 "「%@」的文字、总结和录音都会删除，不能恢复。" = "The text, summary, and recording of “%@” will be deleted. This can't be undone.";
 
 /* 主窗口改版（Linear 风格）、转写记录 */
 "没有转写完，Tidytalk 中途退出了" = "Not finished. Tidytalk quit during transcription.";
 "返回%@（⌘[）" = "Back to %@ (⌘[)";
-"只保存在内存里，退出后清空" = "Kept in memory only, cleared when you quit";
-"已在设置里关闭最近记录" = "Recent results are turned off in Settings";
-"打开后，最近 20 次说话输入的结果会显示在这里。" = "Turn it on to see your last 20 dictation results here.";
-"打开设置" = "Open Settings";
 "语音改写" = "Voice rewrite";
 "已总结" = "Summarized";
 "没有找到“%@”" = "No results for “%@”";
-"会搜索会议标题、说话人和记录里的文字。" = "Searches meeting titles, speakers, and transcript text.";
-"同时录下你的麦克风和电脑里会议的声音，会后分出谁说了什么。" = "Records your microphone and the meeting audio on your Mac, then works out who said what.";
-"对方有几个人也能分开" = "Tells several remote speakers apart";
-"几个人同时说话会标出来" = "Marks when people talk over each other";
-"会后可以生成 AI 总结" = "AI summary after the meeting";
-"要点、决定和待办" = "Key points, decisions, to-dos";
-"只保存在这台 Mac 上" = "Stays on this Mac";
-"录音和文字可以随时删除" = "Delete recordings and text anytime";
-"也可以在菜单栏菜单里开始" = "You can also start from the menu bar menu";
 "清除" = "Clear";
 "删除" = "Delete";
 "文件" = "Files";
 "链接" = "Links";
-"搜索转写" = "Search transcriptions";
-"转写过的文件会保存在这里，可以随时回来查看、导出。" = "Files you transcribe are kept here, so you can come back to read or export them.";
-"转写过的链接会保存在这里，下载的音频可以回放、另存。" = "Links you transcribe are kept here. You can play or save the downloaded audio.";
-"会搜索标题、上传者和转写的文字。" = "Searches titles, uploaders, and transcript text.";
-"全部文件" = "All Files";
-"全部链接" = "All Links";
 "在浏览器中打开" = "Open in Browser";
 "删除…" = "Delete…";
-"MP3、M4A、WAV、MP4、MOV 等，最长 3 小时。在这台 Mac 上识别，使用%@模型。" = "MP3, M4A, WAV, MP4, MOV and more, up to 3 hours. Transcribed on this Mac with %@.";
-"正在转写另一个" = "Another transcription is running";
-"粘贴视频链接（YouTube、B 站等）" = "Paste a video link (YouTube, Bilibili, …)";
-"只下载链接里的音频和封面图，保存在这台 Mac 上，可以随时删除。仅限你有权使用的内容。" = "Only the audio and cover image are downloaded. They stay on this Mac and can be deleted anytime. Use only content you have the right to use.";
 "转写失败" = "Transcription failed";
 "只转写了前面一部分" = "Only the beginning was transcribed";
 "正在获取标题…" = "Getting title…";
@@ -940,8 +750,6 @@
 "昨天 %@" = "Yesterday %@";
 "文字、下载的音频和封面图都会删除，不能恢复。" = "The text, downloaded audio, and cover image will be deleted. This can't be undone.";
 "转写的文字会删除，不能恢复。原文件不受影响。" = "The transcript will be deleted. This can't be undone. The original file isn't affected.";
-"已删除" = "Deleted";
-"这条转写已删除" = "This transcription was deleted";
 "停止转写，保留已经识别的部分" = "Stop and keep what has been transcribed";
 "删除音频，保留文字" = "Delete Audio, Keep Text";
 "标题" = "Title";
@@ -973,12 +781,9 @@
 "打开设置引导" = "Open Setup Guide";
 "停止收听（⌃⌥C）" = "Stop Listening (⌃⌥C)";
 "开始收听（⌃⌥C）" = "Start Listening (⌃⌥C)";
-"使用这个模型" = "Use This Model";
 "正在处理" = "In progress";
 "只完成了一部分" = "Partly done";
 "出错了" = "Failed";
-"选择文件" = "Choose File";
-"把音频或视频文件拖到这里，或点一下选择" = "Drop an audio or video file here, or click to choose one";
 "转写这个链接（回车）" = "Transcribe This Link (Return)";
 "在这台 Mac 上识别" = "Transcribed on this Mac";
 "正在转写" = "Transcribing";
@@ -987,3 +792,341 @@
 "帮助" = "Help";
 "使用指南" = "User Guide";
 "隐私说明" = "Privacy Policy";
+"开" = "On";
+"关" = "Off";
+"%@ 字" = "%@ characters";
+"%@ 已就绪" = "%@ is ready";
+"B 站" = "Bilibili";
+"下午好" = "Good afternoon";
+"中午好" = "Good afternoon";
+"早上好" = "Good morning";
+"晚上好" = "Good evening";
+"今天说了 %@ 字" = "You dictated %@ characters today";
+"今天说了 %@ 字，大约省下 %@ 分钟打字" = "You dictated %@ characters today, saving about %@ minutes of typing";
+"今天还没开始。在任何输入框里按住 %@ 说话试试。" = "Nothing yet today. Hold %@ in any text field and start talking.";
+"从这个版本起，说话输入的结果会保存 30 天，可以在资料库里搜索，不会上传。不想保存，可以在“设置 › 隐私与数据”里关掉。" = "Starting with this version, dictation results are kept for 30 days so you can search them in the Library. Nothing is uploaded. To stop saving them, turn it off in Settings › Privacy & Data.";
+"修改要求" = "Instruction";
+"全部" = "All";
+"同时录下你和对方的声音，会后分出说话人、生成总结。" = "Records you and the other side, then tells speakers apart and writes a summary.";
+"在任何输入框里按住 %@ 说话，结果会出现在这里。" = "Hold %@ in any text field and talk. Your results show up here.";
+"在任何输入框里按住快捷键说话，松开就是整理好的文字。" = "Hold the shortcut in any text field and talk. Let go to get clean text.";
+"已就绪" = "Ready";
+"开了 %@ 场会" = "%@ meetings";
+"打开正在记录的会议" = "Open the meeting being recorded";
+"打开资料库" = "Open Library";
+"打开隐私与数据" = "Open Privacy & Data";
+"抖音" = "Douyin";
+"拷贝%@" = "Copy %@";
+"按住" = "Hold";
+"搜索资料库" = "Search Library";
+"最新的在前" = "Newest first";
+"最早的在前" = "Oldest first";
+"最近" = "Recent";
+"正在收听电脑声音" = "Listening to your Mac";
+"知道了" = "Got it";
+"结果" = "Result";
+"记录已删除" = "This item was deleted";
+"识别原文" = "Raw transcript";
+"说话" = "Dictation";
+"说话 · %@ 字" = "Dictation · %@ characters";
+"说话记录现在会保存在这台 Mac 上" = "Dictation history is now saved on this Mac";
+"说话输入、会议记录和转写的结果都会放在这里。" = "Your dictation, meeting notes, and transcriptions all end up here.";
+"资料库" = "Library";
+"资料库还是空的" = "Your library is empty";
+"还没有会议记录" = "No meeting notes yet";
+"还没有说话记录" = "No dictation yet";
+"还没有转写" = "No transcriptions yet";
+"首页" = "Home";
+"；" = "; ";
+"右 ⌥" = "Right ⌥";
+"右 ⌘" = "Right ⌘";
+"%@ 天" = "%@ days";
+"MIT 许可证，在 GitHub 上" = "MIT License, on GitHub";
+"~/.tidytalk.json，用文本编辑器修改高级选项" = "~/.tidytalk.json, for advanced options in a text editor";
+"一年" = "1 year";
+"一步步检查权限、AI 服务和识别模型" = "Walk through permissions, the AI service, and speech models";
+"一直保留" = "Forever";
+"中英文排版" = "Chinese–English spacing";
+"主窗口里" = "In the main window";
+"会议总结" = "Meeting summaries";
+"使用 Fn 时，请在“系统设置 › 键盘”里把“按下 🌐 键时”设为“无操作”。" = "To use Fn, set “Press 🌐 key to” to “Do Nothing” in System Settings › Keyboard.";
+"保存说话记录" = "Save dictation history";
+"保留多久" = "Keep for";
+"共用" = "Shared";
+"关于" = "About";
+"功能" = "Features";
+"占用空间" = "Storage";
+"去下载说话人模型" = "Download the speaker model";
+"双击上面的键开始，再按一次结束" = "Double-press the key above to start, press once more to stop";
+"反馈问题" = "Report an issue";
+"只听某一个应用时，其他应用的声音不会出字幕" = "When you pick one app, other apps aren't captioned";
+"同时录下你的麦克风和电脑里会议的声音，会后在这台 Mac 上整理成文字、分出说话人。按 ⌃⌥M 开始或结束。" = "Records your microphone and the meeting audio on your Mac, then turns it into text and tells speakers apart on this Mac. Press ⌃⌥M to start or stop.";
+"启动时检查，每天最多一次。版本和手动检查在“关于”里" = "Checks at launch, at most once a day. The version and manual check are in About";
+"在 GitHub 上提 issue" = "Open an issue on GitHub";
+"在中文和英文、数字之间加空格，统一用全角标点" = "Adds spaces between Chinese and English or numbers, and uses full-width punctuation";
+"在任何输入框里按住快捷键说话，松开后把整理好的文字粘贴到光标处。快捷键在“快捷键”里改。" = "Hold the shortcut in any text field and talk. When you let go, clean text is pasted at the cursor. Change the shortcut in Shortcuts.";
+"在资料库里搜索" = "Search the library";
+"声音始终在这台 Mac 上识别。这里管理系统权限、说话记录，以及 Tidytalk 在这台 Mac 上占用的空间。" = "Your voice is always recognized on this Mac. Manage permissions, dictation history, and the space Tidytalk uses here.";
+"字幕条" = "Caption bar";
+"字幕翻译" = "Caption translation";
+"存了什么、什么时候联网" = "What's stored and when it goes online";
+"存了什么、什么时候联网、哪些文字会发给 AI 服务" = "What's stored, when it goes online, and what text goes to the AI service";
+"帮助和资料" = "Help and resources";
+"开始和结束录音时各响一声" = "A sound when recording starts and stops";
+"开始或停止收听" = "Start or stop listening";
+"开始或结束会议记录" = "Start or stop meeting notes";
+"所有快捷键都在这一页。前三组在任何应用里都能用。" = "Every shortcut is on this page. The first three groups work in any app.";
+"所有模型都在这台 Mac 上运行，声音不上传。说话输入、实时字幕、会议记录和转写都用这里选的模型。" = "All models run on this Mac and your voice is never uploaded. Dictation, live captions, meeting notes, and transcription all use the model you pick here.";
+"打开" = "Open";
+"打开“%@”" = "Open “%@”";
+"打开设置 · 返回" = "Open Settings · Go back";
+"打开配置文件" = "Open the config file";
+"把字幕里刚才那段话整理后粘贴到光标处，收听时才有效" = "Cleans up what was just said and pastes it at the cursor. Works while listening";
+"按住开始录音，松开输出文字，按 Esc 取消" = "Hold to record, let go to get text, press Esc to cancel";
+"按场合调整语气：聊天更口语，邮件更书面" = "Matches the tone: casual for chat, formal for email";
+"排版和词库" = "Formatting and vocabulary";
+"提示加入词库" = "Suggest vocabulary";
+"整理后的文字和识别原文存在这台 Mac 上，资料库里可以搜索。关掉后只在这次打开期间放在内存里，退出就清空" = "Clean text and raw transcripts are kept on this Mac so you can search them in the Library. Turn off to keep them in memory only until you quit";
+"整理文字、语音改写、字幕翻译和会议总结都用这里的服务。选本机模型或 Apple 智能时，文字不离开这台 Mac。" = "Tidy up text, voice rewrite, caption translation, and meeting summaries all use this service. With a local model or Apple Intelligence, text stays on this Mac.";
+"更新日志" = "Changelog";
+"有声音时自动重新出现" = "Comes back when there's sound";
+"服务" = "Service";
+"每个功能怎么用、常见问题" = "How each feature works, and FAQ";
+"每个版本改了什么" = "What changed in each version";
+"没连上时用系统默认的麦克风" = "Uses the system default when it isn't connected";
+"深色适合视频，浅色适合文档" = "Dark for video, light for documents";
+"清空说话记录" = "Clear dictation history";
+"源代码" = "Source code";
+"点了才生成" = "On request";
+"版本 %@ · 按住说话，松开就是整理好的文字" = "Version %@ · Hold to talk, let go for clean text";
+"现在有 %@ 条" = "%@ items now";
+"现在没有说话记录" = "No dictation history yet";
+"用 AI 去掉口头禅，修正口误和标点。关闭后直接输出识别结果" = "Uses AI to remove filler words and fix slips and punctuation. Turn off to get the raw transcript";
+"用 AI 服务翻译每一句，译文显示在原文下面" = "Translates each caption with the AI service, shown below the original";
+"用到的开源项目：SenseVoice、Qwen3-ASR、Whisper、sherpa-onnx、yt-dlp 等。" = "Built with open-source projects including SenseVoice, Qwen3-ASR, Whisper, sherpa-onnx, and yt-dlp.";
+"用在这些地方" = "Used for";
+"登录 Mac 后在菜单栏里待命" = "Waits in the menu bar after you log in";
+"监听快捷键、把文字粘贴到光标处、读取选中的文字" = "Listens for shortcuts, pastes text at the cursor, reads selected text";
+"粘贴后发现你在输入框里改过的词，在词库里提示加入，确认后才加入" = "After pasting, words you change in the text field are suggested in Vocabulary. Nothing is added until you confirm";
+"系统" = "System";
+"线上会议建议只听会议应用，例如腾讯会议、Zoom" = "For online meetings, pick the meeting app, such as Zoom or Tencent Meeting";
+"自动生成" = "Automatic";
+"设置 › %@" = "Settings › %@";
+"语音识别模型" = "Speech recognition models";
+"说中文也可以直接输出英文等其他语言" = "Speak Chinese and get English or another language";
+"说话人模型" = "Speaker model";
+"说话时在指示器里显示识别出的文字" = "Shows recognized text in the indicator while you talk";
+"说话记录" = "Dictation history";
+"说话输入、会议记录" = "Dictation and meeting notes";
+"资料库里的说话记录都会删除，不能恢复。会议和转写不受影响。" = "All dictation history in the Library will be deleted. This can't be undone. Meetings and transcriptions aren't affected.";
+"超过时间的说话记录自动删除，会议和转写不受影响" = "Older dictation is deleted automatically. Meetings and transcriptions aren't affected";
+"选中一段文字，按住这个键说出要怎么改" = "Select some text, hold this key, and say how to change it";
+"都在这台 Mac 上" = "all on this Mac";
+"重新打开设置引导" = "Open the setup guide again";
+"隐私与数据" = "Privacy & Data";
+"默认关闭。打开后，每场会议结束都会把文字发给 AI 服务" = "Off by default. When on, every meeting's text is sent to the AI service when it ends";
+"用的是 Apple 智能，文字不离开这台 Mac" = "Using Apple Intelligence. Text stays on this Mac";
+"用的是 %@，文字会发给这个服务" = "Using %@. Text is sent to this service";
+"停止实时字幕" = "Stop Live Captions";
+"关于 Tidytalk" = "About Tidytalk";
+"反馈问题…" = "Report an Issue…";
+"开始实时字幕" = "Start Live Captions";
+"显示" = "View";
+"显示全部记录…" = "Show All History…";
+"最小化" = "Minimize";
+"最近的结果" = "Recent Results";
+"窗口" = "Window";
+"缩放" = "Zoom";
+"转写文件…" = "Transcribe File…";
+"转写链接…" = "Transcribe Link…";
+"键盘快捷键" = "Keyboard Shortcuts";
+"以后也可以在“设置 › 隐私与数据”里允许" = "You can also allow this later in Settings › Privacy & Data";
+"可以跳过，以后在“设置 › AI 服务”里配置" = "You can skip this and set it up later in Settings › AI Service";
+"以后可以在“设置 › 识别模型”里换用其他模型" = "You can switch models later in Settings › Speech Model";
+"。" = ".";
+
+/* 2026-10 界面按设计稿 v2 重做（转写页、词库标签、详情页各状态） */
+"导出…" = "Export…";
+"返回" = "Back";
+"全部应用" = "All apps";
+"用 Apple 智能在这台 Mac 上总结，文字不会离开这台 Mac。点下面的按钮开始。" = "Summarizes with Apple Intelligence on this Mac. Your text never leaves this Mac. Click the button below to start.";
+"用本机的大模型总结，文字不会离开这台 Mac。点下面的按钮开始。" = "Summarizes with a local model. Your text never leaves this Mac. Click the button below to start.";
+"会把会议文字和说话人的名字发给 %@。点下面的按钮才会发送。" = "The transcript and speaker names will be sent to %@. Nothing is sent until you click the button below.";
+"你好，欢迎使用 Tidytalk" = "Hi, welcome to Tidytalk";
+"下面三件事都在这台 Mac 上完成。说过的话、开过的会和转写的结果都会放进资料库。" = "All three run on this Mac. What you dictate, your meetings, and your transcriptions all end up in the Library.";
+"缺少模型" = "Model needed";
+"缺少权限" = "Permission needed";
+"把电脑里正在播放的声音变成字幕，可以边听边翻译。" = "Turns whatever your Mac is playing into captions, with optional live translation.";
+"正在记录 %@" = "Recording %@";
+"还没有记录" = "Nothing here yet";
+"按住 %@ 在任何输入框里说一句话，结果会出现在这里。" = "Hold %@ in any text field and say something. The result shows up here.";
+"改写 · 要求：%@" = "Rewrite · %@";
+"快捷短语 · %@" = "Snippet · %@";
+"改写：" = "Rewrite: ";
+"整理中" = "Processing";
+"整理失败" = "Processing failed";
+"处理中" = "Working";
+"会搜索标题、说话人和记录里的文字。换个词试试，或者清空搜索框。" = "Searches titles, speakers, and text. Try another word, or clear the search.";
+"说话记录现在不保存" = "Dictation history isn't being saved";
+"“设置 › 隐私与数据”里关掉了保存。这次打开期间说的话会显示在这里，退出后清空。" = "Saving is turned off in Settings › Privacy & Data. What you dictate shows up here until you quit Tidytalk.";
+"按 ⌃⌥M，或者在首页开始记录一场会议。" = "Press ⌃⌥M, or start a meeting from Home.";
+"在“转写”页拖入音频、视频文件，或者粘贴视频链接。" = "On the Transcribe page, drop in an audio or video file, or paste a video link.";
+"只在内存里，退出后清空" = "Memory only, cleared when you quit";
+"说出的话" = "What you said";
+"这条记录已经删除" = "This item was deleted";
+"可能在别处删掉了，或者超过了保留时间。" = "It may have been deleted elsewhere, or it was older than the retention period.";
+"还不能说话输入" = "Dictation isn't ready";
+"说话，松开出字" = "to talk, let go for text";
+"⌃⌥C 停止" = "⌃⌥C to stop";
+"译成%@ · ⌃⌥C 停止" = "Into %@ · ⌃⌥C to stop";
+"还差一步：允许使用麦克风" = "One more step: allow the microphone";
+"说话输入和会议记录要用麦克风录音。在系统设置里打开后回到这里，不用重新启动。" = "Dictation and meeting notes record with the microphone. Turn it on in System Settings, then come back. No restart needed.";
+"还差一步：允许“辅助功能”" = "One more step: allow Accessibility";
+"说话输入要用它监听快捷键、把文字粘贴到光标处。在系统设置里打开后回到这里，不用重新启动。" = "Dictation uses it to listen for the shortcut and paste text at the cursor. Turn it on in System Settings, then come back. No restart needed.";
+"下载完就能说话输入，可以先去做别的。" = "You can dictate as soon as it's done. Feel free to do something else meanwhile.";
+"还差一步：下载语音识别模型" = "One more step: download a speech model";
+"声音在这台 Mac 上识别，要先下载一个识别模型。" = "Speech is recognized on this Mac, so a speech model is needed first.";
+"麦克风没有打开" = "Microphone is off";
+"辅助功能没有打开" = "Accessibility is off";
+"正在下载识别模型 %lld%%" = "Downloading speech model %lld%%";
+"识别模型还没下载" = "Speech model not downloaded";
+"录音已删除" = "Recording deleted";
+"正在整理：%@" = "Processing: %@";
+"整理完之前可以先看会议中识别的文字，说话人会在整理完后补上。" = "You can read the live transcript in the meantime. Speakers are filled in when processing finishes.";
+"会后整理失败" = "Processing failed";
+"%@。下面是会议中识别的文字，可以重新整理一次。" = "%@. Below is the live transcript. You can process the meeting again.";
+"下载完会自动重新整理这场会议。" = "When it's downloaded, this meeting is processed again automatically.";
+"正在校验说话人模型…" = "Verifying the speaker model…";
+"重新整理这场会议，就能分出对方的多个人。" = "Process this meeting again to tell the other speakers apart.";
+"下载说话人模型后，可以分出对方的多个人" = "Download the speaker model to tell the other speakers apart";
+"约 %@，从 Hugging Face 下载。下载完会自动重新整理这场会议。" = "About %@, from Hugging Face. When it's downloaded, this meeting is processed again automatically.";
+"播放速度" = "Playback speed";
+"从这一句开始放" = "Play from here";
+"%@ 正在整理，长会议要一两分钟。可以先去做别的，好了会出现在这里。" = "%@ is working on it. Long meetings take a minute or two. You can do something else; the summary will appear here.";
+"总结失败" = "Summary failed";
+"设置 AI 服务" = "Set up an AI service";
+"开始说话后，文字会出现在这里。说完一句才显示，会后还会分出说话人、再精修一遍。" = "Text appears here once people start talking, a sentence at a time. After the meeting, speakers are told apart and the text is refined.";
+"说完一句才显示。结束后会分出对方的说话人，再精修一遍文字。停止按钮在左下角。" = "Text appears a sentence at a time. After the meeting, speakers are told apart and the text is refined. The stop button is at the bottom left.";
+"开始于 %@" = "Started %@";
+"录音保存在这台 Mac 上" = "Recording saved on this Mac";
+"电脑的声音 · 没有声音" = "Mac audio · No sound";
+"电脑的声音 · %@" = "Mac audio · %@";
+"正在识别……" = "Recognizing…";
+"下载识别模型" = "Download speech model";
+"说话时录音" = "Records while you talk";
+"快捷键和粘贴" = "Shortcut and pasting";
+"整理文字，可以跳过" = "Tidies text, optional";
+"在本机识别" = "Runs on this Mac";
+"按住 %@ 说话，松开后整理好的文字出现在光标处。" = "Hold %@ and talk. Let go, and clean text appears at the cursor.";
+"允许 Tidytalk 使用麦克风" = "Allow Tidytalk to use the microphone";
+"允许辅助功能" = "Allow Accessibility";
+"只在你按住快捷键时录音。声音在这台 Mac 上识别，不会上传。" = "Tidytalk records only while you hold the shortcut. Speech is recognized on this Mac and never uploaded.";
+"用来监听快捷键、把文字粘贴到光标处。Tidytalk 不会读取你输入的其他内容。" = "Used to listen for the shortcut and paste text at the cursor. Tidytalk doesn't read anything else you type.";
+"用 AI 去掉“嗯、那个”，修正口误和标点。选 Ollama、LM Studio 或 Apple 智能时不联网。" = "AI removes filler words and fixes slips and punctuation. With Ollama, LM Studio, or Apple Intelligence, nothing goes online.";
+"已经拒绝过，要在系统设置里打开" = "Access was denied. Turn it on in System Settings";
+"点右边的按钮，macOS 会弹出询问" = "Click the button on the right and macOS will ask";
+"点下面的按钮，打开“系统设置 › 隐私与安全性 › 辅助功能”" = "Click the button below to open System Settings › Privacy & Security › Accessibility";
+"在列表里打开 Tidytalk 的开关" = "Turn on Tidytalk in the list";
+"回到这里，会自动进入下一步" = "Come back here and the next step opens on its own";
+"监听快捷键、粘贴文字" = "Listens for the shortcut, pastes text";
+"关闭后直接输出识别结果" = "When off, you get the raw transcript";
+"下载完就能用。想要更准，以后可以换成 Qwen3-ASR（%@）。" = "Ready to use once downloaded. For better accuracy, you can switch to Qwen3-ASR (%@) later.";
+"已允许" = "Allowed";
+"还没允许" = "Not allowed";
+"已下载" = "Downloaded";
+"%@ · 保存在这台 Mac 上" = "%@ · Saved on this Mac";
+"已下载 %@ · 从 %@ 下载，失败时自动换成镜像" = "%@ downloaded · From %@, switches to a mirror if that fails";
+"需要下载约 %@，之后可以离线识别" = "About %@ to download, then it works offline";
+"用到时会询问" = "Asked when needed";
+"没用到" = "Not used";
+"还没设置 AI 服务" = "No AI service set up yet";
+"翻译用的是 Apple 智能，文字不离开这台 Mac" = "Translation uses Apple Intelligence. Your text stays on this Mac";
+"总结用的是 Apple 智能，文字不离开这台 Mac" = "Summaries use Apple Intelligence. Your text stays on this Mac";
+"用的是本机 %@，文字不离开这台 Mac" = "Using %@ on this Mac. Your text stays on this Mac";
+"翻译用的是本机 %@，文字不离开这台 Mac" = "Translation uses %@ on this Mac. Your text stays on this Mac";
+"总结用的是本机 %@，文字不离开这台 Mac" = "Summaries use %@ on this Mac. Your text stays on this Mac";
+"翻译用的是 %@，字幕会发给这个服务" = "Translation uses %@. Captions are sent to this service";
+"总结用的是 %@，会议文字会发给这个服务" = "Summaries use %@. Meeting text is sent to this service";
+"系统默认（%@）" = "System default (%@)";
+"给电脑正在播放的声音加字幕：视频、网课、线上会议都可以。按 ⌃⌥C 开始或停止，快捷键在“快捷键”里改。" = "Captions for whatever your Mac is playing: videos, online classes, video calls. Press ⌃⌥C to start or stop. Change the shortcut in Shortcuts.";
+"一句没说完就先翻，译文会随时更新" = "Translates before a sentence ends and updates as it goes";
+"录音存在这台 Mac 上，可以回放；关掉后只留文字" = "Recordings are saved on this Mac for playback. When off, only the text is kept";
+"会后把对方分成说话人 1、2、3，可以改名。需要说话人模型（%@）" = "After the meeting, other people are split into Speaker 1, 2, 3, which you can rename. Needs the speaker model (%@)";
+"会议记录占用的空间，在“隐私与数据”里查看和清理" = "See and clean up the space meetings use in Privacy & Data";
+"切换首页、转写、资料库、词库" = "Switch between Home, Transcribe, Library, and Vocabulary";
+"要先设置" = "Set up first";
+"模型共占用 %@，在“隐私与数据”里可以看到所有内容占用的空间" = "Models use %@. See everything Tidytalk stores in Privacy & Data";
+"实时字幕、会议记录" = "Live captions, meeting notes";
+"语音识别" = "Speech Recognition";
+"只在选了 Apple 系统识别时需要" = "Only needed for Apple Speech";
+"现在内存里有 %@ 条，退出 Tidytalk 后清空" = "%@ items in memory, cleared when you quit Tidytalk";
+"，约 %@" = ", about %@";
+"有新版本 %@" = "Version %@ available";
+"连接" = "Connection";
+"填你在服务商那里拿到的 API Key" = "The API key from your provider";
+"已连接，响应用了 %@ 秒" = "Connected, responded in %@ s";
+"点右边的按钮测试连接" = "Click the button on the right to test the connection";
+"用这台 Mac 自带的 Apple 智能" = "Using Apple Intelligence on this Mac";
+"已连上本机 %@" = "Connected to %@ on this Mac";
+"已连上 %@" = "Connected to %@";
+"还差接口地址。填好后点右边的按钮测试" = "The endpoint is missing. Fill it in, then test with the button on the right";
+"还差 API Key。填好后点右边的按钮测试" = "The API key is missing. Fill it in, then test with the button on the right";
+"还差模型名。填好后点右边的按钮测试" = "The model name is missing. Fill it in, then test with the button on the right";
+"DeepSeek、OpenAI 等" = "DeepSeek, OpenAI, and more";
+"macOS 自带，不用下载" = "Built into macOS, no download";
+"正在用" = "In use";
+"取消下载" = "Cancel download";
+"会议记录结束后，把对方分成说话人 1、2、3，可以改名" = "After a meeting, splits other people into Speaker 1, 2, 3, which you can rename";
+"格式：" = "Format:";
+"把音频、视频文件或视频链接转成文字。声音在这台 Mac 上识别，链接只下载音频。" = "Turn audio files, video files, or video links into text. Speech is recognized on this Mac; for links, only the audio is downloaded.";
+"粘贴视频链接，例如 YouTube 或 B 站的视频页面" = "Paste a video link, like a YouTube or Bilibili page";
+"第一次转写链接时，会先下载开源工具 yt-dlp。只下载音频和封面，不下载视频。" = "The first link downloads the open-source tool yt-dlp. Only the audio and cover image are downloaded, never the video.";
+"选择文件（⌘O）" = "Choose a file (⌘O)";
+"松开就开始转写" = "Drop to start transcribing";
+"正在转写“%@”" = "Transcribing “%@”";
+"把音频或视频文件拖到这里" = "Drop an audio or video file here";
+"一次转写一个，这个完成后就可以开始下一个。" = "One at a time. You can start the next one when this finishes.";
+"MP3、M4A、WAV、MP4、MOV 这些常见格式都可以，也可以点右边的按钮选择文件。" = "Common formats like MP3, M4A, WAV, MP4, and MOV all work. Or choose a file with the button on the right.";
+"转写记录" = "Transcriptions";
+"在资料库里看全部转写" = "See all transcriptions in the Library";
+"还没有转写记录" = "No transcriptions yet";
+"转写好的文字会放在这里，也能在资料库里找到。" = "Finished transcriptions appear here and in the Library.";
+"视频网站有时要十几秒才回应。拿到标题和封面后会先显示出来。" = "Video sites can take 10 seconds or more to respond. The title and cover show up as soon as they arrive.";
+"可以换一个链接，或者把视频下载下来拖进“转写”页。" = "Try another link, or download the video and drop it onto the Transcribe page.";
+"可以换一个文件再试。" = "Try a different file.";
+"重新转写" = "Transcribe again";
+"没有文字" = "No text";
+"没能下载音频，所以还没有识别。" = "The audio couldn't be downloaded, so nothing was recognized.";
+"没能读出这个文件的声音。" = "The audio in this file couldn't be read.";
+"让识别和 AI 整理用对你的写法。改动马上生效，不用保存。" = "Teach recognition and AI tidying how you write things. Changes take effect right away; there's nothing to save.";
+"发现你改过的词" = "Words you corrected";
+"粘贴后你把左边改成了右边，加入词库后以后会自动改" = "After pasting, you changed the left into the right. Add them and Tidytalk will fix them next time";
+"添加人名、产品名或术语，按回车加入" = "Add a name, product, or term and press Return";
+"还没有常用词" = "No terms yet";
+"把人名、产品名、术语加进来，AI 整理时会把读音相近的词纠正成这些写法。" = "Add names, products, and terms. When tidying, AI corrects similar-sounding words to these spellings.";
+"AI 整理文字时会参考这些写法。没打开“整理文字”时不起作用。" = "AI uses these spellings when tidying text. They have no effect when Tidy up text is off.";
+"还没有固定替换" = "No replacements yet";
+"识别成左边的词时换成右边的写法，例如“克劳德 → Claude”。" = "When the left side is recognized, it's replaced with the right, like “Klawd → Claude”.";
+"还没有快捷短语" = "No snippets yet";
+"只说出一个短语时，直接输出你设好的内容，比如邮箱、地址。" = "Say just the phrase to insert what you set, like your email or address.";
+"再加一条写法要求，按回车加入" = "Add another writing rule and press Return";
+"还没有自定义规则" = "No custom rules yet";
+"每条一个写法要求，AI 整理和改写时会遵守，例如“金额一律用阿拉伯数字”。" = "One writing rule each, followed when AI tidies or rewrites. For example: “Always write amounts in digits”.";
+"AI 整理和语音改写时会遵守这些要求。" = "AI follows these rules when tidying and for voice rewrite.";
+"%@ / %@ 条" = "%@ / %@";
+"加入（回车）" = "Add (Return)";
+"删除“%@”" = "Remove “%@”";
+
+/* 设置 › 通用 › 外观和语言 */
+"跟随系统（%@）" = "System (%@)";
+"Tidytalk 的外观和语言、怎么启动、怎么提醒你、怎么更新。" = "How Tidytalk looks, which language it uses, how it starts, reminds you, and updates.";
+"外观和语言" = "Appearance & Language";
+"外观" = "Appearance";
+"跟随系统的浅色和深色，或者固定用一种" = "Follow the system's light and dark, or pick one";
+"语言" = "Language";
+"界面文字的语言。跟随系统时，按 macOS 的首选语言显示" = "The language Tidytalk uses. System follows your preferred language in macOS";
+"重新打开 Tidytalk 后换成 %@" = "Switches to %@ when you reopen Tidytalk";
+"现在重新打开 Tidytalk" = "Reopen Tidytalk now";
+"启动和更新" = "Startup & Updates";
+"跟随系统" = "System";
+"浅色" = "Light";

@@ -10,6 +10,8 @@ final class TranscribeController {
     enum Stage: Equatable {
         case idle
         case installingTool
+        /// 链接：yt-dlp 在读视频网页、找音频，还没开始下载（常常要十几秒）
+        case fetchingInfo
         case downloading(Double)
         case decoding(Double)
         case splitting
@@ -37,6 +39,7 @@ final class TranscribeController {
             switch self {
             case .idle, .finished: ""
             case .installingTool: String(localized: "正在下载 yt-dlp…")
+            case .fetchingInfo: String(localized: "正在读取视频信息…")
             case .downloading(let f): String(localized: "正在下载音频 \(Int(f * 100))%")
             case .decoding: String(localized: "正在读取音频…")
             case .splitting: String(localized: "正在分句…")
@@ -96,6 +99,7 @@ final class TranscribeController {
         }
         let item = Transcription(kind: .link, title: link, model: modelTitle, link: link)
         return start(item) { [weak self] directory in
+            let id = item.id
             if !YTDLP.isInstalled {
                 self?.stage = .installingTool
                 try await YTDLP.install()
@@ -104,11 +108,17 @@ final class TranscribeController {
                 self?.stage = .installingTool
                 try? await YTDLP.install()
             }
-            self?.stage = .downloading(0)
-            let result = try await YTDLP.downloadAudio(from: link, into: directory) { fraction in
+            self?.stage = .fetchingInfo
+            let result = try await YTDLP.downloadAudio(from: link, into: directory, onInfo: { info in
+                Task { @MainActor in self?.show(info, of: id, thumbnailIn: directory) }
+            }) { fraction in
                 Task { @MainActor in
-                    guard let self, case .downloading = self.stage else { return }
-                    self.stage = .downloading(fraction)
+                    // 收到第一个百分比才算开始下载
+                    guard let self else { return }
+                    switch self.stage {
+                    case .fetchingInfo, .downloading: self.stage = .downloading(fraction)
+                    default: return
+                    }
                 }
             }
             if let self, let id = self.current {
@@ -126,8 +136,31 @@ final class TranscribeController {
         }
     }
 
+    #if DEBUG || TIDYTALK_DEV_TOOLS
+    /// 截图用：把记录显示成正在转写、停在某个阶段。
+    func simulate(_ item: Transcription?, stage: Stage, segments: [TranscriptSegment] = []) {
+        current = item?.id
+        title = item?.title ?? ""
+        self.segments = segments
+        self.stage = stage
+    }
+    #endif
+
     func cancel() {
         task?.cancel()
+    }
+
+    /// yt-dlp 读到视频信息、还没开始下载时，先把标题、上传者、时长和封面图显示出来，不用等下载完。
+    private func show(_ info: YTDLP.Info, of id: UUID, thumbnailIn directory: URL) {
+        guard current == id else { return }
+        title = info.title
+        let thumbnail = YTDLP.thumbnail(in: directory)
+        store.update(id) {
+            $0.title = info.title
+            $0.uploader = info.uploader
+            if let duration = info.duration { $0.duration = duration }
+            if let thumbnail { $0.thumbnailFile = thumbnail.lastPathComponent }
+        }
     }
 
     func clearFailure() {
@@ -152,7 +185,7 @@ final class TranscribeController {
         segments = []
         title = item.title
         stage = .decoding(0)
-        if item.kind == .link { stage = .downloading(0) }
+        if item.kind == .link { stage = .fetchingInfo }
         task = Task {
             let outcome = await run(id: id, source: source)
             finish(id, outcome)

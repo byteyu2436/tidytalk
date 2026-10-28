@@ -98,8 +98,13 @@ final class ListenController {
         Task { [weak self] in
             while true {
                 try? await Task.sleep(for: Self.silenceCheckDelay)
-                guard let self, current == self.session, model.isListening, !heardSound.value else { return }
+                guard let self, current == self.session, model.isListening else { return }
+                if heardSound.value {
+                    model.noteSystemAudio(heard: true)
+                    return
+                }
                 guard !model.listeningPaused, AudioProcesses.somethingElseIsPlaying() else { continue }
+                model.noteSystemAudio(heard: false)
                 onError?(String(localized: "收不到电脑的声音：请在\"系统设置 › 隐私与安全性 › 录制系统音频\"里允许 Tidytalk"))
                 Permissions.openSystemAudioSettings()
                 return

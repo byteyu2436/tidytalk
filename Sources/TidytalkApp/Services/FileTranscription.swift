@@ -164,8 +164,20 @@ enum YTDLP {
         var thumbnail: URL?
     }
 
-    /// 只下载链接里的音频（和封面图），返回文件位置和标题。`onProgress` 回报 0...1 的下载进度。
+    /// 开始下载前就知道的信息：标题、上传者、时长。这时封面图也已经写好了。
+    struct Info: Equatable {
+        var title: String
+        var uploader: String?
+        var duration: TimeInterval?
+    }
+
+    /// `--print before_dl` 那一行的开头，和最后打印的标题、文件路径分开。
+    static let infoPrefix = "tidytalk-info\t"
+
+    /// 只下载链接里的音频（和封面图），返回文件位置和标题。读到视频信息、还没开始下载时调用 `onInfo`
+    /// （常常要等十几秒），`onProgress` 回报 0...1 的下载进度。
     static func downloadAudio(from link: String, into directory: URL,
+                              onInfo: @escaping @Sendable (Info) -> Void = { _ in },
                               onProgress: @escaping @Sendable (Double) -> Void) async throws -> Download {
         let process = Process()
         process.executableURL = executable
@@ -176,6 +188,8 @@ enum YTDLP {
             "-o", directory.appending(path: "audio.%(ext)s").path,
             // 封面图在卡片上显示；下载不到时 yt-dlp 只给警告，不影响音频
             "--write-thumbnail", "-o", "thumbnail:" + directory.appending(path: "thumbnail.%(ext)s").path,
+            // 封面图在下载音频之前写好，这一行在它之后、下载之前打印
+            "--print", "before_dl:" + infoPrefix + "%(title)s\t%(uploader)s\t%(duration)s",
             "--print", "after_move:title", "--print", "after_move:uploader", "--print", "after_move:filepath",
             "--", link,
         ]
@@ -188,6 +202,8 @@ enum YTDLP {
         let handleLine: @Sendable (String, LineCollector) -> Void = { line, collector in
             if let percent = Self.progress(in: line) {
                 onProgress(percent / 100)
+            } else if let info = Self.info(in: line) {
+                onInfo(info)
             } else {
                 collector.append(line)
             }
@@ -255,6 +271,19 @@ enum YTDLP {
         let uploader = lines[lines.count - 2]
         return Download(file: URL(fileURLWithPath: path), title: lines[lines.count - 3],
                         uploader: uploader == "NA" || uploader.isEmpty ? nil : uploader)
+    }
+
+    /// 解析 `--print before_dl` 的那一行：标题、上传者、时长用制表符隔开，没有的是 NA。
+    static func info(in line: String) -> Info? {
+        guard line.hasPrefix(infoPrefix) else { return nil }
+        let parts = line.dropFirst(infoPrefix.count).components(separatedBy: "\t")
+        guard parts.count >= 3 else { return nil }
+        // 标题里万一有制表符，只拆最后两段
+        let title = parts.dropLast(2).joined(separator: "\t").trimmingCharacters(in: .whitespaces)
+        let uploader = parts[parts.count - 2]
+        guard !title.isEmpty, title != "NA" else { return nil }
+        return Info(title: title, uploader: uploader == "NA" || uploader.isEmpty ? nil : uploader,
+                    duration: Double(parts[parts.count - 1]).flatMap { $0 > 0 ? $0 : nil })
     }
 
     /// 下载目录里的封面图（扩展名由网站决定：jpg、webp、png）。

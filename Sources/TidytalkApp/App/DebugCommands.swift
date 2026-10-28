@@ -289,7 +289,7 @@ enum SnapshotCommand {
         // 完整高度，检查下半部分的文字
         render(GeneralSettings(model: model).frame(width: 560, height: 2200), to: dir.appending(path: "settings-full.png"))
         render(AIConfigEditor(model: model).padding(24).frame(width: 400), to: dir.appending(path: "ai-config.png"))
-        render(VocabularySettings(model: model).frame(width: 560, height: 620), to: dir.appending(path: "vocabulary.png"))
+        render(VocabularyView(model: model).frame(width: 560, height: 620), to: dir.appending(path: "vocabulary.png"))
 
         let phases: [(String, AppModel.Phase)] = [
             ("indicator-recording", .recording),
@@ -600,6 +600,31 @@ enum SettingsCaptureCommand {
                 try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
                     .write(to: dir.appending(path: "settings-tab\(i).png"))
             }
+        }
+
+        // 外观和语言（设计稿 14-appearance-*）。英文界面配合 -AppleLanguages "(en)" --simulate-language en
+        func shot(_ name: String) {
+            navigation.openSettings(.about)
+            RunLoop.main.run(until: Date().addingTimeInterval(0.3))
+            navigation.openSettings(.general)
+            RunLoop.main.run(until: Date().addingTimeInterval(1.0))
+            if let image = capture(.null, 1 << 3, UInt32(window.windowNumber), 0)?.takeRetainedValue() {
+                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                    .write(to: dir.appending(path: "\(name).png"))
+            }
+        }
+        AppLanguage.simulated = args.contains("--simulate-language") ? .english : .system
+        shot("14-appearance-1-system")
+        if !args.contains("--dark") {
+            model.configStore.update { $0.appearance = .dark }
+            AppAppearance.dark.apply()
+            shot("14-appearance-2-dark")
+            model.configStore.update { $0.appearance = .system }
+            AppAppearance.system.apply()
+        }
+        if AppLanguage.runningCode.hasPrefix("zh") {
+            AppLanguage.simulated = .english
+            shot("14-appearance-3-english-pending")
         }
         return true
     }
@@ -1246,42 +1271,206 @@ enum MainWindowCaptureCommand {
                     .write(to: dir.appending(path: "\(name).png"))
             }
         }
-        shot("meetings-empty")
-        if let first = store.meetings.first {
-            navigation.meeting = first.id
-            shot("meeting-transcript")
-            navigation.meetingTab = .summary
-            shot("meeting-summary")
-            navigation.meetingTab = .transcript
+        // 和设计稿 docs/design/screens 的编号一一对应，方便逐张对比
+        let english = !(Bundle.main.preferredLocalizations.first?.hasPrefix("zh") ?? true)
+        seedDictations(model)
+        model.simulate(notice: false)
+        model.simulate(suggestions: [WordCorrection(from: "瑟斯沃伊斯", to: "SenseVoice"),
+                                     WordCorrection(from: "欧拉马", to: "Ollama")])
+
+        // 首页
+        shot("01-home-1-full")
+        // 页头在标题栏（工具栏）的高度里：检查点击会不会被标题栏截走
+        if let frame = window.contentView?.superview {
+            let h = frame.bounds.height
+            // 离窗口顶边的距离换成这个视图的坐标
+            func top(_ y: CGFloat) -> CGFloat { frame.isFlipped ? y : h - y }
+            for (name, point) in [("header-search", NSPoint(x: frame.bounds.width - 120, y: top(26))),
+                                  ("header-title", NSPoint(x: 300, y: top(26))),
+                                  ("traffic-gap", NSPoint(x: 150, y: top(26))),
+                                  ("sidebar-row", NSPoint(x: 100, y: top(130))),
+                                  ("body", NSPoint(x: 700, y: top(300)))] {
+                let view = frame.hitTest(point)
+                print("hit \(name): \(view.map { String(describing: type(of: $0)) } ?? "nil")")
+            }
         }
-        navigation.meeting = nil
-        for section in [MainNavigation.Section.transcribe, .history, .vocabulary] {
-            navigation.section = section
-            shot("section-\(section.rawValue)")
-        }
-        navigation.section = .transcribe
-        navigation.transcribeTab = .link
-        shot("transcribe-link")
-        if let link = transcriptions.items(of: .link).first {
-            navigation.transcription = link.id
-            shot("transcription-link-detail")
-        }
-        navigation.transcription = nil
-        navigation.transcribeTab = .file
-        if let file = transcriptions.items(of: .file).first {
-            navigation.transcription = file.id
-            shot("transcription-file-detail")
-        }
-        navigation.transcription = nil
-        // 录制界面：用第一场会议的前几段当实时文字
+        let accessibility = model.accessibilityGranted
+        model.accessibilityGranted = false
+        shot("01-home-3-not-ready")
+        model.accessibilityGranted = accessibility
         if var live = store.meetings.first {
             live.segments = Array(live.segments.prefix(4))
             meetings.simulateRecording(live, elapsed: 754)
-            navigation.section = .meetings
-            navigation.meeting = live.id
-            shot("meeting-live")
+            shot("01-home-4-meeting")
+            meetings.simulateIdle()
         }
+        model.isListening = true
+        shot("01-home-5-captions")
+        model.isListening = false
+
+        // 转写
+        navigation.show(.transcribe)
+        shot("02-transcribe-2-records")
+        if let first = transcriptions.items.first {
+            transcriber.simulate(first, stage: .recognizing(done: 128, total: 300))
+            shot("02-transcribe-3-busy")
+            transcriber.simulate(nil, stage: .idle)
+        }
+        _ = transcriber.transcribe(link: "youtube.com/watch?v=dQw4w9WgXcQ")
+        shot("02-transcribe-5-link-error")
+        transcriber.clearFailure()
+
+        // 资料库
+        navigation.show(.library)
+        shot("03-library-1-all")
+        navigation.libraryFilter = .meetings
+        shot("03-library-2-filter-meetings")
+        navigation.libraryFilter = .all
+        navigation.search = english ? "quarterly budget" : "季度预算"
+        shot("03-library-3-search-empty")
+        navigation.search = ""
+        model.simulate(notice: true)
+        shot("03-library-5-upgrade-notice")
+        model.simulate(notice: false)
+
+        // 词库
+        navigation.show(.vocabulary)
+        for (index, tab) in [VocabularyView.Tab.terms, .replacements, .snippets, .rules].enumerated() {
+            navigation.vocabularyTab = tab
+            shot("04-vocabulary-\(index + 1)")
+        }
+        navigation.vocabularyTab = .terms
+
+        // 会议详情
+        if let first = store.meetings.first {
+            navigation.openMeeting(first.id)
+            navigation.meetingTab = .transcript
+            shot("05-meeting-1-transcript")
+            navigation.meetingTab = .summary
+            shot("05-meeting-2-summary")
+            let summary = first.summary
+            store.update(first.id) { $0.summary = nil }
+            shot("05-meeting-3-no-summary")
+            processor.simulate(first.id, stage: nil, summarizing: true)
+            shot("05-meeting-5-summarizing")
+            processor.simulate(first.id, stage: nil)
+            store.update(first.id) { $0.summary = summary }
+            navigation.meetingTab = .transcript
+            processor.simulate(first.id, stage: english ? "Telling the other speakers apart (2/3)" : "分出对方的说话人（2/3）", fraction: 0.62)
+            shot("05-meeting-6-processing")
+            processor.simulate(first.id, stage: nil)
+            store.update(first.id) {
+                $0.state = .failed
+                $0.processingError = english ? "The speaker model failed to load" : "说话人模型加载失败"
+            }
+            shot("05-meeting-7-failed")
+            store.update(first.id) { $0.state = .ready; $0.processingError = nil }
+            store.deleteRecording(first.id)
+            shot("05-meeting-9-recording-deleted")
+        }
+
+        // 说话记录详情
+        let entries = model.history
+        for (index, kind) in [HistoryEntry.Kind.dictation, .rewrite, .snippet].enumerated() {
+            if let entry = entries.first(where: { $0.kind == kind }) {
+                navigation.openDictation(entry.id)
+                shot("06-dictation-\(index + 1)")
+            }
+        }
+        navigation.openDictation(UUID())
+        shot("06-dictation-4-deleted")
+
+        // 开会中
+        if var live = store.meetings.first {
+            live.segments = []
+            meetings.simulateRecording(live, elapsed: 8, levels: [.microphone: 0.2, .system: 0.1])
+            navigation.openMeeting(live.id)
+            shot("07-meeting-live-1-started")
+            live.segments = Array((store.meetings.first?.segments ?? []).prefix(4))
+            meetings.simulateRecording(live, elapsed: 754, queued: [.system])
+            shot("07-meeting-live-2-content")
+            meetings.simulateRecording(live, elapsed: 754, levels: [.microphone: 0.55, .system: 0],
+                                       warning: String(localized: "收不到电脑的声音：请在\"系统设置 › 隐私与安全性 › 录制系统音频\"里允许 Tidytalk"))
+            shot("07-meeting-live-3-no-system-audio")
+            meetings.simulateIdle()
+        }
+
+        // 转写详情：正在读视频信息（不确定进度）、下载到一半、识别中，完成、出错、本机文件中途停止
+        let link = "https://www.youtube.com/watch?v=H3KnMyojEQU"
+        let pending = Transcription(kind: .link, title: link, model: "SenseVoice", link: link)
+        try? transcriptions.create(pending)
+        navigation.openTranscription(pending.id)
+        transcriber.simulate(pending, stage: .fetchingInfo)
+        shot("08-transcription-1-fetching")
+        writeThumbnail(to: transcriptions.directory(for: pending.id).appending(path: "thumbnail.png"))
+        transcriptions.update(pending.id) {
+            $0.title = english ? "Building a menu bar app with SwiftUI" : "用 SwiftUI 做一个菜单栏应用"
+            $0.uploader = english ? "Swift Community" : "Swift 中文社区"
+            $0.duration = 754
+            $0.thumbnailFile = "thumbnail.png"
+        }
+        transcriber.simulate(pending, stage: .downloading(0.46))
+        shot("08-transcription-2-downloading")
+        let finished = transcriptions.items(of: .link).first { $0.state == .finished && $0.thumbnailFile != nil }
+        transcriber.simulate(pending, stage: .recognizing(done: 64, total: 180),
+                             segments: Array((finished?.segments ?? []).prefix(3)))
+        shot("08-transcription-3-recognizing")
+        transcriber.simulate(nil, stage: .idle)
+        transcriptions.delete(pending.id)
+        if let finished {
+            navigation.openTranscription(finished.id)
+            shot("08-transcription-4-done")
+            let title = finished.title
+            transcriptions.update(finished.id) { $0.title = "iPhone Duo レビュー！遂に手に入れた折りたたみスマホは最高すぎた【自腹購入】" }
+            shot("08-transcription-7-long-title")
+            transcriptions.update(finished.id) { $0.title = title }
+        }
+        if let failed = transcriptions.items.first(where: { $0.state == .failed }) {
+            navigation.openTranscription(failed.id)
+            shot("08-transcription-5-error")
+        }
+        if let partial = transcriptions.items.first(where: { $0.isPartial }) {
+            navigation.openTranscription(partial.id)
+            shot("08-transcription-6-file-stopped")
+        }
+
+        // 什么都没有的时候
+        model.clearHistory()
+        for meeting in store.meetings { store.delete(meeting.id) }
+        for item in transcriptions.items { transcriptions.delete(item.id) }
+        navigation.show(.home)
+        shot("01-home-2-first-use")
+        navigation.show(.transcribe)
+        shot("02-transcribe-1-empty")
+        navigation.show(.library)
+        shot("03-library-4-empty")
         return true
+    }
+
+    /// 截图用的说话记录（存在临时配置旁边，不碰真实记录）。
+    private static func seedDictations(_ model: AppModel) {
+        guard model.history.isEmpty else { return }
+        let english = !(Bundle.main.preferredLocalizations.first?.hasPrefix("zh") ?? true)
+        let now = Date()
+        let samples: [(TimeInterval, String, String, HistoryEntry.Kind)] = english ? [
+            (-86_400 * 1.2, "um so the demo is on Thursday", "The demo is on Thursday.", .dictation),
+            (-5_400, "Make it more polite", "Could you please send me the quote by Friday? Thanks.", .rewrite),
+            (-1_800, "remember to bring last week's numbers to the meeting tomorrow at three",
+             "Remember to bring last week's numbers to tomorrow's 3 p.m. meeting.", .dictation),
+            (-600, "we're using claude for the demo and we'll send it to the client before wednesday",
+             "We're using Claude for the demo and will send it to the client before Wednesday.", .dictation),
+            (-300, "my email", "name@example.com", .snippet),
+        ] : [
+            (-86_400 * 1.2, "嗯那个演示放在周四", "演示放在周四。", .dictation),
+            (-5_400, "改得礼貌一点", "请在周五前把报价单发给我，谢谢。", .rewrite),
+            (-1_800, "明天下午三点开会记得带上周的数据", "明天下午三点开会，记得带上周的数据。", .dictation),
+            (-600, "我们用克劳德做演示下周三之前给到客户", "我们用 Claude 做演示，下周三之前给到客户。", .dictation),
+            (-300, "我的邮箱", "name@example.com", .snippet),
+        ]
+        for (offset, transcript, output, kind) in samples {
+            model.recordHistory(HistoryEntry(date: now.addingTimeInterval(offset), transcript: transcript,
+                                             output: output, kind: kind))
+        }
     }
 
     /// 截图用的转写记录：两个链接（一个带封面图和音频）、两个文件。
@@ -1337,6 +1526,11 @@ enum MainWindowCaptureCommand {
         video.duration = 245
         video.isPartial = true
         try? store.create(video)
+        var failed = Transcription(kind: .file, title: english ? "Recording 0915" : "会议录像 0915",
+                                   createdAt: Date().addingTimeInterval(-900_000), state: .failed, model: "SenseVoice",
+                                   sourcePath: "/Users/demo/Movies/0915.mov", segments: [])
+        failed.error = english ? "No speech was heard" : "没有听到内容"
+        try? store.create(failed)
     }
 
     /// 16 kHz 单声道的静音 WAV。

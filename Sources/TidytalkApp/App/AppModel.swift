@@ -86,18 +86,66 @@ final class AppModel {
         didSet { UserDefaults.standard.set(onboardingCompleted, forKey: Keys.onboardingCompleted) }
     }
 
-    /// 最近的识别结果，最新的在前。只保存在内存中，退出应用即清空。
-    private(set) var history: [HistoryEntry] = []
-    static let historyLimit = 20
+    /// 说话记录。打开"保存说话记录"时存在这台 Mac 上，超过保留天数自动删除；关闭时只在内存里。
+    let dictations: DictationStore
+
+    /// 最近的说话记录，最新的在前。
+    var history: [HistoryEntry] { dictations.entries }
 
     func recordHistory(_ entry: HistoryEntry) {
-        guard configStore.config.history else { return }
-        history.insert(entry, at: 0)
-        if history.count > Self.historyLimit { history.removeLast(history.count - Self.historyLimit) }
+        dictations.add(entry)
     }
 
     func clearHistory() {
-        history.removeAll()
+        dictations.clear()
+    }
+
+    /// 改"保存说话记录"和保留天数（设置 › 隐私与数据）。
+    func setHistory(saving: Bool? = nil, days: Int? = nil) {
+        configStore.update { config in
+            if let saving { config.history = saving }
+            if let days { config.historyDays = days }
+        }
+        dictations.configure(saving: configStore.config.history, retentionDays: configStore.config.historyDays)
+    }
+
+    /// 老用户升级后第一次打开资料库时提示一次：说话记录现在会保存、在哪里关。
+    private(set) var dictationNoticePending: Bool
+
+    #if DEBUG || TIDYTALK_DEV_TOOLS
+    /// 截图用：显示升级提示、放几条“发现你改过的词”。
+    func simulate(notice: Bool? = nil, suggestions: [WordCorrection]? = nil) {
+        if let notice { dictationNoticePending = notice }
+        if let suggestions { correctionSuggestions = suggestions }
+    }
+    #endif
+
+    /// 录制系统音频的权限：macOS 不提供查询接口，按收到过的声音判断。收听或开会时听到过电脑的声音算已允许；
+    /// 有别的应用在发声、收到的却一直是静音算还没允许；都没试过时不知道。
+    enum SystemAudioStatus: String { case unknown, granted, denied }
+
+    var systemAudio: SystemAudioStatus = SystemAudioStatus(
+        rawValue: UserDefaults.standard.string(forKey: "systemAudioStatus") ?? "") ?? .unknown
+
+    func noteSystemAudio(heard: Bool) {
+        let status: SystemAudioStatus = heard ? .granted : .denied
+        guard status != systemAudio else { return }
+        systemAudio = status
+        UserDefaults.standard.set(status.rawValue, forKey: "systemAudioStatus")
+    }
+
+    func dismissDictationNotice() {
+        dictationNoticePending = false
+        if !Self.isScratchRun { UserDefaults.standard.set(true, forKey: Keys.dictationNoticeShown) }
+    }
+
+    /// 开发用的截图命令（`--config` 指定临时配置）不改真实的偏好设置。
+    private static var isScratchRun: Bool {
+        #if DEBUG || TIDYTALK_DEV_TOOLS
+        CommandLine.arguments.contains("--config")
+        #else
+        false
+        #endif
     }
 
     /// 粘贴后发现用户改掉的词，等用户确认后加入词库。只保存在内存中。
@@ -136,10 +184,23 @@ final class AppModel {
 
     private enum Keys {
         static let onboardingCompleted = "onboardingCompleted"
+        /// 资料库里"说话记录现在会保存"的提示看过了
+        static let dictationNoticeShown = "dictationNoticeShown"
     }
 
     init() {
-        onboardingCompleted = UserDefaults.standard.bool(forKey: Keys.onboardingCompleted)
+        let defaults = UserDefaults.standard
+        let completed = defaults.bool(forKey: Keys.onboardingCompleted)
+        onboardingCompleted = completed
+        let config = configStore.config
+        dictations = DictationStore(saving: config.history, retentionDays: config.historyDays)
+        // 只提示升级上来的老用户（以前完成过设置引导）；新用户在引导里就知道了
+        if defaults.object(forKey: Keys.dictationNoticeShown) == nil {
+            dictationNoticePending = completed && config.history
+            if !completed && !Self.isScratchRun { defaults.set(true, forKey: Keys.dictationNoticeShown) }
+        } else {
+            dictationNoticePending = false
+        }
     }
 
     var readiness: Readiness {
@@ -181,11 +242,11 @@ final class AppModel {
     }
 }
 
-/// 一次说话的结果。
-struct HistoryEntry: Identifiable, Equatable {
-    enum Kind { case dictation, rewrite, snippet }
+/// 一次说话的结果。保存说话记录时写进 `Dictations/dictations.json`。
+struct HistoryEntry: Identifiable, Equatable, Codable {
+    enum Kind: String, Codable { case dictation, rewrite, snippet }
 
-    let id = UUID()
+    var id = UUID()
     let date: Date
     /// 识别原文（已按替换表替换）；语音改写时是"改写：修改要求"。
     let transcript: String

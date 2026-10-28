@@ -38,9 +38,20 @@ final class MeetingProcessor {
 
     func isProcessing(_ id: UUID) -> Bool { progress[id] != nil }
 
+    #if DEBUG || TIDYTALK_DEV_TOOLS
+    /// 截图用：停在整理的某一步、或者正在生成总结。
+    func simulate(_ id: UUID, stage: String?, fraction: Double? = nil, summarizing: Bool = false) {
+        progress[id] = stage.map { Progress(stage: $0, fraction: fraction) }
+        if summarizing { self.summarizing.insert(id) } else { self.summarizing.remove(id) }
+    }
+    #endif
+
     /// 说话人模型（界面上显示下载状态）。
     var diarizationModels: ModelManager { model.diarizationModels }
-    var diarizationReady: Bool { model.diarizationModels.isReady }
+    /// 说话人模型已下载，而且设置里打开了“区分说话人”
+    var diarizationReady: Bool { model.diarizationModels.isReady && diarizeEnabled }
+    /// 设置里打开了“区分说话人”
+    var diarizeEnabled: Bool { model.configStore.config.meetingDiarize }
     /// 现在配置的 AI 服务（总结用）。
     var aiConfig: AIConfig { model.configStore.config.ai }
 
@@ -256,7 +267,7 @@ final class MeetingProcessor {
 
     private func loadDiarizer() -> SpeakerDiarizer? {
         if let diarizer { return diarizer }
-        guard model.diarizationModels.isReady else { return nil }
+        guard model.diarizationModels.isReady, model.configStore.config.meetingDiarize else { return nil }
         diarizer = try? SpeakerDiarizer(directory: model.diarizationModels.directory)
         return diarizer
     }
@@ -321,8 +332,8 @@ final class MeetingProcessor {
 
     /// 文字会发到哪里，"生成总结"按钮旁边说明。
     static func destination(_ config: AIConfig) -> String {
-        if config.service == .apple { return String(localized: "用 Apple 智能在这台 Mac 上总结，文字不会离开这台 Mac") }
-        if config.isLocal { return String(localized: "用本机的大模型总结，文字不会离开这台 Mac") }
-        return String(localized: "会议文字会发送给 \(serviceName(config)) 来总结")
+        if config.service == .apple { return String(localized: "用 Apple 智能在这台 Mac 上总结，文字不会离开这台 Mac。点下面的按钮开始。") }
+        if config.isLocal { return String(localized: "用本机的大模型总结，文字不会离开这台 Mac。点下面的按钮开始。") }
+        return String(localized: "会把会议文字和说话人的名字发给 \(serviceName(config))。点下面的按钮才会发送。")
     }
 }

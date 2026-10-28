@@ -24,6 +24,7 @@
   "hotkey": "option_command",
   "microphone": "",
   "history": true,
+  "history_days": 30,
   "hands_free": true,
   "rewrite_hotkey": "right_option",
   "sounds": true,
@@ -42,7 +43,9 @@
   "learn_corrections": true,
   "meeting_keep_recording": true,
   "meeting_auto_summary": false,
-  "meeting_source": ""
+  "meeting_diarize": true,
+  "meeting_source": "",
+  "appearance": "system"
 }
 ```
 
@@ -62,7 +65,8 @@
 | `output_language` | 输出语言：`original`（与原文相同）、`en`、`zh-Hans`、`zh-Hant`、`ja`、`ko`、`fr`、`de`、`es` |
 | `hotkey` | 按住说话的触发键：`option_command`（默认，同时按住 Option 和 Command）、`control`、`option`、`command`、`fn`、`right_option`、`right_command` |
 | `microphone` | 麦克风的设备 UID，空字符串表示跟随系统默认 |
-| `history` | 是否在内存中记住最近的结果 |
+| `history` | 是否把说话记录保存在这台 Mac 上（`~/Library/Application Support/Tidytalk/Dictations/`），资料库里可以搜索。关闭时只放在内存里，退出即清空 |
+| `history_days` | 说话记录保留几天：7、30、90、365，或 0（一直保留），默认 30；超过的自动删除 |
 | `hands_free` | 双击触发键免按住录音 |
 | `rewrite_hotkey` | 语音改写的触发键，取值同 `hotkey`，`off` 表示关闭；不能和 `hotkey` 相同 |
 | `sounds` | 开始、结束录音时的提示音 |
@@ -81,4 +85,6 @@
 | `learn_corrections` | 粘贴后发现你手动改了某个词时，提示加入词库 |
 | `meeting_keep_recording` | 会议记录：处理完后保留录音（可以回放、重新分说话人），关闭时只留文字 |
 | `meeting_auto_summary` | 会议记录：处理完后自动生成 AI 总结 |
+| `meeting_diarize` | 会议记录：会后用说话人模型把对方分成几个人（默认开），关闭时只分“我”和“对方” |
 | `meeting_source` | 会议记录收听的应用（bundle id，例如 `us.zoom.xos`），空字符串表示电脑的全部声音 |
+| `appearance` | 外观：`system`（跟随系统，默认）、`light`（浅色）或 `dark`（深色） |

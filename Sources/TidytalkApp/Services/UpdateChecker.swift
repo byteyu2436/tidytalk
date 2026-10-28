@@ -37,6 +37,10 @@ enum UpdateChecker {
     }
 
     private static let lastCheckKey = "lastUpdateCheck"
+    private static let latestKey = "latestVersionSeen"
+
+    /// 上次检查到的最新版本；没检查过时为 nil（“关于”里显示是不是最新版本）。
+    static var latestKnownVersion: String? { UserDefaults.standard.string(forKey: latestKey) }
 
     /// 启动时自动检查，一天最多一次，没有新版本时不打扰。
     static func checkInBackgroundIfNeeded(enabled: Bool) {
@@ -52,6 +56,7 @@ enum UpdateChecker {
         do {
             let release = try await fetchLatest(from: feedURL)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: lastCheckKey)
+            UserDefaults.standard.set(release?.version ?? currentVersion, forKey: latestKey)
 
             if let release, AppVersion.isNewer(release.version, than: currentVersion) {
                 present(release)

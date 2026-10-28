@@ -133,7 +133,9 @@ python3 -m http.server 8765 --directory site   # 打开 http://localhost:8765/
 ```bash
 DEV_TOOLS=1 scripts/install.sh
 open -n /Applications/Tidytalk.app --args --check-permissions /tmp/permissions.txt
-open -n /Applications/Tidytalk.app --args --settings-capture /tmp/settings     # 截取主窗口里设置的每一页
+open -n /Applications/Tidytalk.app --args --settings-capture /tmp/settings --config /tmp/cfg.json     # 截取主窗口里设置的每一页
+open -n /Applications/Tidytalk.app --args --main-window-capture /tmp/main --meetings <会议目录> --config /tmp/cfg.json --size 900x800
+# 截取首页、资料库、各种详情页和词库；加 --dark 截深色，--size 指定窗口大小（官网配图用 900x800）
 open -n /Applications/Tidytalk.app --args --onboarding-capture /tmp/onboarding # 截取引导的每一步
 ```
 

@@ -36,6 +36,19 @@ public enum HotkeyKey: String, CaseIterable, Sendable {
         }
     }
 
+    /// 键帽上的符号，用在快捷键提示（⌥⌘、右 ⌥）里。
+    public var symbol: String {
+        switch self {
+        case .optionCommand: "⌥⌘"
+        case .control: "⌃"
+        case .option: "⌥"
+        case .command: "⌘"
+        case .fn: "Fn"
+        case .rightOption: String(localized: "右 ⌥")
+        case .rightCommand: String(localized: "右 ⌘")
+        }
+    }
+
     /// CGEventFlags 的原始位。放在这里而不是引用 CoreGraphics，方便单元测试。
     public enum Flag {
         public static let shift: UInt64 = 0x0002_0000

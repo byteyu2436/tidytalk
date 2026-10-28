@@ -36,6 +36,9 @@ PATTERNS = [
     re.compile(r"\bfeature\(\s*\"[^\"]*\",\s*(?:[^\",]+,\s*)?\"[^\"]*\",\s*" + LITERAL),
     # 自己写的控件里 LocalizedStringKey 类型的参数：IconButton(help:)、SearchField(prompt:)
     re.compile(r"\bhelp:\s*" + LITERAL),
+    # 设置页的组件：SettingsForm("标题", description: "…")、SettingsGroup("标题", footer: "…")、SettingsRow("名字", help: "…")
+    re.compile(r"\b(?:SettingsForm|SettingsGroup|SettingsRow|SettingsLinkRow)\(\s*" + LITERAL),
+    re.compile(r"\b(?:footer|description):\s*" + LITERAL),
     re.compile(r"\bprompt:\s*" + LITERAL),
 ]
 # 插值表达式按结尾判断是不是整数

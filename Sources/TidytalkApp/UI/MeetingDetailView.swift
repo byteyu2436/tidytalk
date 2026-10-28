@@ -3,7 +3,8 @@ import AppKit
 import SwiftUI
 import TidytalkCore
 
-/// 一场会议：「原始记录」按说话人排好的每段话，「AI 总结」要点、决定和待办。
+/// 一场会议（设计稿「详情 · 会议」）：页头只放位置和操作（拷贝全文、导出、更多）。内容区从上到下：
+/// 标题和属性、提示条、播放条、标签和说话人、原始记录或 AI 总结。
 struct MeetingDetailView: View {
     enum Tab: Hashable { case transcript, summary }
 
@@ -27,31 +28,48 @@ struct MeetingDetailView: View {
         if let meeting = store.meeting(id) {
             VStack(spacing: 0) {
                 headerBar(meeting)
-                VStack(alignment: .leading, spacing: 12) {
+                PageBody(scrolls: false) {
                     header(meeting)
                     banners(meeting)
-                }
-                .frame(maxWidth: Theme.readableWidth, alignment: .leading)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 28)
-                .padding(.top, 22)
-                .padding(.bottom, 6)
-                switch navigation.meetingTab {
-                case .transcript:
-                    if meeting.segments.isEmpty {
-                        EmptyState(symbol: "text.bubble", tint: Theme.Tint.meeting,
-                                   title: processor.isProcessing(id) ? String(localized: "正在整理文字…")
-                                       : String(localized: "这场会议没有识别到说话的内容"))
-                    } else {
-                        TranscriptList(meeting: meeting, player: player, store: store, actions: actions)
+                    if player.canPlay(meeting) {
+                        MeetingPlayerBar(player: player)
                     }
-                case .summary:
-                    MeetingSummaryView(meeting: meeting, meetings: meetings, onOpenSettings: onOpenSettings)
+                    VStack(alignment: .leading, spacing: 12) {
+                        tabRow(meeting)
+                        switch navigation.meetingTab {
+                        case .transcript:
+                            if meeting.segments.isEmpty {
+                                EmptyState(symbol: "text.bubble", tint: Theme.Tint.meeting,
+                                           title: processor.isProcessing(id) ? String(localized: "正在整理文字…")
+                                               : String(localized: "这场会议没有识别到说话的内容"))
+                            } else {
+                                TranscriptList(meeting: meeting, player: player, actions: actions)
+                            }
+                        case .summary:
+                            MeetingSummaryView(meeting: meeting, meetings: meetings, onOpenSettings: onOpenSettings)
+                        }
+                    }
+                    .frame(maxHeight: .infinity, alignment: .top)
                 }
             }
-            .onAppear { title = meeting.title }
-            .onChange(of: id) { title = store.meeting(id)?.title ?? "" }
+            .onAppear {
+                title = meeting.title
+                player.load(meeting, store: store)
+            }
+            .onChange(of: id) {
+                title = store.meeting(id)?.title ?? ""
+                if let meeting = store.meeting(id) { player.load(meeting, store: store) }
+            }
+            .onChange(of: meeting.hasRecording) { player.load(meeting, store: store, force: true) }
             .onDisappear { player.stop() }
+            .onChange(of: navigation.exportRequest) {
+                guard let (url, format) = ExportPanel.run(name: meeting.title) else { return }
+                do {
+                    try MeetingExport.render(meeting, as: format).write(to: url, atomically: true, encoding: .utf8)
+                } catch {
+                    NSAlert(error: error).runModal()
+                }
+            }
             .overlay(alignment: .bottom) { undoToast }
             .confirmationDialog("重新分对方的说话人？", isPresented: Binding(get: { pendingRedo != nil },
                                                                             set: { if !$0 { pendingRedo = nil } })) {
@@ -64,12 +82,14 @@ struct MeetingDetailView: View {
             }
             .confirmationDialog("删除这场会议？", isPresented: $confirmDelete) {
                 Button("删除会议和录音", role: .destructive) {
-                    navigation.meeting = nil
+                    navigation.closeRecord()
                     store.delete(id)
                 }
             } message: {
                 Text("文字、总结和录音都会删除，不能恢复。")
             }
+        } else {
+            RecordGoneView(navigation: navigation)
         }
     }
 
@@ -117,17 +137,21 @@ struct MeetingDetailView: View {
 
     private func header(_ meeting: Meeting) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            TextField("会议标题", text: $title)
+            // 标题太长时换行，最多三行
+            TextField("会议标题", text: $title, axis: .vertical)
                 .textFieldStyle(.plain)
+                .lineLimit(1...3)
                 .font(Theme.title)
+                .tracking(Theme.titleTracking)
                 .foregroundStyle(Theme.text)
                 .onSubmit { saveTitle() }
                 .onChange(of: title) { saveTitle() }
-            ChipRow {
-                StatusChip(kind: status(meeting), text: statusText(meeting))
-                PropertyChip(symbol: "calendar", text: meeting.startedAt.formatted(date: .abbreviated, time: .shortened))
-                PropertyChip(symbol: "clock", text: MeetingFormat.duration(meeting.duration))
-                if !meeting.activeSpeakers.isEmpty {
+            ChipRow(spacing: 8) {
+                let status = status(meeting)
+                PropertyChip(symbol: status.symbol, text: status.text, tint: status.color)
+                PropertyChip(symbol: "calendar", text: TranscribeFormat.chipDate(meeting.startedAt))
+                PropertyChip(symbol: "timer", text: MeetingFormat.duration(meeting.duration))
+                if meeting.activeSpeakers.count > 1 {
                     PropertyChip(symbol: "person.2", text: String(localized: "\(String(meeting.activeSpeakers.count)) 人"),
                                  tint: Theme.Tint.meeting)
                 }
@@ -136,41 +160,26 @@ struct MeetingDetailView: View {
                 }
                 if meeting.hasRecording {
                     PropertyChip(symbol: "lock", text: String(localized: "录音在这台 Mac 上"), tint: Theme.Tint.local)
+                } else if meeting.state != .recording {
+                    PropertyChip(symbol: "mic.slash", text: String(localized: "录音已删除"))
                 }
             }
-            if meeting.activeSpeakers.count > 1 {
-                SpeakerBar(meeting: meeting) { speaker, name in store.update(id) { $0.rename(speaker: speaker, to: name) } }
-            }
         }
     }
 
-    private func status(_ meeting: Meeting) -> StatusIcon.Kind {
-        if let progress = processor.progress[id] { return .progress(progress.fraction) }
+    private func status(_ meeting: Meeting) -> (symbol: String, text: String, color: Color) {
+        if processor.progress[id] != nil { return ("rays", String(localized: "正在整理"), Theme.Tint.progress) }
         switch meeting.state {
-        case .recording: return .recording
-        case .processing: return .progress(nil)
-        case .failed: return .failed
-        case .ready: return .done
-        }
-    }
-
-    private func statusText(_ meeting: Meeting) -> String {
-        if processor.progress[id] != nil { return String(localized: "正在整理") }
-        switch meeting.state {
-        case .recording: return String(localized: "正在记录")
-        case .processing: return String(localized: "正在整理")
-        case .failed: return String(localized: "处理失败")
-        case .ready: return String(localized: "已完成")
+        case .recording: return ("record.circle", String(localized: "正在记录"), Theme.Tint.recording)
+        case .processing: return ("rays", String(localized: "正在整理"), Theme.Tint.progress)
+        case .failed: return ("exclamationmark.circle", String(localized: "处理失败"), Theme.danger)
+        case .ready: return ("checkmark.circle", String(localized: "已完成"), Theme.Tint.local)
         }
     }
 
     private func headerBar(_ meeting: Meeting) -> some View {
         PageHeader {
-            Breadcrumb(parent: String(localized: "会议"), title: meeting.title) { navigation.meeting = nil }
-            LinearTabs(selection: Binding(get: { navigation.meetingTab }, set: { navigation.meetingTab = $0 }),
-                       items: [.init(value: Tab.transcript, title: String(localized: "原始记录")),
-                               .init(value: Tab.summary, title: String(localized: "AI 总结"))])
-                .padding(.leading, 10)
+            Breadcrumb(parent: navigation.section.title, title: meeting.title) { navigation.closeRecord() }
         } trailing: {
             IconButton("doc.on.doc", help: "拷贝全文") { copy(MeetingExport.render(meeting, as: .text)) }
             IconMenu(symbol: "square.and.arrow.up", help: "导出") {
@@ -181,11 +190,28 @@ struct MeetingDetailView: View {
             IconMenu(symbol: "ellipsis", help: "更多") {
                 speakerMenu(meeting)
                 Divider()
-                Button("删除录音，保留文字") { store.deleteRecording(id) }
-                    .disabled(!meeting.hasRecording || processor.isProcessing(id))
+                Button("删除录音，保留文字") {
+                    player.stop()
+                    store.deleteRecording(id)
+                }
+                .disabled(!meeting.hasRecording || processor.isProcessing(id))
                 Button("在访达中显示") { NSWorkspace.shared.activateFileViewerSelecting([store.directory(for: id)]) }
                 Divider()
                 Button("删除会议…", role: .destructive) { confirmDelete = true }
+            }
+        }
+    }
+
+    /// 标签（原始记录 / AI 总结）和右边的说话人（点一下改名）。
+    private func tabRow(_ meeting: Meeting) -> some View {
+        HStack(spacing: 8) {
+            LinearTabs(selection: Binding(get: { navigation.meetingTab }, set: { navigation.meetingTab = $0 }),
+                       items: [.init(value: Tab.transcript, title: String(localized: "原始记录")),
+                               .init(value: Tab.summary, title: String(localized: "AI 总结"), symbol: "sparkles",
+                                     tint: Theme.Tint.ai)])
+            Spacer(minLength: 8)
+            if navigation.meetingTab == .transcript, meeting.activeSpeakers.count > 1, !processor.isProcessing(id) {
+                SpeakerBar(meeting: meeting) { speaker, name in store.update(id) { $0.rename(speaker: speaker, to: name) } }
             }
         }
     }
@@ -198,7 +224,7 @@ struct MeetingDetailView: View {
             Button("自动判断人数") { pendingRedo = .some(nil) }
             Divider()
             ForEach(2...6, id: \.self) { count in
-                Button("对方 \(String(count)) 个人") { pendingRedo = .some(count) }
+                Button("对方 \(count) 个人") { pendingRedo = .some(count) }
             }
         }
         .disabled(!canRedo)
@@ -207,17 +233,19 @@ struct MeetingDetailView: View {
     @ViewBuilder
     private func banners(_ meeting: Meeting) -> some View {
         if let progress = processor.progress[id] {
-            Callout(symbol: "circle.dotted", tint: Theme.Tint.progress) {
-                Text(progress.stage).foregroundStyle(Theme.secondaryText)
-                Spacer()
-                ThinProgress(fraction: progress.fraction).frame(width: 160)
+            AlertBar(symbol: "rays", tint: Theme.Tint.progress, spinning: true,
+                     title: String(localized: "正在整理：\(progress.stage)"),
+                     message: String(localized: "整理完之前可以先看会议中识别的文字，说话人会在整理完后补上。")) {
+                ThinProgress(fraction: progress.fraction, tint: Theme.Tint.progress).frame(width: 160)
             }
         } else if meeting.state == .failed {
             let reason = meeting.processingError ?? ""
-            Callout(symbol: "exclamationmark.triangle.fill", tint: Theme.Tint.failed) {
-                Text(String(localized: "会后整理失败，下面是会议中识别的文字：\(reason)")).foregroundStyle(Theme.text)
+            AlertBar(symbol: "exclamationmark.triangle", tint: Theme.danger, title: String(localized: "会后整理失败"),
+                     message: String(localized: "\(reason)。下面是会议中识别的文字，可以重新整理一次。")) {
+                IconButton("arrow.clockwise", help: "重新整理这场会议", outlined: true) { processor.process(id) }
+                    .disabled(!meeting.hasRecording)
             }
-        } else if !processor.diarizationReady, meeting.hasRecording {
+        } else if processor.diarizeEnabled, !processor.diarizationModels.isReady, meeting.hasRecording {
             DiarizationModelBanner(manager: processor.diarizationModels) {
                 processor.process(id)
             }
@@ -247,7 +275,7 @@ struct MeetingDetailView: View {
     }
 }
 
-/// 参会的人：头像和名字，点一下改名。
+/// 参会的人：头像和名字，点一下改名（设计稿：高 28 的圆角标签，头像 20）。
 struct SpeakerBar: View {
     let meeting: Meeting
     let onRename: (String, String) -> Void
@@ -258,48 +286,99 @@ struct SpeakerBar: View {
                 ForEach(meeting.activeSpeakers) { speaker in
                     RenameButton(speaker: speaker, onRename: onRename) {
                         HStack(spacing: 6) {
-                            SpeakerAvatar(speaker: speaker, color: SpeakerColors.color(for: speaker.id, in: meeting), size: 18)
-                            Text(speaker.name).font(Theme.small).foregroundStyle(Theme.text)
+                            SpeakerAvatar(speaker: speaker, color: SpeakerColors.color(for: speaker.id, in: meeting), size: 20)
+                            Text(speaker.name).font(Theme.smallMedium).foregroundStyle(Theme.text)
                         }
-                        .padding(.leading, 3)
-                        .padding(.trailing, 9)
-                        .frame(height: 24)
-                        .background(Theme.subtle, in: Capsule())
+                        .padding(.leading, 4)
+                        .padding(.trailing, 10)
+                        .frame(height: 28)
                         .overlay(Capsule().strokeBorder(Theme.border))
+                        .contentShape(Capsule())
                     }
                 }
             }
         }
+        .fixedSize(horizontal: true, vertical: false)
     }
 }
 
-/// 没有下载说话人模型时的提示：下载后可以区分对方的多个人。
+/// 没有下载说话人模型时的提示（蓝色）：下载后自动重新整理这场会议，可以分出对方的多个人。
 struct DiarizationModelBanner: View {
     let manager: ModelManager
     let onReady: () -> Void
 
     var body: some View {
-        Callout(symbol: "person.3", tint: Theme.Tint.meeting) {
+        Group {
             switch manager.status {
             case .downloading(let fraction, _):
-                Text("正在下载说话人模型 \(Int(fraction * 100))%").foregroundStyle(Theme.secondaryText)
-                Spacer()
-                ThinProgress(fraction: fraction).frame(width: 140)
+                AlertBar(symbol: "person.2", tint: Theme.Tint.meeting,
+                         title: String(localized: "正在下载说话人模型 \(Int(fraction * 100))%"),
+                         message: String(localized: "下载完会自动重新整理这场会议。")) {
+                    ThinProgress(fraction: fraction, tint: Theme.Tint.meeting).frame(width: 160)
+                }
             case .verifying:
-                Text("正在校验…").foregroundStyle(Theme.secondaryText)
-                Spacer()
-                ThinProgress(fraction: nil).frame(width: 140)
+                AlertBar(symbol: "person.2", tint: Theme.Tint.meeting, title: String(localized: "正在校验说话人模型…")) {
+                    ThinProgress(fraction: nil, tint: Theme.Tint.meeting).frame(width: 160)
+                }
             case .ready:
-                Text("说话人模型已就绪").foregroundStyle(Theme.secondaryText)
-                Spacer()
-                IconButton("arrow.clockwise", help: "重新整理这场会议", size: 24, tint: Theme.Tint.meeting, action: onReady)
+                AlertBar(symbol: "person.2", tint: Theme.Tint.meeting, title: String(localized: "说话人模型已就绪"),
+                         message: String(localized: "重新整理这场会议，就能分出对方的多个人。")) {
+                    IconButton("arrow.clockwise", help: "重新整理这场会议", tint: Theme.Tint.meeting, outlined: true,
+                               action: onReady)
+                }
             default:
-                Text(String(localized: "下载说话人模型（约 \(ByteCountFormatter.string(fromByteCount: manager.totalSize ?? 0, countStyle: .file))）后，可以区分对方的多个人"))
-                    .foregroundStyle(Theme.secondaryText)
-                Spacer()
-                IconButton("arrow.down.circle", help: "下载说话人模型", size: 24, tint: Theme.Tint.meeting) { manager.download() }
+                AlertBar(symbol: "person.2", tint: Theme.Tint.meeting,
+                         title: String(localized: "下载说话人模型后，可以分出对方的多个人"),
+                         message: String(localized: "约 \(ByteCountFormatter.string(fromByteCount: manager.totalSize ?? 0, countStyle: .file))，从 Hugging Face 下载。下载完会自动重新整理这场会议。")) {
+                    IconButton("arrow.down.to.line", help: "下载说话人模型", tint: Theme.Tint.meeting, outlined: true) {
+                        manager.download()
+                    }
+                }
             }
         }
+        // 下载、校验完自动重新整理
+        .onChange(of: manager.isReady) { if manager.isReady { onReady() } }
+    }
+}
+
+/// 整场会议的播放条（设计稿：黑色圆形播放键 32、进度条高 6、右边是速度）。“我”和“对方”两路录音一起放。
+struct MeetingPlayerBar: View {
+    let player: MeetingPlayer
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: player.toggle) {
+                Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(Theme.accentForeground)
+                    .frame(width: 32, height: 32)
+                    .background(Theme.accent, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .help(player.isPlaying ? String(localized: "暂停") : String(localized: "播放"))
+            Text(MeetingFormat.clock(player.currentTime))
+                .font(Theme.smallMedium.monospacedDigit())
+                .foregroundStyle(Theme.text)
+            ScrubBar(value: player.currentTime, total: player.duration) { player.seek(to: $0) }
+            Text(MeetingFormat.clock(player.duration))
+                .font(Theme.small.monospacedDigit())
+                .foregroundStyle(Theme.secondaryText)
+            Button(action: player.cycleRate) {
+                Text(verbatim: player.rate == 1 ? "1×" : player.rate == 1.5 ? "1.5×" : "2×")
+                    .font(Theme.smallMedium)
+                    .foregroundStyle(Theme.text)
+                    .padding(.horizontal, 8)
+                    .frame(height: 24)
+                    .background(Theme.panel, in: RoundedRectangle(cornerRadius: Theme.radius, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: Theme.radius, style: .continuous).strokeBorder(Theme.border))
+            }
+            .buttonStyle(.plain)
+            .help("播放速度")
+        }
+        .padding(.leading, 10)
+        .padding(.trailing, 14)
+        .padding(.vertical, 10)
+        .cardStyle()
     }
 }
 
@@ -318,26 +397,33 @@ struct TranscriptActions {
 struct TranscriptList: View {
     let meeting: Meeting
     var player: MeetingPlayer?
-    var store: MeetingStore?
     var followLatest = false
     var actions: TranscriptActions?
+    /// 开会中：说完了、还在识别的那几路，列表最后显示灰色的“正在识别……”
+    var recognizing: [MeetingSource] = []
+
+    /// 正在播放的那一句
+    private var playing: Int? {
+        guard let player, player.hasStarted else { return nil }
+        return meeting.segments.filter { $0.start <= player.currentTime + 0.05 }.max { $0.start < $1.start }?.id
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 20) {
+                LazyVStack(alignment: .leading, spacing: 2) {
                     ForEach(TranscriptGroup.make(meeting.segments)) { group in
-                        TranscriptGroupView(meeting: meeting, group: group, player: player, store: store,
+                        TranscriptGroupView(meeting: meeting, group: group, player: player, playing: playing,
                                             actions: actions)
                             .id(group.id)
                     }
+                    ForEach(recognizing, id: \.self) { source in
+                        RecognizingRow(meeting: meeting, source: source).id("recognizing-\(source.rawValue)")
+                    }
                 }
-                .frame(maxWidth: Theme.readableWidth, alignment: .leading)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 28)
-                .padding(.top, 14)
-                .padding(.bottom, 28)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .scrollIndicators(.automatic)
             .onChange(of: meeting.segments.count) {
                 if followLatest, let last = TranscriptGroup.make(meeting.segments).last {
                     withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
@@ -371,52 +457,61 @@ struct TranscriptGroupView: View {
     let meeting: Meeting
     let group: TranscriptGroup
     let player: MeetingPlayer?
-    let store: MeetingStore?
+    var playing: Int?
     let actions: TranscriptActions?
 
     private var speakers: [MeetingSpeaker] { group.speakerIDs.compactMap { meeting.speaker($0) } }
+    private var isPlaying: Bool { group.segments.contains { $0.id == playing } }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            AvatarStack(meeting: meeting, speakers: speakers, size: 24)
-                .frame(width: 24, alignment: .leading)
-                .padding(.top, 1)
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(spacing: 6) {
-                    ForEach(speakers) { speaker in
-                        if let actions {
-                            RenameButton(speaker: speaker, onRename: actions.rename) { name(speaker) }
-                        } else {
-                            name(speaker)
+            AvatarStack(meeting: meeting, speakers: speakers, size: speakers.count > 1 ? 20 : 28)
+                .frame(width: 28, height: 28, alignment: speakers.count > 1 ? .topLeading : .center)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    HStack(spacing: 0) {
+                        ForEach(Array(speakers.enumerated()), id: \.element.id) { index, speaker in
+                            if index > 0 { Text(String(localized: "、")).font(Theme.bodySemibold).foregroundStyle(Theme.text) }
+                            if let actions {
+                                RenameButton(speaker: speaker, onRename: actions.rename) { name(speaker) }
+                            } else {
+                                name(speaker)
+                            }
                         }
-                    }
-                    if group.speakerIDs.count > 1 {
-                        HStack(spacing: 4) {
-                            Circle().fill(Theme.Tint.vocabulary).frame(width: 6, height: 6)
-                            Text("同时在说")
-                        }
-                            .font(Theme.micro)
-                            .foregroundStyle(Theme.secondaryText)
-                            .padding(.horizontal, 6)
-                            .frame(height: 18)
-                            .background(Theme.subtle, in: RoundedRectangle(cornerRadius: 4))
-                            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(Theme.border))
-                            .help("几个人同时在说话，这段文字是混在一起识别出来的")
                     }
                     Text(TranscriptExport.clock(group.segments[0].start))
-                        .font(Theme.small.monospacedDigit())
-                        .foregroundStyle(Theme.tertiaryText)
+                        .font((isPlaying ? Theme.smallMedium : Theme.small).monospacedDigit())
+                        .foregroundStyle(isPlaying ? Theme.text : Theme.secondaryText)
+                    if group.speakerIDs.count > 1 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bubble.left.and.bubble.right").font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(Theme.Tint.progress)
+                            Text("同时在说").font(Theme.micro).foregroundStyle(Theme.text)
+                        }
+                        .padding(.horizontal, 6)
+                        .frame(height: 20)
+                        .background(Theme.panel, in: RoundedRectangle(cornerRadius: Theme.radius, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: Theme.radius, style: .continuous).strokeBorder(Theme.border))
+                        .help("几个人同时在说话，这段文字是混在一起识别出来的")
+                    }
+                    if isPlaying {
+                        Image(systemName: "speaker.wave.2").font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Theme.Tint.meeting)
+                    }
                 }
                 ForEach(group.segments) { segment in
-                    SegmentText(meeting: meeting, segment: segment, player: player, store: store, actions: actions)
+                    SegmentText(meeting: meeting, segment: segment, player: player, actions: actions)
                 }
             }
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(isPlaying ? Theme.subtle : .clear, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     private func name(_ speaker: MeetingSpeaker) -> some View {
         Text(speaker.name)
-            .font(.system(size: 13, weight: .semibold))
+            .font(Theme.bodySemibold)
             .foregroundStyle(Theme.text)
     }
 }
@@ -426,14 +521,11 @@ struct SegmentText: View {
     let meeting: Meeting
     let segment: MeetingSegment
     let player: MeetingPlayer?
-    let store: MeetingStore?
     let actions: TranscriptActions?
     @ViewState private var hovering = false
     @ViewState private var editing = false
     @ViewState private var draft = ""
     @FocusState private var focused: Bool
-
-    private var playing: Bool { player?.playing == segment.id }
 
     var body: some View {
         Group {
@@ -445,20 +537,15 @@ struct SegmentText: View {
                         .font(Theme.reading)
                         .foregroundStyle(Theme.text)
                         .textSelection(.enabled)
-                        .lineSpacing(4)
+                        .lineSpacing(8)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .onTapGesture(count: 2) { if actions != nil { startEditing() } }
                     tools
-                        .opacity(hovering || playing ? 1 : 0)
+                        .opacity(hovering ? 1 : 0)
                 }
             }
         }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 6)
-        .background(editing ? Theme.accent.opacity(0.07) : playing ? Theme.accent.opacity(0.1)
-                    : hovering ? Theme.hover : .clear,
-                    in: RoundedRectangle(cornerRadius: Theme.radius))
-        .padding(.horizontal, -6)
+        .background(editing ? Theme.accent.opacity(0.07) : .clear, in: RoundedRectangle(cornerRadius: Theme.radius))
         .onHover { hovering = $0 }
         .contextMenu { if actions != nil { menuItems } }
     }
@@ -466,23 +553,12 @@ struct SegmentText: View {
     @ViewBuilder
     private var tools: some View {
         HStack(spacing: 2) {
-            if let player, let store, player.canPlay(meeting) {
-                Button {
-                    player.toggle(segment, url: store.audioURL(meeting.id, segment.source))
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: playing ? "stop.fill" : "play.fill").font(.system(size: 8, weight: .bold))
-                        Text(TranscriptExport.clock(segment.start)).font(Theme.small.monospacedDigit())
-                    }
-                    .padding(.horizontal, 6)
-                    .frame(height: 22)
-                }
-                .buttonStyle(IconButtonStyle(tint: playing ? Theme.Tint.recording : Theme.accentText))
-                .help("回放这一句")
+            if let player, player.canPlay(meeting) {
+                IconButton("play", help: "从这一句开始放", size: 24) { player.play(from: segment.start) }
             }
             if actions != nil {
-                IconButton("pencil", help: "编辑这一句", size: 22, action: startEditing)
-                IconMenu(symbol: "ellipsis", help: "更多", size: 22) { menuItems }
+                IconButton("pencil", help: "编辑这一句", size: 24, action: startEditing)
+                IconMenu(symbol: "ellipsis", help: "更多", size: 24) { menuItems }
             }
         }
     }
@@ -513,16 +589,17 @@ struct SegmentText: View {
             TextField("", text: $draft, axis: .vertical)
                 .textFieldStyle(.plain)
                 .font(Theme.reading)
-                .lineSpacing(4)
+                .lineSpacing(8)
                 .focused($focused)
                 .onSubmit(save)
                 .onExitCommand { editing = false }
             HStack(spacing: 6) {
-                Text("回车保存，Esc 取消").font(Theme.small).foregroundStyle(Theme.tertiaryText)
-                IconButton("xmark", help: "取消（Esc）", size: 24) { editing = false }
-                IconButton("checkmark", help: "保存（回车）", size: 24, prominent: true, action: save)
+                Text("回车保存，Esc 取消").font(Theme.small).foregroundStyle(Theme.secondaryText)
+                IconButton("xmark", help: "取消（Esc）", size: 28) { editing = false }
+                IconButton("checkmark", help: "保存（回车）", size: 28, prominent: true, action: save)
             }
         }
+        .padding(8)
     }
 
     private func startEditing() {
@@ -630,49 +707,105 @@ enum SpeakerColors {
 
     /// "我"用强调色，其他人按在会议里出现的顺序取不同的颜色。
     static func color(for id: String, in meeting: Meeting) -> Color {
-        if id == MeetingSpeaker.me.id { return Theme.accent }
+        if id == MeetingSpeaker.me.id { return Theme.Tint.meeting }
         let others = meeting.speakers.filter { $0.id != MeetingSpeaker.me.id }
         let index = others.firstIndex { $0.id == id } ?? 0
         return palette[index % palette.count]
     }
 }
 
-/// 回放会议里的某一句：从这句的开始放到结束。
+/// 播放整场会议：“我”和“对方”两路录音一起放，可以拖进度、换速度；点某一句从那里开始放。
 @MainActor
 @Observable
 final class MeetingPlayer {
-    private(set) var playing: Int?
-    @ObservationIgnored private var player: AVAudioPlayer?
+    private(set) var isPlaying = false
+    private(set) var currentTime: TimeInterval = 0
+    private(set) var duration: TimeInterval = 0
+    private(set) var rate: Float = 1
+    /// 放过（之后才高亮正在放的那一句）
+    private(set) var hasStarted = false
+
+    @ObservationIgnored private var players: [AVAudioPlayer] = []
     @ObservationIgnored private var timer: Timer?
+    @ObservationIgnored private var loaded: UUID?
 
     func canPlay(_ meeting: Meeting) -> Bool {
         meeting.hasRecording && meeting.state != .recording && meeting.state != .processing
     }
 
-    func toggle(_ segment: MeetingSegment, url: URL) {
-        if playing == segment.id {
-            stop()
-            return
-        }
+    func load(_ meeting: Meeting, store: MeetingStore, force: Bool = false) {
+        guard force || loaded != meeting.id else { return }
         stop()
-        guard let player = try? AVAudioPlayer(contentsOf: url) else { return }
-        player.currentTime = segment.start
-        player.play()
-        self.player = player
-        playing = segment.id
-        let timer = Timer(timeInterval: max(0.5, segment.duration), repeats: false) { [weak self] _ in
-            MainActor.assumeIsolated { self?.stop() }
+        loaded = meeting.id
+        guard canPlay(meeting) else { return }
+        players = MeetingSource.allCases.compactMap { try? AVAudioPlayer(contentsOf: store.audioURL(meeting.id, $0)) }
+        for player in players {
+            player.enableRate = true
+            player.prepareToPlay()
+        }
+        duration = max(meeting.duration, players.map(\.duration).max() ?? 0)
+    }
+
+    func toggle() {
+        isPlaying ? pause() : play(from: currentTime >= duration - 0.2 ? 0 : currentTime)
+    }
+
+    func play(from time: TimeInterval) {
+        guard let first = players.first else { return }
+        // 两路同时开始，免得一前一后
+        let start = first.deviceCurrentTime + 0.05
+        for player in players {
+            player.currentTime = min(time, player.duration)
+            player.rate = rate
+            player.play(atTime: start)
+        }
+        currentTime = time
+        isPlaying = true
+        hasStarted = true
+        timer?.invalidate()
+        let timer = Timer(timeInterval: 0.2, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.tick() }
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
     }
 
-    func stop() {
+    func pause() {
+        players.forEach { $0.pause() }
+        isPlaying = false
         timer?.invalidate()
         timer = nil
-        player?.stop()
-        player = nil
-        playing = nil
+    }
+
+    func seek(to time: TimeInterval) {
+        if isPlaying {
+            play(from: time)
+        } else {
+            currentTime = time
+            hasStarted = true
+        }
+    }
+
+    func cycleRate() {
+        rate = rate == 1 ? 1.5 : rate == 1.5 ? 2 : 1
+        players.forEach { $0.rate = rate }
+    }
+
+    func stop() {
+        pause()
+        players = []
+        loaded = nil
+        currentTime = 0
+        duration = 0
+        hasStarted = false
+    }
+
+    private func tick() {
+        currentTime = players.map(\.currentTime).max() ?? currentTime
+        if !players.contains(where: \.isPlaying) {
+            pause()
+            if currentTime >= duration - 0.3 { currentTime = 0 }
+        }
     }
 }
 
@@ -695,7 +828,8 @@ struct MeetingSummaryView: View {
             if editing {
                 editor
             } else if processor.summarizing.contains(meeting.id) {
-                EmptyState(symbol: "sparkles", tint: Theme.Tint.ai, title: String(localized: "正在生成总结…")) {
+                EmptyState(symbol: "sparkles", tint: Theme.Tint.ai, title: String(localized: "正在生成总结…"),
+                           message: String(localized: "\(MeetingProcessor.serviceName(config)) 正在整理，长会议要一两分钟。可以先去做别的，好了会出现在这里。")) {
                     ThinProgress(fraction: nil, tint: Theme.Tint.ai).frame(width: 160)
                 }
             } else if let summary = meeting.summary {
@@ -706,11 +840,7 @@ struct MeetingSummaryView: View {
                         }
                         footer(summary)
                     }
-                    .frame(maxWidth: Theme.readableWidth, alignment: .leading)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 28)
-                    .padding(.top, 14)
-                    .padding(.bottom, 28)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             } else {
                 emptyState
@@ -718,11 +848,13 @@ struct MeetingSummaryView: View {
         }
         .safeAreaInset(edge: .bottom) {
             if let error = processor.summaryErrors[meeting.id] {
-                Callout(symbol: "exclamationmark.triangle.fill", tint: Theme.Tint.failed) {
-                    Text(String(localized: "总结失败：\(error)")).foregroundStyle(Theme.text)
+                AlertBar(symbol: "exclamationmark.triangle", tint: Theme.danger, title: String(localized: "总结失败"),
+                         message: error) {
+                    IconButton("arrow.clockwise", help: "重新生成", tint: Theme.Tint.ai, outlined: true) {
+                        processor.summarize(meeting.id)
+                    }
                 }
-                .frame(maxWidth: Theme.readableWidth)
-                .padding(12)
+                .padding(.top, 12)
             }
         }
     }
@@ -737,25 +869,24 @@ struct MeetingSummaryView: View {
             Label(String(localized: "\(summary.service) 生成于 \(summary.createdAt.formatted(date: .abbreviated, time: .shortened))"),
                   systemImage: "sparkles")
                 .labelStyle(TightLabelStyle())
-                .foregroundStyle(Theme.tertiaryText)
+                .foregroundStyle(Theme.secondaryText)
                 .lineLimit(1)
             Spacer()
-            IconButton("pencil", help: "编辑总结", size: 26) {
+            IconButton("pencil", help: "编辑总结", size: 28) {
                 draft = summary.markdown
                 editing = true
             }
-            IconButton("doc.on.doc", help: "拷贝总结", size: 26) {
+            IconButton("doc.on.doc", help: "拷贝总结", size: 28) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(summary.markdown, forType: .string)
             }
-            IconButton("arrow.clockwise", help: "重新生成", size: 26, tint: Theme.Tint.ai) { processor.summarize(meeting.id) }
+            IconButton("arrow.clockwise", help: "重新生成", size: 28, tint: Theme.Tint.ai) { processor.summarize(meeting.id) }
                 .disabled(!config.isConfigured || meeting.segments.isEmpty)
-            IconMenu(symbol: "ellipsis", help: "更多", size: 26) {
+            IconMenu(symbol: "ellipsis", help: "更多", size: 28) {
                 Button("删除总结…", role: .destructive) { confirmDelete = true }
             }
         }
         .font(Theme.small)
-        .padding(.top, 4)
         .confirmationDialog("删除这份总结？", isPresented: $confirmDelete) {
             Button("删除总结", role: .destructive) { meetings.store.update(meeting.id) { $0.summary = nil } }
         } message: {
@@ -774,7 +905,7 @@ struct MeetingSummaryView: View {
             HStack {
                 Text("用 Markdown 写：## 开头是小节标题，- 开头是列表，- [ ] 开头是待办。")
                     .font(Theme.small)
-                    .foregroundStyle(Theme.tertiaryText)
+                    .foregroundStyle(Theme.secondaryText)
                 Spacer()
                 IconButton("xmark", help: "取消（Esc）") { editing = false }
                     .keyboardShortcut(.cancelAction)
@@ -790,10 +921,6 @@ struct MeetingSummaryView: View {
                 .keyboardShortcut("s", modifiers: .command)
             }
         }
-        .frame(maxWidth: Theme.readableWidth)
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 28)
-        .padding(.vertical, 16)
     }
 
     private var emptyState: some View {
@@ -801,10 +928,12 @@ struct MeetingSummaryView: View {
                    message: config.isConfigured ? MeetingProcessor.destination(config)
                        : String(localized: "总结需要 AI 服务。可以用本机的 Ollama、LM Studio 或 Apple 智能，文字不会离开这台 Mac。")) {
             if config.isConfigured {
-                RoundIconButton(symbol: "sparkles", help: "生成总结", tint: Theme.Tint.ai) { processor.summarize(meeting.id) }
-                    .disabled(meeting.segments.isEmpty || processor.isProcessing(meeting.id))
+                IconButton("sparkles", help: "生成总结", size: 40, tint: Theme.Tint.ai, prominent: true) {
+                    processor.summarize(meeting.id)
+                }
+                .disabled(meeting.segments.isEmpty || processor.isProcessing(meeting.id))
             } else {
-                RoundIconButton(symbol: "gearshape.fill", help: "配置 AI", tint: Theme.Tint.ai, size: 44, glyph: 0.42) {
+                IconButton("gearshape", help: "设置 AI 服务", size: 40, tint: Theme.Tint.ai, outlined: true) {
                     onOpenSettings(.ai)
                 }
             }
@@ -868,18 +997,11 @@ struct SummaryCard: View {
     let section: SummarySection
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             if !section.title.isEmpty {
-                HStack(spacing: 8) {
-                    Image(systemName: section.symbol)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(section.tint)
-                        .frame(width: 22, height: 22)
-                        .background(section.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
-                    Text(section.title).font(.system(size: 13, weight: .semibold)).foregroundStyle(Theme.text)
-                }
+                Text(section.title).font(Theme.captionSemibold).foregroundStyle(Theme.secondaryText)
             }
-            MarkdownView(markdown: section.lines.joined(separator: "\n"))
+            MarkdownView(markdown: section.lines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines))
                 .font(Theme.reading)
                 .foregroundStyle(Theme.text)
                 .textSelection(.enabled)
@@ -909,20 +1031,22 @@ struct MarkdownView: View {
             Spacer().frame(height: 2)
         } else if line.hasPrefix("#") {
             let text = line.drop { $0 == "#" }.trimmingCharacters(in: .whitespaces)
-            inline(text).font(.system(size: 13, weight: .semibold)).padding(.top, 4)
+            inline(text).font(Theme.captionSemibold).padding(.top, 4)
         } else if let rest = Self.strip(line, prefixes: ["- [ ] ", "* [ ] "]) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "circle").font(.system(size: 12)).foregroundStyle(Theme.tertiaryText)
+                RoundedRectangle(cornerRadius: 4, style: .continuous).strokeBorder(Theme.borderStrong)
+                    .frame(width: 14, height: 14)
+                    .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 2 }
                 inline(rest)
             }
         } else if let rest = Self.strip(line, prefixes: ["- [x] ", "- [X] ", "* [x] "]) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: "checkmark.circle.fill").font(.system(size: 12)).foregroundStyle(Theme.Tint.done)
+                Image(systemName: "checkmark.square.fill").font(.system(size: 13)).foregroundStyle(Theme.accent)
                 inline(rest)
             }
         } else if let rest = Self.strip(line, prefixes: ["- ", "* ", "• "]) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Circle().fill(Theme.tertiaryText).frame(width: 4, height: 4).alignmentGuide(.firstTextBaseline) { $0[.bottom] + 4 }
+                Circle().fill(Theme.secondaryText).frame(width: 5, height: 5).alignmentGuide(.firstTextBaseline) { $0[.bottom] + 4 }
                 inline(rest)
             }
             .padding(.leading, raw.hasPrefix("  ") ? 16 : 0)

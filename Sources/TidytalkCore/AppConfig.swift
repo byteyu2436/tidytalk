@@ -92,6 +92,7 @@ public struct AIConfig: Equatable, Sendable {
 ///   "hotkey": "option_command",
 ///   "microphone": "",
 ///   "history": true,
+///   "history_days": 30,
 ///   "hands_free": true,
 ///   "rewrite_hotkey": "right_option",
 ///   "sounds": true,
@@ -111,7 +112,9 @@ public struct AIConfig: Equatable, Sendable {
 ///   "learn_corrections": true,
 ///   "meeting_keep_recording": true,
 ///   "meeting_auto_summary": false,
-///   "meeting_source": ""
+///   "meeting_diarize": true,
+///   "meeting_source": "",
+///   "appearance": "system"
 /// }
 /// ```
 public struct AppConfig: Equatable, Sendable {
@@ -131,8 +134,12 @@ public struct AppConfig: Equatable, Sendable {
     public var hotkey: HotkeyKey
     /// 录音使用的麦克风（Core Audio 设备 UID），空字符串表示跟随系统默认。
     public var microphone: String
-    /// 是否记住最近的结果（只保存在内存中，退出应用即清空）。
+    /// 是否把说话记录保存在这台 Mac 上（资料库里可以搜索）。关闭时只放在内存里，退出应用即清空。
     public var history: Bool
+    /// 说话记录保留几天，超过的自动删除；0 表示一直保留。
+    public var historyDays: Int
+    /// 设置里可以选的保留天数（0 是一直保留）。
+    public static let historyDayChoices = [7, 30, 90, 365, 0]
     /// 双击触发键进入免按住录音。
     public var handsFree: Bool
     /// 语音改写选中文字的触发键，nil 表示关闭。不能和 `hotkey` 相同。
@@ -171,14 +178,18 @@ public struct AppConfig: Equatable, Sendable {
     public var meetingKeepRecording: Bool
     /// 会议模式：会议结束、处理完后自动生成 AI 总结。
     public var meetingAutoSummary: Bool
+    /// 会议模式：会后用说话人模型把对方分成几个人（需要下载说话人模型）。关闭时只分“我”和“对方”。
+    public var meetingDiarize: Bool
     /// 会议模式收听的应用（bundle id），空字符串表示电脑的全部声音。
     public var meetingSource: String
+    /// 界面的深浅色。
+    public var appearance: AppAppearance
 
     public init(cleanupEnabled: Bool = true, ai: AIConfig = .default, typography: Bool = true,
                 vocabulary: [String] = [], replacements: [String: String] = [:],
                 style: CleanupStyle = .standard, outputLanguage: OutputLanguage = .original,
                 hotkey: HotkeyKey = .optionCommand, microphone: String = "", history: Bool = true,
-                handsFree: Bool = true, rewriteHotkey: HotkeyKey? = .rightOption, sounds: Bool = true,
+                historyDays: Int = 30, handsFree: Bool = true, rewriteHotkey: HotkeyKey? = .rightOption, sounds: Bool = true,
                 cleanupLevel: CleanupLevel = .standard, snippets: [String: String] = [:],
                 customRules: [String] = [], autoUpdateCheck: Bool = true, livePreview: Bool = true,
                 listenSource: String = "", captionSize: CaptionSize = .medium, captionAutoHide: Bool = true,
@@ -186,7 +197,7 @@ public struct AppConfig: Equatable, Sendable {
                 captionStyle: CaptionStyle = .dark, captionLiveTranslate: Bool = true,
                 speechModel: SpeechModel = .senseVoice,
                 learnCorrections: Bool = true, meetingKeepRecording: Bool = true, meetingAutoSummary: Bool = false,
-                meetingSource: String = "") {
+                meetingDiarize: Bool = true, meetingSource: String = "", appearance: AppAppearance = .system) {
         self.cleanupEnabled = cleanupEnabled
         self.ai = ai
         self.typography = typography
@@ -197,6 +208,7 @@ public struct AppConfig: Equatable, Sendable {
         self.hotkey = hotkey
         self.microphone = microphone
         self.history = history
+        self.historyDays = Self.historyDayChoices.contains(historyDays) ? historyDays : 30
         self.handsFree = handsFree
         // 两个触发键相同时不在这里改写成关闭：改回不同的触发键后应该恢复。实际使用看 activeRewriteHotkey
         self.rewriteHotkey = rewriteHotkey
@@ -217,7 +229,9 @@ public struct AppConfig: Equatable, Sendable {
         self.learnCorrections = learnCorrections
         self.meetingKeepRecording = meetingKeepRecording
         self.meetingAutoSummary = meetingAutoSummary
+        self.meetingDiarize = meetingDiarize
         self.meetingSource = meetingSource
+        self.appearance = appearance
     }
 
     /// 实际生效的语音改写触发键：和说话的触发键相同时视为关闭。
@@ -247,6 +261,7 @@ public struct AppConfig: Equatable, Sendable {
         static let hotkey = "hotkey"
         static let microphone = "microphone"
         static let history = "history"
+        static let historyDays = "history_days"
         static let handsFree = "hands_free"
         static let rewriteHotkey = "rewrite_hotkey"
         static let sounds = "sounds"
@@ -266,7 +281,9 @@ public struct AppConfig: Equatable, Sendable {
         static let learnCorrections = "learn_corrections"
         static let meetingKeepRecording = "meeting_keep_recording"
         static let meetingAutoSummary = "meeting_auto_summary"
+        static let meetingDiarize = "meeting_diarize"
         static let meetingSource = "meeting_source"
+        static let appearance = "appearance"
         static let service = "service"
         static let off = "off"
         /// 旧版本的按应用风格，已废弃，写回时删除
@@ -308,6 +325,7 @@ public struct AppConfig: Equatable, Sendable {
             hotkey: (root[Key.hotkey] as? String).flatMap(HotkeyKey.init(rawValue:)) ?? .optionCommand,
             microphone: (root[Key.microphone] as? String) ?? "",
             history: (root[Key.history] as? Bool) ?? true,
+            historyDays: (root[Key.historyDays] as? Int) ?? 30,
             handsFree: (root[Key.handsFree] as? Bool) ?? true,
             rewriteHotkey: {
                 guard let raw = root[Key.rewriteHotkey] as? String else { return .rightOption }
@@ -330,7 +348,9 @@ public struct AppConfig: Equatable, Sendable {
             learnCorrections: (root[Key.learnCorrections] as? Bool) ?? true,
             meetingKeepRecording: (root[Key.meetingKeepRecording] as? Bool) ?? true,
             meetingAutoSummary: (root[Key.meetingAutoSummary] as? Bool) ?? false,
-            meetingSource: (root[Key.meetingSource] as? String) ?? ""
+            meetingDiarize: (root[Key.meetingDiarize] as? Bool) ?? true,
+            meetingSource: (root[Key.meetingSource] as? String) ?? "",
+            appearance: (root[Key.appearance] as? String).flatMap(AppAppearance.init(rawValue:)) ?? .system
         )
     }
 
@@ -355,6 +375,7 @@ public struct AppConfig: Equatable, Sendable {
         root[Key.hotkey] = hotkey.rawValue
         root[Key.microphone] = microphone
         root[Key.history] = history
+        root[Key.historyDays] = historyDays
         root[Key.handsFree] = handsFree
         root[Key.rewriteHotkey] = rewriteHotkey?.rawValue ?? Key.off
         root[Key.sounds] = sounds
@@ -374,7 +395,9 @@ public struct AppConfig: Equatable, Sendable {
         root[Key.learnCorrections] = learnCorrections
         root[Key.meetingKeepRecording] = meetingKeepRecording
         root[Key.meetingAutoSummary] = meetingAutoSummary
+        root[Key.meetingDiarize] = meetingDiarize
         root[Key.meetingSource] = meetingSource
+        root[Key.appearance] = appearance.rawValue
         root[Key.legacyAppStyles] = nil
 
         return try JSONSerialization.data(withJSONObject: root,

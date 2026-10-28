@@ -29,6 +29,21 @@ import Testing
         #expect(try AppConfig.decode(data) == config)
     }
 
+    @Test func appearanceAndDiarizeRoundTrip() throws {
+        // 没写时跟随系统、区分说话人；不认识的值也当跟随系统
+        let defaults = try AppConfig.decode(Data(#"{"appearance": "sepia"}"#.utf8))
+        #expect(defaults.appearance == .system)
+        #expect(defaults.meetingDiarize)
+        var config = defaults
+        config.appearance = .dark
+        config.meetingDiarize = false
+        let data = try config.encode(merging: Data("{}".utf8))
+        let root = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(root["appearance"] as? String == "dark")
+        #expect(root["meeting_diarize"] as? Bool == false)
+        #expect(try AppConfig.decode(data) == config)
+    }
+
     @Test func rejectsNonObject() {
         #expect(throws: (any Error).self) { try AppConfig.decode(Data("[1]".utf8)) }
         #expect(throws: (any Error).self) { try AppConfig.decode(Data("{oops".utf8)) }
