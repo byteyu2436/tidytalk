@@ -21,6 +21,8 @@ enum Theme {
     static let hover = dynamic(light: .black.withAlphaComponent(0.04), dark: .white.withAlphaComponent(0.06))
     /// 侧边栏选中的一行、按下时的底色（shadcn 的 sidebar-accent）
     static let selected = dynamic(light: rgb(0xF4F4F5), dark: rgb(0x27272A))
+    /// 列表里鼠标停着的那一行（设计稿的 muted）
+    static let rowHover = dynamic(light: rgb(0xF4F4F5), dark: rgb(0x27272A))
     /// 输入框聚焦时的外圈
     static let ring = dynamic(light: rgb(0xA1A1AA), dark: rgb(0x71717A))
 

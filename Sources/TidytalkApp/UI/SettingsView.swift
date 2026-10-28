@@ -293,7 +293,7 @@ struct SettingsNote: View {
         .padding(.trailing, 10)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.canvas)
+        .background(Theme.canvas, in: Rectangle())
     }
 }
 
@@ -866,7 +866,7 @@ struct GeneralSettings: View {
                     .padding(.leading, 16)
                     .padding(.trailing, 10)
                     .padding(.vertical, 8)
-                    .background(Theme.canvas)
+                    .background(Theme.canvas, in: Rectangle())
                 }
             }
             SettingsGroup(String(localized: "启动和更新")) {
@@ -1091,7 +1091,7 @@ struct PrivacySettings: View {
                 }
             }
             .frame(height: 8)
-            .background(Theme.subtle)
+            .background(Theme.subtle, in: Rectangle())
             .clipShape(Capsule())
         }
         .padding(16)

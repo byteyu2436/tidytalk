@@ -738,8 +738,8 @@
 "没有找到“%@”" = "No results for “%@”";
 "清除" = "Clear";
 "删除" = "Delete";
-"文件" = "Files";
-"链接" = "Links";
+"文件" = "File";
+"链接" = "Link";
 "在浏览器中打开" = "Open in Browser";
 "删除…" = "Delete…";
 "转写失败" = "Transcription failed";

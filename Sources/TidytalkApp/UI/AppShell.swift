@@ -21,13 +21,13 @@ struct AppShell<Sidebar: View, Content: View>: View {
             }
             .frame(width: width - 1)
             .frame(maxHeight: .infinity)
-            .background(Theme.canvas)
+            .background(Theme.canvas, in: Rectangle())
             Rectangle().fill(Theme.border).frame(width: 1)
             content()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Theme.panel)
+                .background(Theme.panel, in: Rectangle())
         }
-        .background(Theme.panel)
+        .background(Theme.panel, in: Rectangle())
         .ignoresSafeArea()
         .tint(Theme.accent)
         .toggleStyle(ShadcnSwitchStyle())
@@ -126,7 +126,10 @@ struct PageHeader<Leading: View, Trailing: View>: View {
         .padding(.horizontal, Theme.pagePadding)
         .frame(height: Theme.headerHeight)
         .background(WindowDragArea())
+        // 不透明、放在内容上面：内容往上滚时从页头下面经过，不会和页头的字叠在一起
+        .background(Theme.panel, in: Rectangle())
         .overlay(alignment: .bottom) { Rectangle().fill(Theme.border).frame(height: 1) }
+        .zIndex(1)
     }
 }
 
@@ -186,12 +189,15 @@ struct PageBody<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
+        // 标题栏隐藏后，macOS 的滚动区域会把内容画到自己上边以外（工具栏下面），要裁掉
         if scrolls {
             ScrollView {
                 stack.frame(maxWidth: .infinity, alignment: .topLeading)
             }
+            .clipped()
         } else {
             stack.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .clipped()
         }
     }
 

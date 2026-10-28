@@ -151,7 +151,7 @@ struct VocabularyView: View {
                 .foregroundStyle(Theme.secondaryText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(Theme.subtle)
+                .background(Theme.subtle, in: Rectangle())
                 ForEach(rows, id: \.key) { row in
                     Rectangle().fill(Theme.border).frame(height: 1)
                     HStack(spacing: 12) {

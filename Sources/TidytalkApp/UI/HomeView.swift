@@ -88,12 +88,17 @@ struct HomeView: View {
 
     // MARK: - 三个功能
 
+    // 三张卡片一样高：至少 192，英文说明长的时候跟着最高的那张一起变高
     private var cards: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             FeatureCard(symbol: "mic", tint: Theme.Tint.dictation, title: String(localized: "说话输入"),
                         message: String(localized: "在任何输入框里按住快捷键说话，松开就是整理好的文字。"),
                         keys: model.configStore.config.hotkey.symbol) {
-                Text("按住说话").font(Theme.small).foregroundStyle(Theme.secondaryText)
+                // 卡片窄、放不下时只留快捷键和状态
+                ViewThatFits(in: .horizontal) {
+                    Text("按住说话").font(Theme.small).foregroundStyle(Theme.secondaryText).lineLimit(1).fixedSize()
+                    Color.clear.frame(width: 0, height: 0)
+                }
                 Spacer(minLength: 4)
                 if model.readiness == .ready {
                     StatusDot(color: Theme.Tint.local, text: String(localized: "已就绪"))
@@ -127,7 +132,7 @@ struct HomeView: View {
                 }
             }
         }
-        .frame(height: 192)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     // MARK: - 最近
@@ -188,6 +193,7 @@ struct StatusDot: View {
             Circle().fill(color).frame(width: 7, height: 7)
             Text(text).font(Theme.small.monospacedDigit()).foregroundStyle(Theme.secondaryText).lineLimit(1)
         }
+        .fixedSize()
     }
 }
 
@@ -217,15 +223,15 @@ struct FeatureCard<Bottom: View>: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            Spacer(minLength: 0)
+            Spacer(minLength: 12)
             HStack(spacing: 8) {
-                KeyHint(keys)
+                KeyHint(keys).fixedSize()
                 bottom()
             }
             .frame(height: 32)
         }
         .padding(20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 192, maxHeight: .infinity, alignment: .topLeading)
         .cardStyle()
     }
 }

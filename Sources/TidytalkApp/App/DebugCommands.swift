@@ -615,6 +615,15 @@ enum SettingsCaptureCommand {
         }
         AppLanguage.simulated = args.contains("--simulate-language") ? .english : .system
         shot("14-appearance-1-system")
+        // 滚动以后：内容从页头下面经过，不会叠在页头的字上
+        navigation.openSettings(.dictation)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.8))
+        scrollFirstScrollView(in: window.contentView, by: 160)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.6))
+        if let image = capture(.null, 1 << 3, UInt32(window.windowNumber), 0)?.takeRetainedValue() {
+            try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?
+                .write(to: dir.appending(path: "settings-scrolled.png"))
+        }
         if !args.contains("--dark") {
             model.configStore.update { $0.appearance = .dark }
             AppAppearance.dark.apply()
@@ -1311,6 +1320,13 @@ enum MainWindowCaptureCommand {
         // 转写
         navigation.show(.transcribe)
         shot("02-transcribe-2-records")
+        if let second = transcriptions.items.sorted(by: { $0.createdAt > $1.createdAt }).dropFirst().first {
+            RowHover.forced = LibraryItem.transcription(second).id
+            navigation.show(.home)
+            navigation.show(.transcribe)
+            shot("02-transcribe-2-records-hover")
+            RowHover.forced = nil
+        }
         if let first = transcriptions.items.first {
             transcriber.simulate(first, stage: .recognizing(done: 128, total: 300))
             shot("02-transcribe-3-busy")
@@ -1323,6 +1339,8 @@ enum MainWindowCaptureCommand {
         // 资料库
         navigation.show(.library)
         shot("03-library-1-all")
+        scrollFirstScrollView(in: window.contentView, by: 220)
+        shot("03-library-1-all-scrolled")
         navigation.libraryFilter = .meetings
         shot("03-library-2-filter-meetings")
         navigation.libraryFilter = .all
@@ -1562,6 +1580,19 @@ enum MainWindowCaptureCommand {
             try? png.write(to: url)
         }
     }
+}
+
+/// 截图用：把窗口里第一个滚动区域往下滚一段，检查内容会不会画到页头上。
+@MainActor
+func scrollFirstScrollView(in view: NSView?, by offset: CGFloat) {
+    guard let view else { return }
+    if let scroll = view as? NSScrollView, scroll.hasVerticalScroller || scroll.documentView != nil,
+       (scroll.documentView?.frame.height ?? 0) > scroll.contentView.bounds.height {
+        scroll.contentView.scroll(to: NSPoint(x: 0, y: offset))
+        scroll.reflectScrolledClipView(scroll.contentView)
+        return
+    }
+    for sub in view.subviews { scrollFirstScrollView(in: sub, by: offset) }
 }
 
 /// 截图命令的窗口大小：`--size 宽x高`（点）。官网的配图用小一点的窗口，缩小后文字还看得清。

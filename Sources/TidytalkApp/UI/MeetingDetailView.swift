@@ -424,6 +424,7 @@ struct TranscriptList: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollIndicators(.automatic)
+            .clipped()
             .onChange(of: meeting.segments.count) {
                 if followLatest, let last = TranscriptGroup.make(meeting.segments).last {
                     withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
@@ -842,6 +843,7 @@ struct MeetingSummaryView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .clipped()
             } else {
                 emptyState
             }

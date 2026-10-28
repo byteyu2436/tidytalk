@@ -122,7 +122,7 @@ struct AIConfigEditor: View {
             .padding(.leading, 16)
             .padding(.trailing, 12)
             .padding(.vertical, 10)
-            .background(Theme.canvas)
+            .background(Theme.canvas, in: Rectangle())
         }
         .labelsHidden()
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
@@ -410,7 +410,7 @@ private struct SpeechModelRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(isSelected ? Theme.canvas : hovering && manager.isReady ? Theme.hover : .clear)
+        .background(isSelected ? Theme.canvas : hovering && manager.isReady ? Theme.hover : .clear, in: Rectangle())
         .contentShape(Rectangle())
         // 点下载好的模型就换用它
         .onTapGesture { if manager.isReady, !isSelected { model.useSpeechModel(speechModel) } }

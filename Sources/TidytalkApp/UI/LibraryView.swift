@@ -365,6 +365,16 @@ struct RowList<Item: Identifiable, Row: View>: View {
     }
 }
 
+enum RowHover {
+    #if DEBUG || TIDYTALK_DEV_TOOLS
+    /// 截图用：假装鼠标停在这一行上
+    nonisolated(unsafe) static var forced: String?
+    static func isForced(_ id: String) -> Bool { forced == id }
+    #else
+    static func isForced(_ id: String) -> Bool { false }
+    #endif
+}
+
 /// 列表的一行（设计稿的 Library Row）：类型图标方块、标题和类型长度、右边的时间或状态。
 /// 有操作时，鼠标移上去整行变浅灰，时间换成几个图标按钮。
 struct LibraryRow<Actions: View>: View {
@@ -380,7 +390,7 @@ struct LibraryRow<Actions: View>: View {
     @ViewState private var hovering = false
 
     private var hasActions: Bool { Actions.self != EmptyView.self }
-    private var showActions: Bool { hovering && hasActions }
+    private var showActions: Bool { (hovering || RowHover.isForced(item.id)) && hasActions }
 
     var body: some View {
         let symbol = status?.symbol ?? item.symbol
@@ -415,7 +425,7 @@ struct LibraryRow<Actions: View>: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(showActions ? Theme.subtle : hovering ? Theme.hover : .clear)
+        .background(showActions ? Theme.rowHover : hovering ? Theme.hover : .clear, in: Rectangle())
         .contentShape(Rectangle())
         .onTapGesture(perform: onOpen)
         .onHover { hovering = $0 }
