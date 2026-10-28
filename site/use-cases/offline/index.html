@@ -43,7 +43,7 @@
   "mainEntityOfPage": "https://tidytalk.zayen.dev/use-cases/offline/",
   "image": "https://tidytalk.zayen.dev/assets/og-en.jpg",
   "datePublished": "2026-10-16",
-  "dateModified": "2026-10-19",
+  "dateModified": "2026-10-28",
   "author": {
     "@type": "Person",
     "name": "zayen",
@@ -99,7 +99,7 @@
     <header class="page-head">
       <h1>Dictation that never leaves your Mac</h1>
       <p class="lead">Tidytalk always recognizes your voice on your Mac. Pair it with a local model and your text stays there too.</p>
-      <p class="updated">Updated 2026-10-19</p>
+      <p class="updated">Updated 2026-10-28</p>
     </header>
 
     <div class="prose">
@@ -114,7 +114,7 @@
           </tbody>
         </table>
       </div>
-      <p>Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240&nbsp;MB. Recent results are kept in memory only and cleared when you quit. Settings are stored in <code>~/.tidytalk.json</code>, readable only by you, and your API key is kept in the macOS Keychain.</p>
+      <p>Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240&nbsp;MB. Dictation history is kept on your Mac for 30 days; you can turn that off in Settings › Privacy &amp; Data. Settings are stored in <code>~/.tidytalk.json</code>, readable only by you, and your API key is kept in the macOS Keychain.</p>
       <p>Apart from the AI service you set up, Tidytalk only goes online to download models, check for updates (at launch, at most once a day, which you can turn off in Settings › General), and transcribe links. Each case is listed in the <a href="/privacy/">privacy policy</a>.</p>
 
       <h2 id="ollama">Set up Ollama</h2>
@@ -123,7 +123,7 @@
         <li>Download a model in Terminal, for example:
           <pre><code>ollama pull qwen2.5:7b</code></pre>
         </li>
-        <li>In Tidytalk, open Settings › Set Up AI, and choose <strong>Ollama</strong> at the top. Check that the model name matches the one you pulled, then click the checkmark button to save.</li>
+        <li>In Tidytalk, open Settings › AI Service, and choose <strong>Ollama</strong> at the top. Check that the model name matches the one you pulled, then click the checkmark button to save.</li>
         <li>Click the purple network icon next to it to test the connection. When it says "Connected", you're done.</li>
       </ol>
 
@@ -131,7 +131,7 @@
       <ol>
         <li>Install <a href="https://lmstudio.ai">LM Studio</a>, download a model, and load it.</li>
         <li>Start LM Studio's local server.</li>
-        <li>In Tidytalk, choose <strong>LM Studio</strong> at the top of Settings › Set Up AI, enter the name of the loaded model, save, and click the purple network icon to test the connection.</li>
+        <li>In Tidytalk, choose <strong>LM Studio</strong> at the top of Settings › AI Service, enter the name of the loaded model, save, and click the purple network icon to test the connection.</li>
       </ol>
       <p>Local models don't need an API key, and Tidytalk gives them a 60-second timeout instead of 12 seconds.</p>
 
@@ -143,7 +143,7 @@
       </ul>
 
       <h2 id="no-ai">No AI at all</h2>
-      <p>Turn off "Tidy up text" in Settings › Set Up AI and Tidytalk becomes a fast, fully offline speech-to-text tool. Replacements, snippets, and Chinese–English spacing still work, because they run on your Mac without AI.</p>
+      <p>Turn off "Tidy up text" in Settings › Dictation and Tidytalk becomes a fast, fully offline speech-to-text tool. Replacements, snippets, and Chinese–English spacing still work, because they run on your Mac without AI.</p>
 
       <h2 id="open-source">Verify it yourself</h2>
       <p>Tidytalk is open source under the MIT License. You can read exactly what it sends and when on <a href="https://github.com/byteyu2436/tidytalk">GitHub</a>, or build it from source.</p>

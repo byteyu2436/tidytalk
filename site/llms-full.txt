@@ -1,6 +1,6 @@
 # Tidytalk – full text of the website
 
-Version 0.3.1. Source: https://tidytalk.zayen.dev/llms.txt
+Version 0.3.2. Source: https://tidytalk.zayen.dev/llms.txt
 
 ---
 
@@ -55,7 +55,7 @@ With Ollama, LM Studio, or Apple Intelligence, your text stays on your Mac too. 
 
 ### Everything else
 Nothing collected
-No account and no tracking in the app. Recent results live in memory and are cleared when you quit.
+No account and no tracking in the app. Dictation history is kept on your Mac for 30 days, and you can turn that off.
 
 See what leaves your Mac in each setup →
 
@@ -90,7 +90,7 @@ Drop in a meeting recording, a lecture, or a video, or paste a YouTube or Bilibi
 
 - A timestamp for every sentence
 - Export as text, SRT subtitles, or Markdown
-- For links, only the audio is downloaded, then deleted
+- Audio and covers from links stay on your Mac until you delete them
 
 How to transcribe meetings and videos →
 
@@ -224,11 +224,13 @@ xattr -dr com.apple.quarantine /Applications/Tidytalk.app
 
 - Allow Accessibility so it can detect the shortcut and paste text at your cursor.
 
-- Set Up AI: enter an OpenAI-compatible endpoint, API key, and model. DeepSeek is the default. You can skip this and get the raw transcript instead.
+- Set Up AI: pick Ollama, LM Studio, Cloud, or Apple Intelligence and enter an OpenAI-compatible endpoint, API key, and model. DeepSeek is the default. You can skip this and get the raw transcript instead.
 
 - Download Speech Model: about 240 MB, once. After that, recognition works offline.
 
-Tidytalk lives in the menu bar. It only appears in the Dock while its setup guide or main window is open. Open the menu bar icon for settings, recent results, and the output language; settings are also at the bottom left of the main window, or press ⌘,.
+Tidytalk lives in the menu bar. It only appears in the Dock while its setup guide or main window is open. The menu bar menu has only actions: start live captions, start meeting notes, transcribe a file or link, and your last 3 results.
+
+The main window has four pages: Home (what you dictated today, the three features, and recent results), Transcribe (transcribe a file or link), Library (dictation, meeting notes, and transcriptions in one list you can filter and search), and Vocabulary. Settings are at the bottom left (⌘,), in three groups, with each option in exactly one place: Features (Dictation, Live Captions, Meetings), Shared (Shortcuts, AI Service, Speech Model), and System (General, Privacy & Data, About).
 
 ## Hold to talk
 
@@ -300,13 +302,13 @@ Click the download button and keep working: the current model is used until the 
 
 Tidytalk can caption whatever your Mac is playing, such as a video, a lecture, or a video call. It records only the computer's audio, never the microphone, and recognizes it on your Mac.
 
-- Turn it on or off: press ⌃⌥C (Control + Option + C), or choose Start Listening under Live Captions in the menu bar menu. The first time, macOS asks to allow Tidytalk to record system audio. While listening, the menu bar icon shows an orange dot. Turning captions off clears the audio and text from memory.
+- Turn it on or off: press ⌃⌥C (Control + Option + C), or choose Start Live Captions on Home or in the menu bar menu. The first time, macOS asks to allow Tidytalk to record system audio. While listening, the menu bar icon shows an orange dot. Turning captions off clears the audio and text from memory.
 
 - The caption bar: one sentence per line, with earlier sentences dimmed. Drag it anywhere and it remembers the spot. It hides after 10 seconds of silence and comes back when there's sound. Hover over it for translate, pause, and close buttons; close stops listening. Clicking a sentence does nothing, so you can drag freely. Choose a dark or glass style and a text size in Settings › Live Captions.
 
-- What it listens to: all audio except Tidytalk's own sounds, or a single app you pick under Listen To in the menu or in Settings › Live Captions.
+- What it listens to: all audio except Tidytalk's own sounds, or a single app you pick in Settings › Live Captions.
 
-- Translation: turn on Translate Captions and sentences are translated with your Set Up AI service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.
+- Translation: turn on Translate Captions in Settings › Live Captions and sentences are translated with the service in Settings › AI Service and shown under the original. Sentences already in the target language are left alone. With "Translate as You Listen" on (the default), the sentence being spoken is translated too and updates as it goes, then the final translation replaces it; turn it off to translate only finished sentences and make fewer AI calls. With Ollama, LM Studio, or Apple Intelligence, nothing goes online; with a cloud service, caption text is sent to it.
 
 - Paste what was just said: while listening, put your cursor in a text field and press ⌃⌥V. Tidytalk tidies the latest passage (since the last pause of more than 2 seconds, up to 30 seconds) with your dictation settings and pastes it. You can also hover over a sentence in the captions and click Paste to paste from there onward. ⌃⌥V only works while captions are on; the rest of the time other apps can use it.
 
@@ -314,7 +316,7 @@ For a step-by-step walkthrough, see Live translated captions for videos and meet
 
 ## Meeting recording
 
-Press ⌃⌥M (Control + Option + M), or start from the menu bar or the Meetings page of the Tidytalk window. Tidytalk records your microphone and your Mac's audio (the people on the other end) at the same time. Press it again to stop.
+Press ⌃⌥M (Control + Option + M), or choose Start Meeting Notes on Home or in the menu bar menu. While recording, the bottom of the main window sidebar shows the timer and a stop button. Tidytalk records your microphone and your Mac's audio (the people on the other end) at the same time. Press it again to stop.
 
 - During the meeting: each sentence appears as a draft as soon as it's spoken, with "Me" and "Others" in two colors. Dictation keeps working. Meeting recording and live captions can't run at the same time.
 
@@ -330,13 +332,13 @@ Press ⌃⌥M (Control + Option + M), or start from the menu bar or the Meetings
 
 ## Transcribe files and links
 
-Choose "Transcribe File or Link…" in the menu bar menu, or open Transcribe in the Tidytalk window. The page has two tabs, Files and Links:
+On the Transcribe page of the main window, drop in a file or paste a video link. You can also choose "Transcribe File or Link…" in the menu bar menu, or press ⌘O for a file and ⌘L for a link. Results are listed on the Transcribe page and in the Library:
 
-- Files: drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) onto the page, or click the drop area to choose one. Tidytalk remembers where the file is and doesn't copy it.
+- Files: drop an audio or video file (MP3, M4A, WAV, MP4, MOV and more, up to 3 hours) onto the Transcribe page, or click the folder icon to choose one. Tidytalk remembers where the file is and doesn't copy it.
 
 - Links: paste a video link (YouTube, Bilibili, and more). The first time, Tidytalk downloads the open-source tool yt-dlp (about 35 MB) from its official GitHub release, checks it against the checksum published there, and updates it every two weeks. Only the audio and cover image are downloaded. They stay on your Mac and can be deleted anytime. Use only content you have the right to use.
 
-- Every transcription is saved as a card. Open it to play the audio, fix a line, copy everything, or export plain text (.txt), subtitles (.srt), or Markdown. Downloaded audio can be saved elsewhere, or deleted while keeping the text.
+- Every transcription is saved in the Library. Open it to play the audio, fix a line, copy everything, or export plain text (.txt), subtitles (.srt), or Markdown. Downloaded audio can be saved elsewhere, or deleted while keeping the text.
 
 - It uses the speech model from Settings › Speech Model and runs on your Mac.
 
@@ -360,11 +362,11 @@ Um so I wanted to ask, like, what's the uh rate limit for this API | I wanted to
 
 Let's move the launch to Wednesday, no wait, Thursday | Let's move the launch to Thursday.
 
-Turn off "Tidy up text" in Settings › Set Up AI to paste the raw transcript. Tidytalk then works fully offline. If the AI service is slow, unreachable, or returns something unexpected, Tidytalk pastes the raw transcript and tells you.
+Turn off "Tidy up text" in Settings › Dictation to paste the raw transcript. Tidytalk then works fully offline. If the AI service is slow, unreachable, or returns something unexpected, Tidytalk pastes the raw transcript and tells you.
 
 ## Cleanup strength and mode
 
-Both are in Settings › Set Up AI › Tidying.
+Both are in Settings › Dictation › Tidy up text.
 
 Strength | What it does
 
@@ -388,7 +390,7 @@ Code (keep terms) | Keeps terms, commands, file names, and symbols exactly as th
 
 By default the output is in the language you spoke. Choose another output language and the text is translated as it's tidied, so you can speak Chinese and paste an English email. Tidytalk can translate into English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, and Spanish.
 
-- Change it in Settings › Set Up AI › Tidying, or quickly from the "Output Language" submenu in the menu bar.
+- Change it in Settings › Dictation › Tidy up text.
 
 - Translation and tidying happen in one request, so it's about as fast as tidying alone. Your vocabulary and mode still apply.
 
@@ -402,7 +404,7 @@ Tidytalk talks to AI services with the OpenAI-compatible protocol, so it also wo
 
 - Install Ollama and download a model, for example ollama pull qwen2.5:7b. Or download and load a model in LM Studio and start its local server.
 
-- At the top of Settings › Set Up AI, choose Ollama or LM Studio, confirm the model name, and save. To go back to DeepSeek, OpenAI, or another online service, choose Cloud. Local models don't need an API key, and the timeout is raised to 60 seconds.
+- At the top of Settings › AI Service, choose Ollama or LM Studio, confirm the model name, and save. To go back to DeepSeek, OpenAI, or another online service, choose Cloud. Local models don't need an API key, and the timeout is raised to 60 seconds.
 
 - Click the purple network icon to test the connection.
 
@@ -410,11 +412,11 @@ Reasoning models such as Qwen3 or DeepSeek-R1 work too: Tidytalk asks the servic
 
 ### Apple Intelligence
 
-On a Mac that supports Apple Intelligence, choose Apple Intelligence in Settings › Set Up AI to tidy and translate with the model built into macOS. No API key is needed, and your text never leaves your Mac. Turn on Apple Intelligence in System Settings first; if this Mac doesn't support it or it's off, the option is dimmed and says why.
+On a Mac that supports Apple Intelligence, choose Apple Intelligence in Settings › AI Service to tidy and translate with the model built into macOS. No API key is needed, and your text never leaves your Mac. Turn on Apple Intelligence in System Settings first; if this Mac doesn't support it or it's off, the option is dimmed and says why.
 
 ## Vocabulary
 
-All of these are in Settings › Vocabulary.
+All of these are on the Vocabulary page of the main window.
 
 ### Common words
 
@@ -422,11 +424,11 @@ List names, products, and terms you use, one per line. These are the words speec
 
 ### Replacements
 
-Always replace one spelling with another, for example "cloud" with "Claude". English matching ignores case and only matches whole words. Replacements run on your Mac, even with tidying off. From "Recent" in the menu bar, choose a result and "Add to Vocabulary…" to add a misheard word directly.
+Always replace one spelling with another, for example "cloud" with "Claude". English matching ignores case and only matches whole words. Replacements run on your Mac, even with tidying off. From "Recent Results" in the menu bar menu, choose a result and "Add to Vocabulary…" to add a misheard word directly.
 
 ### Words you correct
 
-If you change a word in the same text field after pasting, such as "cloud" to "Claude", Tidytalk lists it under "Edits Found" in the menu bar and at the top of Settings › Vocabulary. Nothing is added until you click "Add to Vocabulary". It only compares within about a minute and a half of pasting and saves nothing. Turn it off at the bottom of the Vocabulary page.
+If you change a word in the same text field after pasting, such as "cloud" to "Claude", Tidytalk lists it under "Words you changed" on the Vocabulary page. Nothing is added until you click ✓. It only compares within about a minute and a half of pasting and saves nothing. Turn it off with "Suggest vocabulary" in Settings › Dictation.
 
 ### Snippets
 
@@ -442,9 +444,9 @@ Not sure which to use? See how to make dictation get names and terms right.
 
 Tidytalk adds spaces between Chinese and English or numbers, uses full-width punctuation after Chinese, and converts full-width letters and digits to half-width. Decimal points, file names, and URLs aren't affected. This runs on your Mac and can be turned off in Settings › General.
 
-## Recent results
+## Dictation history
 
-Your last 20 results are kept in memory. From "Recent" in the menu bar you can paste or copy one again, copy the raw transcript, re-tidy it with another mode or language and paste it into the current text field, or add a misheard word to your vocabulary. Nothing is written to disk, and the list is cleared when you quit.
+Each dictation and voice rewrite (the clean text and the raw transcript) is saved on this Mac for 30 days by default. Only you can read it, nothing is uploaded, and Tidytalk doesn't record which app you pasted into. Everything is in the Library, where you can search, copy, re-tidy, or delete it; your last 3 results are also under "Recent Results" in the menu bar menu, where you can paste one again. In Settings › Privacy & Data you can change how long it's kept, clear it all, or turn off "Save dictation history" to keep it in memory only until you quit.
 
 ## Supported languages
 
@@ -468,7 +470,7 @@ Mixing Chinese and English? See how to dictate mixed Chinese and English.
 
 What happens | Why, and what to do
 
-"Cleanup failed, pasted original" | The AI service was unreachable, timed out, or returned something unusual. Check your network and click the purple network icon in Settings › Set Up AI to test the connection.
+"Cleanup failed, pasted original" | The AI service was unreachable, timed out, or returned something unusual. Check your network and click the purple network icon in Settings › AI Service to test the connection.
 
 "Didn't hear anything" | Nothing was recognized. Check the microphone in Settings › Dictation.
 
@@ -493,7 +495,7 @@ rm -rf ~/Library/Caches/app.tidytalk.Tidytalk ~/Library/HTTPStorages/app.tidytal
 defaults delete app.tidytalk.Tidytalk
 tccutil reset All app.tidytalk.Tidytalk
 
-These remove the speech models (SenseVoice is about 240 MB, other models about 1 GB each), the speaker model, yt-dlp, your meetings, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep ~/.tidytalk.json if you plan to reinstall and want your settings back.
+These remove the speech models (SenseVoice is about 240 MB, other models about 1 GB each), the speaker model, yt-dlp, your meetings, transcriptions, and dictation history, your settings, your API key in the Keychain, network caches, preferences, and microphone, accessibility, and system audio recording permissions. Keep ~/.tidytalk.json if you plan to reinstall and want your settings back.
 
 ---
 
@@ -645,9 +647,9 @@ Tidytalk also does a few things beyond dictation: live captions for audio your M
 
 - Pick your shortcut in Settings › Dictation. If you're used to holding Fn, choose Fn (🌐), then set "Press 🌐 key to" to "Do Nothing" in System Settings › Keyboard.
 
-- Add the names and terms from your Wispr Flow dictionary to Settings › Vocabulary. With Qwen3-ASR as the speech model, they're recognized correctly from the start.
+- Add the names and terms from your Wispr Flow dictionary to the Vocabulary page. With Qwen3-ASR as the speech model, they're recognized correctly from the start.
 
-- Choose an AI service in Settings › Set Up AI: Ollama or LM Studio to keep everything on your Mac, Apple Intelligence if your Mac supports it, or a cloud API such as DeepSeek or OpenAI.
+- Choose an AI service in Settings › AI Service: Ollama or LM Studio to keep everything on your Mac, Apple Intelligence if your Mac supports it, or a cloud API such as DeepSeek or OpenAI.
 
 ## Sources
 
@@ -707,9 +709,9 @@ Both have custom vocabulary and text replacements. Tidytalk also includes live c
 
 - Download Tidytalk and follow the setup guide.
 
-- Copy your custom vocabulary into Settings › Vocabulary › Common Words, and your text replacements into Replacements.
+- Copy your custom vocabulary into Vocabulary › Common Words, and your text replacements into Replacements.
 
-- Instead of modes, pick a cleanup mode (Standard, Chat, Email, or Code) in Settings › Set Up AI › Tidying, and add your own instructions as Custom Rules.
+- Instead of modes, pick a cleanup mode (Standard, Chat, Email, or Code) in Settings › Dictation › Tidy up text, and add your own instructions as Custom Rules.
 
 - To keep everything local, choose Ollama, LM Studio, or Apple Intelligence as the AI service. See private and offline dictation.
 
@@ -783,9 +785,9 @@ Typeless says audio isn't stored and its AI providers don't keep or train on you
 
 - Download Tidytalk and follow the setup guide.
 
-- Copy the words from your Typeless dictionary into Settings › Vocabulary › Common Words.
+- Copy the words from your Typeless dictionary into Vocabulary › Common Words.
 
-- Choose an AI service in Settings › Set Up AI. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac.
+- Choose an AI service in Settings › AI Service. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac.
 
 - Pick a shortcut in Settings › Dictation. Voice editing of selected text uses Right Option by default.
 
@@ -875,7 +877,7 @@ Local model in Ollama or LM Studio | Stays on your Mac | Stays on your Mac
 
 "Tidy up text" turned off | Stays on your Mac | Stays on your Mac (raw transcript)
 
-Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240 MB. Recent results are kept in memory only and cleared when you quit. Settings are stored in ~/.tidytalk.json, readable only by you, and your API key is kept in the macOS Keychain.
+Speech recognition uses the SenseVoice model, which runs on your Mac after a one-time download of about 240 MB. Dictation history is kept on your Mac for 30 days; you can turn that off in Settings › Privacy & Data. Settings are stored in ~/.tidytalk.json, readable only by you, and your API key is kept in the macOS Keychain.
 
 Apart from the AI service you set up, Tidytalk only goes online to download models, check for updates (at launch, at most once a day, which you can turn off in Settings › General), and transcribe links. Each case is listed in the privacy policy.
 
@@ -886,7 +888,7 @@ Apart from the AI service you set up, Tidytalk only goes online to download mode
 - Download a model in Terminal, for example:
 ollama pull qwen2.5:7b
 
-- In Tidytalk, open Settings › Set Up AI, and choose Ollama at the top. Check that the model name matches the one you pulled, then click the checkmark button to save.
+- In Tidytalk, open Settings › AI Service, and choose Ollama at the top. Check that the model name matches the one you pulled, then click the checkmark button to save.
 
 - Click the purple network icon next to it to test the connection. When it says "Connected", you're done.
 
@@ -896,7 +898,7 @@ ollama pull qwen2.5:7b
 
 - Start LM Studio's local server.
 
-- In Tidytalk, choose LM Studio at the top of Settings › Set Up AI, enter the name of the loaded model, save, and click the purple network icon to test the connection.
+- In Tidytalk, choose LM Studio at the top of Settings › AI Service, enter the name of the loaded model, save, and click the purple network icon to test the connection.
 
 Local models don't need an API key, and Tidytalk gives them a 60-second timeout instead of 12 seconds.
 
@@ -910,7 +912,7 @@ Local models don't need an API key, and Tidytalk gives them a 60-second timeout 
 
 ## No AI at all
 
-Turn off "Tidy up text" in Settings › Set Up AI and Tidytalk becomes a fast, fully offline speech-to-text tool. Replacements, snippets, and Chinese–English spacing still work, because they run on your Mac without AI.
+Turn off "Tidy up text" in Settings › Dictation and Tidytalk becomes a fast, fully offline speech-to-text tool. Replacements, snippets, and Chinese–English spacing still work, because they run on your Mac without AI.
 
 ## Verify it yourself
 
@@ -942,11 +944,11 @@ Your correction ("a wait or, no, actually a retry") keeps only the final version
 
 ## Keep technical terms intact
 
-Switch the mode to Code (keep terms) in Settings › Set Up AI › Tidying. Terms, commands, file names, and symbols are kept exactly as you said them, and punctuation isn't converted. If you speak Chinese, English terms you mix in, such as "API" or "rate limit", are kept exactly as you said them.
+Switch the mode to Code (keep terms) in Settings › Dictation › Tidy up text. Terms, commands, file names, and symbols are kept exactly as you said them, and punctuation isn't converted. If you speak Chinese, English terms you mix in, such as "API" or "rate limit", are kept exactly as you said them.
 
 ## Teach it your project's names
 
-Speech recognition stumbles on names it has never heard: libraries, internal services, teammates. Two settings in Settings › Vocabulary fix this:
+Speech recognition stumbles on names it has never heard: libraries, internal services, teammates. Two lists on the Vocabulary page fix this:
 
 - Common words: list names like SenseVoice, Kubernetes, or your service names. The AI corrects similar-sounding mistakes to your spelling.
 
@@ -970,7 +972,7 @@ Your voice is always recognized on your Mac. If your prompts mention proprietary
 
 - Double-tap the shortcut for hands-free recording when you want to talk through a long explanation.
 
-- Use "Recent" in the menu bar to paste the last result again, for example into a second chat.
+- Use "Recent Results" in the menu bar menu to paste the last result again, for example into a second chat.
 
 - Tidytalk works in any app with a text field, including VS Code, Cursor, Xcode, Terminal, Slack, and web apps.
 
@@ -986,7 +988,7 @@ Explain it the way you think, and send it in the language your reader needs. Tid
 
 ## How it works
 
-- Choose an output language from the menu bar icon (Output Language), or in Settings › Set Up AI › Tidying.
+- Choose an output language in Settings › Dictation › Tidy up text.
 
 - Hold Option + Command and speak in Chinese, English, Japanese, Korean, or Cantonese. You don't need to pick the spoken language; it's detected automatically.
 
@@ -1010,7 +1012,7 @@ Set the mode to Email (formal) to get complete, polite sentences in the target l
 
 - The Output Language submenu in the menu bar changes the language for your next dictation without opening Settings.
 
-- Already pasted English but need it in Japanese too? Open "Recent" in the menu bar, choose the result, and pick "Re-tidy" with another language. It's pasted into the current text field without speaking again.
+- Already pasted English but need it in Japanese too? Open "Recent Results" in the menu bar menu, choose the result, and pick "Re-tidy" with another language. It's pasted into the current text field without speaking again.
 
 - To rewrite text you've already typed, select it, hold Right Option, and say "translate this into German".
 
@@ -1060,7 +1062,7 @@ You don't choose a language before speaking. The language is detected automatica
 
 ## 2. Add the English terms you use
 
-Speech recognition gets rare names and jargon wrong more than anything else. In Settings › Vocabulary, list them under Common Words, one per line: your product names, colleagues' names, tools like Kubernetes or Figma.
+Speech recognition gets rare names and jargon wrong more than anything else. On the Vocabulary page, list them under Common Words, one per line: your product names, colleagues' names, tools like Kubernetes or Figma.
 
 - With Qwen3-ASR, these words are recognized correctly from the start.
 
@@ -1074,7 +1076,7 @@ See how to teach dictation names and terms for more.
 
 Tidying removes fillers and slips and adds punctuation, but English words and technical terms inside Chinese speech are kept as they are. It never translates them into Chinese unless you ask it to.
 
-- For technical writing, choose the Code (keep terms) mode in Settings › Set Up AI › Tidying. It keeps terms, commands, file names, and symbols exactly as you said them.
+- For technical writing, choose the Code (keep terms) mode in Settings › Dictation › Tidy up text. It keeps terms, commands, file names, and symbols exactly as you said them.
 
 - For messages, the Chat (casual) mode keeps your tone and sentence-final particles.
 
@@ -1090,7 +1092,7 @@ Set the output language to English, and you can speak Chinese and paste English.
 
 - Say English terms the way you normally would. You don't need to slow down or spell them.
 
-- If a result is wrong, open Recent in the menu bar, pick the result, and choose "Add to Vocabulary…" to fix the word for next time.
+- If a result is wrong, open Recent Results in the menu bar menu, pick the result, and choose "Add to Vocabulary…" to fix the word for next time.
 
 - If you fix a word yourself right after pasting, Tidytalk notices and offers to add it to your vocabulary. Nothing is added until you confirm.
 
@@ -1112,7 +1114,7 @@ Anything your Mac plays: YouTube or Bilibili in a browser, a downloaded video, a
 
 - Install Tidytalk and finish the setup guide.
 
-- For translation, choose an AI service in Settings › Set Up AI. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac; with a cloud service such as DeepSeek or OpenAI, caption text is sent to it.
+- For translation, choose an AI service in Settings › AI Service. Ollama, LM Studio, or Apple Intelligence keep everything on your Mac; with a cloud service such as DeepSeek or OpenAI, caption text is sent to it.
 
 - In Settings › Live Captions, turn on Translate Captions and pick a language under Translate To: English, Simplified or Traditional Chinese, Japanese, Korean, French, German, or Spanish.
 
@@ -1166,7 +1168,7 @@ Speech recognition is good at everyday words and bad at the words that matter mo
 
 {{updated}}
 
-Everything here is in Settings › Vocabulary.
+Everything here is on the Vocabulary page of the main window.
 
 ## 1. List your common words
 
@@ -1186,11 +1188,11 @@ These words help at two stages:
 
 If a word is always misheard the same way, add a replacement, for example "cloud" → "Claude". English matching ignores case and only matches whole words, so "cloudy" is left alone. Replacements run on your Mac and work even with tidying off.
 
-The quickest way to add one: open Recent in the menu bar, pick the result that went wrong, and choose "Add to Vocabulary…".
+The quickest way to add one: open Recent Results in the menu bar menu, pick the result that went wrong, and choose "Add to Vocabulary…".
 
 ## 3. Let it learn from your corrections
 
-When you fix a word yourself right after pasting, in the same text field, Tidytalk notices. The change is listed under Edits Found in the menu bar and at the top of Settings › Vocabulary. Nothing is added until you click "Add to Vocabulary".
+When you fix a word yourself right after pasting, in the same text field, Tidytalk notices. The change is listed under "Words you changed" on the Vocabulary page. Nothing is added until you click ✓.
 
 It only compares within about a minute and a half of pasting and saves nothing. You can turn it off at the bottom of the Vocabulary page.
 

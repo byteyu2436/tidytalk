@@ -23,7 +23,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/changelog/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/changelog/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/changelog/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/changelog/"/>
@@ -37,7 +37,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/docs/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/docs/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/docs/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/docs/"/>
@@ -65,7 +65,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
@@ -86,14 +86,14 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/use-cases/offline/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/offline/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/use-cases/transcribe/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/transcribe/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/transcribe/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/transcribe/"/>
@@ -128,7 +128,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/changelog/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/changelog/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/changelog/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/changelog/"/>
@@ -142,7 +142,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/docs/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/docs/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/docs/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/docs/"/>
@@ -174,7 +174,7 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
@@ -195,14 +195,14 @@
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/use-cases/offline/</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/offline/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/offline/"/>
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/use-cases/transcribe/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/transcribe/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/use-cases/transcribe/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/use-cases/transcribe/"/>

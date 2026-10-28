@@ -43,7 +43,7 @@
   "mainEntityOfPage": "https://tidytalk.zayen.dev/zh/use-cases/offline/",
   "image": "https://tidytalk.zayen.dev/assets/og-zh.jpg",
   "datePublished": "2026-10-16",
-  "dateModified": "2026-10-16",
+  "dateModified": "2026-10-28",
   "author": {
     "@type": "Person",
     "name": "zayen",
@@ -99,7 +99,7 @@
     <header class="page-head">
       <h1>声音和文字都不离开你的 Mac</h1>
       <p class="lead">Tidytalk 始终在你的 Mac 上识别语音。再接上本机大模型，整理文字也在本机完成。</p>
-      <p class="updated">更新于 2026-10-16</p>
+      <p class="updated">更新于 2026-10-28</p>
     </header>
 
     <div class="prose">
@@ -114,7 +114,7 @@
           </tbody>
         </table>
       </div>
-      <p>语音识别用的是 SenseVoice 模型，第一次下载约 240&nbsp;MB 后就在本机运行。最近记录只保存在内存中，退出即清空。设置保存在 <code>~/.tidytalk.json</code>，只有你自己能读写；API Key 存在 macOS 钥匙串里。</p>
+      <p>语音识别用的是 SenseVoice 模型，第一次下载约 240&nbsp;MB 后就在本机运行。说话记录默认在这台 Mac 上保存 30 天，可以在“设置 › 隐私与数据”里关掉。设置保存在 <code>~/.tidytalk.json</code>，只有你自己能读写；API Key 存在 macOS 钥匙串里。</p>
       <p>除了你配置的 AI 服务，Tidytalk 只在下载模型、检查更新（启动时每天最多一次，可以在"设置 › 通用"里关闭）和转写链接时联网。每一项写在<a href="/zh/privacy/">隐私说明</a>里。</p>
 
       <h2 id="ollama">接入 Ollama</h2>
@@ -123,7 +123,7 @@
         <li>在终端下载一个模型，例如：
           <pre><code>ollama pull qwen2.5:7b</code></pre>
         </li>
-        <li>在 Tidytalk 里打开"设置 › 配置 AI"，在顶部选 <strong>Ollama</strong>，确认模型名和刚才下载的一致，点 ✓ 按钮保存。</li>
+        <li>在 Tidytalk 里打开"设置 › AI 服务"，在顶部选 <strong>Ollama</strong>，确认模型名和刚才下载的一致，点 ✓ 按钮保存。</li>
         <li>点旁边紫色的网络图标测试连接，显示"连接成功"就可以用了。</li>
       </ol>
 
@@ -131,7 +131,7 @@
       <ol>
         <li>安装 <a href="https://lmstudio.ai">LM Studio</a>，下载并加载一个模型。</li>
         <li>打开 LM Studio 的本地服务。</li>
-        <li>在 Tidytalk 的"设置 › 配置 AI"顶部选 <strong>LM Studio</strong>，填上已加载的模型名，保存后点紫色的网络图标测试连接。</li>
+        <li>在 Tidytalk 的"设置 › AI 服务"顶部选 <strong>LM Studio</strong>，填上已加载的模型名，保存后点紫色的网络图标测试连接。</li>
       </ol>
       <p>本机模型不需要 API Key，超时时间也从 12 秒放宽到 60 秒。</p>
 
@@ -143,7 +143,7 @@
       </ul>
 
       <h2 id="no-ai">完全不用 AI</h2>
-      <p>在"设置 › 配置 AI"里关闭"整理文字"，Tidytalk 就是一个快速、完全离线的语音转文字工具。固定替换、快捷短语和中英文排版规范仍然有效，因为它们本来就在本机处理，不需要 AI。</p>
+      <p>在"设置 › 说话输入"里关闭"整理文字"，Tidytalk 就是一个快速、完全离线的语音转文字工具。固定替换、快捷短语和中英文排版规范仍然有效，因为它们本来就在本机处理，不需要 AI。</p>
 
       <h2 id="open-source">可以自己核实</h2>
       <p>Tidytalk 以 MIT 许可证开源。它什么时候发送什么内容，都可以在 <a href="https://github.com/byteyu2436/tidytalk">GitHub</a> 上看源码确认，也可以自己从源码编译。</p>

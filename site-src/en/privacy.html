@@ -40,7 +40,7 @@ description: Tidytalk needs no account and has no analytics or tracking. Your vo
       </ul>
 
       <h2 id="ai">Text sent to an AI service</h2>
-      <p>Text is sent only when you turn on the feature and choose a service in Settings › Set Up AI:</p>
+      <p>Text is sent only when you turn on the feature and choose a service in Settings › AI Service:</p>
       <ul>
         <li><strong>Tidy up text</strong>: the recognized text, plus the terms in your vocabulary and your custom rules, so the AI follows them.</li>
         <li><strong>Voice rewrite</strong>: the text you selected and the change you asked for.</li>
@@ -72,13 +72,13 @@ description: Tidytalk needs no account and has no analytics or tracking. Your vo
           <tbody>
             <tr><td><code>~/.tidytalk.json</code></td><td>Settings, the AI endpoint, vocabulary, snippets, and custom rules. Readable only by you</td></tr>
             <tr><td><code>app.tidytalk.Tidytalk</code> in the Keychain</td><td>Your API key</td></tr>
-            <tr><td><code>~/Library/Application Support/Tidytalk/</code></td><td>Speech models, the speaker model, and yt-dlp; meeting notes (<code>Meetings/</code>, transcripts and recordings); transcriptions (<code>Transcriptions/</code>, text plus the audio and cover images downloaded from links). For a file on your Mac, only its location is saved, not a copy</td></tr>
-            <tr><td><code>app.tidytalk.Tidytalk</code> in system preferences</td><td>Window positions, whether you've seen the setup guide, and when updates were last checked</td></tr>
+            <tr><td><code>~/Library/Application Support/Tidytalk/</code></td><td>Speech models, the speaker model, and yt-dlp; meeting notes (<code>Meetings/</code>, transcripts and recordings); transcriptions (<code>Transcriptions/</code>, text plus the audio and cover images downloaded from links); dictation history (<code>Dictations/</code>: clean text, raw transcripts, and times; for voice rewrite, your instruction and the rewritten text). For a file on your Mac, only its location is saved, not a copy. Which app you pasted into isn't recorded</td></tr>
+            <tr><td><code>app.tidytalk.Tidytalk</code> in system preferences</td><td>Window positions, the interface language, whether you've seen the setup guide, when updates were last checked and the latest version, and whether system audio recording has worked</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Meeting and transcription files are readable only by your user account. Your last 20 dictation results and live captions are kept in memory only and cleared when you quit Tidytalk.</p>
-      <p>You can delete meetings and transcriptions one by one in the main window. To remove everything, follow <a href="/docs/#uninstall">Uninstall in the user guide</a>.</p>
+      <p>Meeting, transcription, and dictation files are readable only by your user account. Dictation history is kept for 30 days by default. In Settings › Privacy &amp; Data you can change that to 7 days, 90 days, a year, or forever, or turn saving off so it stays in memory only until you quit Tidytalk. Live captions are kept in memory only and cleared when you quit.</p>
+      <p>You can delete meetings, transcriptions, and dictation history one by one in the Library, or clear all dictation history in Settings › Privacy &amp; Data. To remove everything, follow <a href="/docs/#uninstall">Uninstall in the user guide</a>.</p>
 
       <h2 id="permissions">Permissions</h2>
       <div class="table-wrap">
@@ -86,7 +86,7 @@ description: Tidytalk needs no account and has no analytics or tracking. Your vo
           <thead><tr><th>Permission</th><th>Used for</th></tr></thead>
           <tbody>
             <tr><td>Microphone</td><td>Dictation and meeting notes</td></tr>
-            <tr><td>Accessibility</td><td>Listening for the shortcut; pasting text at the cursor; reading the selected text for voice rewrite; for a minute and a half after pasting, comparing words you change in the text field so Tidytalk can suggest adding them to your vocabulary (nothing is saved, and you can turn it off on the Vocabulary page)</td></tr>
+            <tr><td>Accessibility</td><td>Listening for the shortcut; pasting text at the cursor; reading the selected text for voice rewrite; for a minute and a half after pasting, comparing words you change in the text field so Tidytalk can suggest adding them to your vocabulary (nothing is saved, and you can turn it off in Settings › Dictation)</td></tr>
             <tr><td>System audio recording</td><td>Live captions and meeting notes</td></tr>
             <tr><td>Speech recognition</td><td>Only when you choose Apple Speech</td></tr>
           </tbody>

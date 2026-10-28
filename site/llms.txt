@@ -2,7 +2,7 @@
 
 > Tidytalk is a free, open-source (MIT) voice input app for macOS. Hold a shortcut, say a whole paragraph, and let go: speech is recognized on your Mac, an AI service of your choice removes filler words and slips and adds punctuation, and the clean text is pasted at your cursor in any app. Audio is never uploaded, and with a local model (Ollama, LM Studio) or Apple Intelligence the text stays on the Mac too.
 
-Current version: 0.3.1. Requires macOS 26 or later on a Mac with Apple silicon. Interface in English and Simplified Chinese. Not notarized yet: on first launch, click "Open Anyway" in System Settings › Privacy & Security.
+Current version: 0.3.2. Requires macOS 26 or later on a Mac with Apple silicon. Interface in English and Simplified Chinese. Not notarized yet: on first launch, click "Open Anyway" in System Settings › Privacy & Security.
 
 Key facts:
 
@@ -13,7 +13,7 @@ Key facts:
 - Live captions: press Control + Option + C to caption audio the Mac is playing (videos, lectures, video calls) using a Core Audio process tap; optional translation as you listen; Control + Option + V tidies and pastes what was just said.
 - File and link transcription: audio or video files (up to 3 hours) and YouTube or Bilibili links, with timestamps; export as TXT, SRT, or Markdown. Each transcription is kept on the Mac with its downloaded audio and cover image, and can be played back, edited, or deleted.
 - Personal vocabulary, replacements, snippets, custom rules, voice rewrite of selected text, Chinese–English spacing, and clipboard restore after pasting. Words you correct after pasting are suggested for the vocabulary.
-- Privacy: no account, no analytics. Recent results are kept in memory only; meeting recordings, transcripts, and file or link transcriptions are saved only on the Mac. Network use: the one-time model download, an optional daily update check, the AI service you configure, and links you ask it to transcribe.
+- Privacy: no account, no analytics. Dictation history is kept on the Mac for 30 days by default and can be turned off; meeting recordings, transcripts, and file or link transcriptions are saved only on the Mac. Network use: the one-time model download, an optional daily update check, the AI service you configure, and links you ask it to transcribe.
 - Price: free. Cloud AI services bill you directly through your own API key.
 
 ## Links

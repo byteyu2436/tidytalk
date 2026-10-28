@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v0.3.2",
+    "name": "Tidytalk 0.3.2",
+    "date": "2026-10-28",
+    "url": "https://github.com/byteyu2436/tidytalk/releases/tag/v0.3.2",
+    "body": "- 设置并进主窗口：点左下角的\"设置\"或按 ⌘, 打开，按 ⌘[ 回来。\n- 新的「帮助」菜单：使用指南（⌘?）和隐私说明。\n- 官网新增隐私说明，写明本机存了什么、什么时候联网、哪些文字会发给 AI 服务。\n\n完整更新内容：https://tidytalk.zayen.dev/zh/changelog/#v0.3.2\n需要 macOS 26 和 Apple 芯片。安装包没有经过苹果公证，第一次打开请到\"系统设置 › 隐私与安全性\"点\"仍要打开\"。\n\n- Settings now open inside the main window: click Settings in the bottom-left corner or press ⌘, and press ⌘[ to go back.\n- A new Help menu with the User Guide (⌘?) and the Privacy Policy.\n- A new privacy policy on the website explains what's stored on your Mac, when Tidytalk goes online, and which text is sent to your AI service.\n\nFull changes: https://tidytalk.zayen.dev/changelog/#v0.3.2\nRequires macOS 26 on Apple silicon. The app isn't notarized. The first time you open it, click \"Open Anyway\" in System Settings › Privacy & Security.\n\nSHA-256 (Tidytalk-0.3.2.dmg): `afc3d85f39ba64fda63389070400c9ee1f40b68a9cb41bc9e0d5f1cb4760b890`\n"
+  },
+  {
     "tag": "v0.3.1",
     "name": "Tidytalk 0.3.1",
     "date": "2026-10-26",

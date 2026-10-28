@@ -40,7 +40,7 @@ description: Tidytalk 不需要账号，没有统计和追踪，声音只在你�
       </ul>
 
       <h2 id="ai">会发给 AI 服务的文字</h2>
-      <p>只有在你打开对应的功能、并在"设置 › 配置 AI"里选了服务以后才会发送：</p>
+      <p>只有在你打开对应的功能、并在"设置 › AI 服务"里选了服务以后才会发送：</p>
       <ul>
         <li><strong>整理文字</strong>：识别出的文字，以及词库里的常用词和自定义规则（让 AI 照着写）。</li>
         <li><strong>语音改写</strong>：你选中的文字和你说的修改要求。</li>
@@ -72,13 +72,13 @@ description: Tidytalk 不需要账号，没有统计和追踪，声音只在你�
           <tbody>
             <tr><td><code>~/.tidytalk.json</code></td><td>设置、AI 接口地址、词库、快捷短语、自定义规则。只有你自己能读写</td></tr>
             <tr><td>钥匙串里的 <code>app.tidytalk.Tidytalk</code></td><td>API Key</td></tr>
-            <tr><td><code>~/Library/Application Support/Tidytalk/</code></td><td>识别模型、说话人模型、yt-dlp；会议记录（<code>Meetings/</code>，文字和录音）；转写记录（<code>Transcriptions/</code>，文字，以及链接下载的音频和封面图）。转写本机文件时只记下原文件的位置，不复制</td></tr>
-            <tr><td>系统偏好设置里的 <code>app.tidytalk.Tidytalk</code></td><td>窗口位置、是否看过设置引导、上次检查更新的时间</td></tr>
+            <tr><td><code>~/Library/Application Support/Tidytalk/</code></td><td>识别模型、说话人模型、yt-dlp；会议记录（<code>Meetings/</code>，文字和录音）；转写记录（<code>Transcriptions/</code>，文字，以及链接下载的音频和封面图）；说话记录（<code>Dictations/</code>，整理后的文字、识别原文和时间；语音改写时是你说的修改要求和改好的文字）。转写本机文件时只记下原文件的位置，不复制。不记录粘贴到了哪个应用</td></tr>
+            <tr><td>系统偏好设置里的 <code>app.tidytalk.Tidytalk</code></td><td>窗口位置、界面语言、是否看过设置引导、上次检查更新的时间和最新的版本号、录制系统音频是否允许过</td></tr>
           </tbody>
         </table>
       </div>
-      <p>会议和转写的文件只有当前用户能读写。最近 20 次说话输入的结果和实时字幕只放在内存里，退出 Tidytalk 就清空。</p>
-      <p>会议和转写可以在主窗口里逐条删除；想全部删掉，按<a href="/zh/docs/#uninstall">使用指南的"卸载"一节</a>操作。</p>
+      <p>会议、转写和说话记录的文件只有当前用户能读写。说话记录默认保留 30 天，可以在"设置 › 隐私与数据"里改成 7 天、90 天、一年或一直保留，也可以关掉保存：关掉后只在这次打开期间放在内存里，退出 Tidytalk 就清空。实时字幕只放在内存里，退出就清空。</p>
+      <p>会议、转写和说话记录可以在资料库里逐条删除，说话记录也可以在"设置 › 隐私与数据"里一次清空；想全部删掉，按<a href="/zh/docs/#uninstall">使用指南的"卸载"一节</a>操作。</p>
 
       <h2 id="permissions">权限</h2>
       <div class="table-wrap">
@@ -86,7 +86,7 @@ description: Tidytalk 不需要账号，没有统计和追踪，声音只在你�
           <thead><tr><th>权限</th><th>用来做什么</th></tr></thead>
           <tbody>
             <tr><td>麦克风</td><td>说话输入、会议记录</td></tr>
-            <tr><td>辅助功能</td><td>监听快捷键；把文字粘贴到光标处；语音改写时读取选中的文字；粘贴后一分半钟内比较输入框里你改过的词，用来提示加入词库（不保存，可以在词库页关掉）</td></tr>
+            <tr><td>辅助功能</td><td>监听快捷键；把文字粘贴到光标处；语音改写时读取选中的文字；粘贴后一分半钟内比较输入框里你改过的词，用来提示加入词库（不保存，可以在"设置 › 说话输入"里关掉）</td></tr>
             <tr><td>录制系统音频</td><td>实时字幕、会议记录</td></tr>
             <tr><td>语音识别</td><td>只在选了"Apple 系统识别"时用</td></tr>
           </tbody>
