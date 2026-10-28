@@ -1,6 +1,6 @@
 # Tidytalk – full text of the website
 
-Version 0.3.2. Source: https://tidytalk.zayen.dev/llms.txt
+Version 0.4.0. Source: https://tidytalk.zayen.dev/llms.txt
 
 ---
 

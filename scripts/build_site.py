@@ -380,6 +380,12 @@ def fetch_releases():
 
 
 CJK = re.compile(r"[一-鿿]")
+LATIN = re.compile(r"[A-Za-z]")
+
+
+def is_chinese(block):
+    """按汉字和英文字母的比例判断：英文段落里提到“简体中文”这样的词，仍然算英文。"""
+    return len(CJK.findall(block)) * 3 >= len(LATIN.findall(block))
 
 
 def inline_markdown(text):
@@ -396,7 +402,7 @@ def release_notes(body, lang):
     out = []
     for block in blocks:
         is_common = block.startswith("SHA-256")
-        if not is_common and bool(CJK.search(block)) != (lang == "zh"):
+        if not is_common and is_chinese(block) != (lang == "zh"):
             continue
         lines = block.splitlines()
         if all(line.lstrip().startswith(("- ", "* ")) for line in lines):

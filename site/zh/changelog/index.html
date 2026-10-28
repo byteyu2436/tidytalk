@@ -76,8 +76,15 @@
       <p class="lead">Tidytalk 每个版本的新功能、修复和下载。</p>
     </header>
     <div class="prose">
+      <article class="release" id="v0.4.0">
+        <h2><a href="#v0.4.0">0.4.0</a> <span class="badge">最新</span></h2>
+        <p class="release-date"><time datetime="2026-10-28">2026-10-28</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.4.0">下载</a></p>
+        <ul><li>界面整个重做：主窗口左边是首页、转写、资料库、词库四页（⌘1–⌘4），设置在左下角。每个选项只放在一个地方，空的页面会写明怎么开始。</li><li>首页：今天说了多少字、大约省下多少分钟打字，说话输入、实时字幕、会议记录三张卡片，下面是最近的结果。还缺权限或识别模型时，最上面会提示还差哪一步。</li><li>新的「转写」页：把音频、视频文件拖进来，或者粘贴视频链接，下面是转写记录。读到视频信息后先显示标题和封面，再开始下载音频。转写失败时可以一键重新转写。</li><li>资料库：说话记录、会议记录和转写放在一个列表里，按天分组，可以按类型筛选、搜索（⌘F）、排序。鼠标移到一条上可以拷贝、重新整理或删除。</li><li>说话记录现在保存在这台 Mac 上，默认保留 30 天，可以在资料库里搜索，不会上传，也不记录粘贴到了哪个应用。在“设置 › 隐私与数据”里可以改保留多久、一次清空，或者关掉保存（关掉后退出就清空）。老用户升级后第一次打开资料库时会提示一次。</li><li>词库分成常用词、固定替换、快捷短语、自定义规则四个标签，改动马上保存。粘贴后你改过的词会提示加入词库。</li><li>设置分成功能、共用、系统三组。“设置 › 通用”新增外观（跟随系统、浅色、深色）和语言（跟随系统、简体中文、English）。</li><li>会议详情：整场会议可以回放，“我”和“对方”两路录音一起放，可以拖进度、换速度。“设置 › 会议记录”新增“区分说话人”开关。开会时显示两路声音的电平，一直收不到电脑的声音时会提示去授权。</li><li>详情页的左上角有返回按钮（⌘[），标题太长时换行显示。会议和转写都可以用“文件 › 导出…”（⇧⌘E）导出。</li><li>英文界面里会议和转写的属性标签不再被截断。</li></ul>
+<p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
+<p class="checksum">SHA-256 (Tidytalk-0.4.0.dmg): <code>74513e7e9875b75aca177f13344b0da422868af93c3e711997ebb607bf5b2718</code></p>
+      </article>
       <article class="release" id="v0.3.2">
-        <h2><a href="#v0.3.2">0.3.2</a> <span class="badge">最新</span></h2>
+        <h2><a href="#v0.3.2">0.3.2</a></h2>
         <p class="release-date"><time datetime="2026-10-28">2026-10-28</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.3.2">下载</a></p>
         <ul><li>设置并进主窗口：不再单独弹出一个设置窗口。点主窗口左下角的&quot;设置&quot;或按 ⌘, 打开，侧边栏换成设置的各页；点&quot;‹ 设置&quot;或按 ⌘[ 回到原来的页面。再打开设置时回到上次看的那一页。设置里和主窗口重复的&quot;词库&quot;页去掉了，词库在主窗口里。</li><li>新的「帮助」菜单：应用的菜单栏和菜单栏图标的菜单里都有&quot;使用指南&quot;（⌘?）和&quot;隐私说明&quot;，按界面语言打开官网上对应的页面。</li><li>隐私说明：官网新增<a href="https://tidytalk.zayen.dev/zh/privacy/">隐私说明</a>，写明 Tidytalk 在这台 Mac 上存了什么、什么时候联网、哪些文字会发给你配置的 AI 服务。设置 › 通用的隐私段落后面有链接。</li><li>设置 › 通用：录制系统音频的用途补上了会议记录，之前只写了实时字幕。</li></ul>
 <p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
