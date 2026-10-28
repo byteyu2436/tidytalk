@@ -114,8 +114,8 @@
           </tbody>
         </table>
       </div>
-      <p>语音识别用的是 SenseVoice 模型，第一次下载约 240&nbsp;MB 后就在本机运行。最近记录只保存在内存中，退出即清空。API Key 等设置保存在 <code>~/.tidytalk.json</code>，只有你自己能读写。</p>
-      <p>除此之外唯一的联网请求是检查更新：启动时从 GitHub 读取最新版本号，每天最多一次，可以在"设置 › 通用"里关闭。</p>
+      <p>语音识别用的是 SenseVoice 模型，第一次下载约 240&nbsp;MB 后就在本机运行。最近记录只保存在内存中，退出即清空。设置保存在 <code>~/.tidytalk.json</code>，只有你自己能读写；API Key 存在 macOS 钥匙串里。</p>
+      <p>除了你配置的 AI 服务，Tidytalk 只在下载模型、检查更新（启动时每天最多一次，可以在"设置 › 通用"里关闭）和转写链接时联网。每一项写在<a href="/zh/privacy/">隐私说明</a>里。</p>
 
       <h2 id="ollama">接入 Ollama</h2>
       <ol>
@@ -123,15 +123,15 @@
         <li>在终端下载一个模型，例如：
           <pre><code>ollama pull qwen2.5:7b</code></pre>
         </li>
-        <li>在 Tidytalk 里打开"设置 › 配置 AI"，在顶部选 <strong>Ollama</strong>，确认模型名和刚才下载的一致，点"保存"。</li>
-        <li>点"测试连接"，显示"连接成功"就可以用了。</li>
+        <li>在 Tidytalk 里打开"设置 › 配置 AI"，在顶部选 <strong>Ollama</strong>，确认模型名和刚才下载的一致，点 ✓ 按钮保存。</li>
+        <li>点旁边紫色的网络图标测试连接，显示"连接成功"就可以用了。</li>
       </ol>
 
       <h2 id="lm-studio">接入 LM Studio</h2>
       <ol>
         <li>安装 <a href="https://lmstudio.ai">LM Studio</a>，下载并加载一个模型。</li>
         <li>打开 LM Studio 的本地服务。</li>
-        <li>在 Tidytalk 的"设置 › 配置 AI"顶部选 <strong>LM Studio</strong>，填上已加载的模型名，保存后点"测试连接"。</li>
+        <li>在 Tidytalk 的"设置 › 配置 AI"顶部选 <strong>LM Studio</strong>，填上已加载的模型名，保存后点紫色的网络图标测试连接。</li>
       </ol>
       <p>本机模型不需要 API Key，超时时间也从 12 秒放宽到 60 秒。</p>
 
@@ -168,7 +168,7 @@
       <div><h2>对比</h2><ul><li><a href="/zh/compare/">语音输入工具对比</a></li><li><a href="/zh/guides/mac-voice-input-apps/">Mac 语音输入法推荐</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/alternatives/superwhisper/">Superwhisper 替代</a></li><li><a href="/zh/alternatives/typeless/">Typeless 替代</a></li></ul></div>
       <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
       <div><h2>教程</h2><ul><li><a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说</a></li><li><a href="/zh/guides/live-translated-captions/">实时翻译字幕</a></li><li><a href="/zh/guides/custom-vocabulary/">认对人名和术语</a></li></ul></div>
-      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="/zh/privacy/">隐私说明</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
         <li><a href="/use-cases/offline/" hreflang="en" lang="en">English</a></li></ul></div>
     </div>
   </footer>

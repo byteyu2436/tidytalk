@@ -71,6 +71,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
   </url>
   <url>
+    <loc>https://tidytalk.zayen.dev/privacy/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/privacy/"/>
+  </url>
+  <url>
     <loc>https://tidytalk.zayen.dev/use-cases/developers/</loc>
     <lastmod>2026-10-19</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/use-cases/developers/"/>
@@ -171,6 +178,13 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/"/>
+  </url>
+  <url>
+    <loc>https://tidytalk.zayen.dev/zh/privacy/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tidytalk.zayen.dev/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://tidytalk.zayen.dev/zh/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tidytalk.zayen.dev/privacy/"/>
   </url>
   <url>
     <loc>https://tidytalk.zayen.dev/zh/use-cases/developers/</loc>

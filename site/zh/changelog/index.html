@@ -76,8 +76,15 @@
       <p class="lead">Tidytalk 每个版本的新功能、修复和下载。</p>
     </header>
     <div class="prose">
+      <article class="release" id="v0.3.1">
+        <h2><a href="#v0.3.1">0.3.1</a> <span class="badge">最新</span></h2>
+        <p class="release-date"><time datetime="2026-10-26">2026-10-26</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.3.1">下载</a></p>
+        <ul><li>蓝牙耳机录不到声音（<a href="https://github.com/byteyu2436/tidytalk/issues/1">#1</a>）：用 AirPods 等蓝牙耳机的麦克风时，耳机要先切到通话模式，录音常常在这时停下，之后整段都录不到。现在麦克风停下或很久没有声音时会自动重新打开，接着录。</li><li>没录到声音时会说明原因：按住说了一阵却没录到声音，不再悄悄收起，会提示原因；用蓝牙耳机时建议改用 Mac 自带的麦克风。</li><li>看得出麦克风准备好了没有：麦克风还没送来声音时，指示器的电平条变暗、缓慢闪烁；用蓝牙耳机时，开始的提示音等麦克风真正开始收音才响，听到再说就不会丢掉开头。</li><li>设置 › 说话输入：正在用蓝牙耳机的麦克风时会说明这个情况，旁边的按钮可以一键改用 Mac 自带的麦克风。</li><li>更新提示：更新说明很长时，提示框比屏幕还高，按钮点不到。现在说明放在一块可以滚动的区域里，只显示当前界面语言的那一半。</li></ul>
+<p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
+<p class="checksum">SHA-256 (Tidytalk-0.3.1.dmg): <code>7e50ee86ec555b620654f2955649706030f49ca74d5e59ef976fa2511bc32226</code></p>
+      </article>
       <article class="release" id="v0.3.0">
-        <h2><a href="#v0.3.0">0.3.0</a> <span class="badge">最新</span></h2>
+        <h2><a href="#v0.3.0">0.3.0</a></h2>
         <p class="release-date"><time datetime="2026-10-26">2026-10-26</time> · <a href="https://github.com/byteyu2436/tidytalk/releases/tag/v0.3.0">下载</a></p>
         <ul><li>会议记录：按 ⌃⌥M 同时录下你的麦克风和电脑里会议的声音，会议中先出粗稿，会后在本机分出说话人。对方有几个人也能分开，几个人同时说话会标出来；说话人可以改名，也可以指定人数重新分。可以生成 AI 总结（概要、要点、决定和待办），总结前写明文字会发往哪里。录音和文字只保存在这台 Mac 上。</li><li>新的主窗口：会议、转写、最近记录和词库放在一个窗口里。界面换成更简洁紧凑的风格，按钮只放图标，鼠标停留时显示说明和快捷键；设置窗口和首次引导也换成同样的风格。</li><li>转写记录：每次转写文件或链接都保存成一张卡片，可以搜索、回放、点时间从那里播放、双击改一句、导出。链接下载的音频和封面图留在本机。</li><li>API Key 存进钥匙串：配置文件里不再写 Key，原来写在文件里的 Key 下次保存设置时自动迁移。</li><li>说话输入更稳：录音中途换麦克风（AirPods 切换、拔掉 USB 麦克风）会接着录；等 AI 整理时按 Esc 可以取消；粘贴后马上就能说下一句；目标应用卡住时 Tidytalk 不再跟着卡。</li><li>配置文件不会被覆盖：文件格式写错时菜单顶部会提示，点一下打开文件；在编辑器里改过的内容不会被设置窗口写回。</li><li>识别模型：文件损坏时显示原因，可以重新下载；下载前检查磁盘空间，校验失败自动换下一个下载源；切换模型时先释放旧模型，不再同时占两份内存。</li><li>AI 整理：长段口述的超时按字数放大；短问题不会被 AI 当成提问来回答；翻译不会原样返回原文，法语、西班牙语等带重音字母的译文也能通过；直接说日文时不再套用中文排版；本机词库纠错不再误改常见英文和中文（例如 discard → Discord）。</li><li>实时字幕：没有&quot;录制系统音频&quot;权限时会提示去授权；插拔耳机、AirPods 切换模式后接着收听；⌃⌥V 只在字幕打开时占用。</li><li>文件转写：解码阶段也能停止，长文件占用的内存大幅减少；yt-dlp 超过 14 天自动更新，网站改版后链接转写不容易失效。</li><li>安装包改用固定的证书签名，其他程序冒充 Tidytalk 拿不到它的权限，升级后不用重新授权；只保留 Apple 芯片需要的部分，安装包更小。</li></ul>
 <p>安装：需要 macOS 26 或更高版本、Apple 芯片的 Mac。安装包没有经过苹果公证，第一次打开请到&quot;系统设置 › 隐私与安全性&quot;点&quot;仍要打开&quot;，或在终端执行 <code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code>。</p>
@@ -144,7 +151,7 @@
       <div><h2>对比</h2><ul><li><a href="/zh/compare/">语音输入工具对比</a></li><li><a href="/zh/guides/mac-voice-input-apps/">Mac 语音输入法推荐</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/alternatives/superwhisper/">Superwhisper 替代</a></li><li><a href="/zh/alternatives/typeless/">Typeless 替代</a></li></ul></div>
       <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
       <div><h2>教程</h2><ul><li><a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说</a></li><li><a href="/zh/guides/live-translated-captions/">实时翻译字幕</a></li><li><a href="/zh/guides/custom-vocabulary/">认对人名和术语</a></li></ul></div>
-      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="/zh/privacy/">隐私说明</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
         <li><a href="/changelog/" hreflang="en" lang="en">English</a></li></ul></div>
     </div>
   </footer>

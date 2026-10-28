@@ -144,7 +144,7 @@
           </ul>
         </li>
       </ol>
-      <p>Tidytalk lives in the menu bar. It only appears in the Dock while its setup or settings window is open. Open the menu bar icon for settings, recent results, and the output language.</p>
+      <p>Tidytalk lives in the menu bar. It only appears in the Dock while its setup guide or main window is open. Open the menu bar icon for settings, recent results, and the output language; settings are also at the bottom left of the main window, or press <kbd>⌘,</kbd>.</p>
 
       <h2 id="hold-to-talk">Hold to talk</h2>
       <ol>
@@ -210,7 +210,7 @@
       <p>For a step-by-step walkthrough, see <a href="/guides/live-translated-captions/">Live translated captions for videos and meetings</a>.</p>
 
       <h2 id="meetings">Meeting recording</h2>
-      <p>Press <kbd>⌃⌥M</kbd> (Control + Option + M), or start from the menu bar or the toolbar of the Tidytalk window. Tidytalk records your microphone and your Mac's audio (the people on the other end) at the same time. Press it again to stop.</p>
+      <p>Press <kbd>⌃⌥M</kbd> (Control + Option + M), or start from the menu bar or the Meetings page of the Tidytalk window. Tidytalk records your microphone and your Mac's audio (the people on the other end) at the same time. Press it again to stop.</p>
       <ul>
         <li><strong>During the meeting:</strong> each sentence appears as a draft as soon as it's spoken, with "Me" and "Others" in two colors. Dictation keeps working. Meeting recording and live captions can't run at the same time.</li>
         <li><strong>After the meeting:</strong> Tidytalk tells speakers apart and transcribes again on your Mac (about 5 minutes for an hour). The other side is split into Speaker 1, 2, 3, which you can rename. Moments when several people talk at once are marked, and that text is transcribed from the mixed audio. If the split looks wrong, set how many people were on the other side and run it again.</li>
@@ -287,7 +287,7 @@
       <ol>
         <li>Install <a href="https://ollama.com">Ollama</a> and download a model, for example <code>ollama pull qwen2.5:7b</code>. Or download and load a model in LM Studio and start its local server.</li>
         <li>At the top of Settings › Set Up AI, choose <strong>Ollama</strong> or <strong>LM Studio</strong>, confirm the model name, and save. To go back to DeepSeek, OpenAI, or another online service, choose <strong>Cloud</strong>. Local models don't need an API key, and the timeout is raised to 60 seconds.</li>
-        <li>Click "Test Connection".</li>
+        <li>Click the purple network icon to test the connection.</li>
       </ol>
       <p>Reasoning models such as Qwen3 or DeepSeek-R1 work too: Tidytalk asks the service to skip thinking and removes any thinking that still comes back. Results depend on the model size. Small models follow "tidy, don't answer" and custom rules less reliably than cloud models, so a model around 7B or larger is recommended. See <a href="/use-cases/offline/">Private and offline dictation</a> for details.</p>
       <h3>Apple Intelligence</h3>
@@ -331,7 +331,7 @@
         <table>
           <thead><tr><th>What happens</th><th>Why, and what to do</th></tr></thead>
           <tbody>
-            <tr><td>"Cleanup failed, pasted original"</td><td>The AI service was unreachable, timed out, or returned something unusual. Check your network and click "Test Connection" in Settings › Set Up AI.</td></tr>
+            <tr><td>"Cleanup failed, pasted original"</td><td>The AI service was unreachable, timed out, or returned something unusual. Check your network and click the purple network icon in Settings › Set Up AI to test the connection.</td></tr>
             <tr><td>"Didn't hear anything"</td><td>Nothing was recognized. Check the microphone in Settings › Dictation.</td></tr>
             <tr><td>The shortcut does nothing</td><td>Accessibility access is missing. Allow it in Settings › General › Permissions.</td></tr>
             <tr><td>macOS says it can't verify the developer</td><td>The app isn't notarized yet. Click "Open Anyway" in System Settings › Privacy &amp; Security.</td></tr>
@@ -373,7 +373,7 @@ tccutil reset All app.tidytalk.Tidytalk</code></pre>
       <div><h2>Compare</h2><ul><li><a href="/compare/">All dictation apps</a></li><li><a href="/alternatives/wispr-flow/">Wispr Flow alternative</a></li><li><a href="/alternatives/superwhisper/">Superwhisper alternative</a></li><li><a href="/alternatives/typeless/">Typeless alternative</a></li></ul></div>
       <div><h2>Use cases</h2><ul><li><a href="/use-cases/developers/">For developers</a></li><li><a href="/use-cases/translation/">Dictate and translate</a></li><li><a href="/use-cases/offline/">Private and offline</a></li><li><a href="/use-cases/transcribe/">Transcribe recordings</a></li></ul></div>
       <div><h2>Guides</h2><ul><li><a href="/guides/mixed-chinese-english-dictation/">Mixed Chinese and English</a></li><li><a href="/guides/live-translated-captions/">Live translated captions</a></li><li><a href="/guides/custom-vocabulary/">Names and terms</a></li></ul></div>
-      <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
+      <div><h2>Project</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">Report an issue</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT License</a></li>
         <li><a href="/zh/docs/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li></ul></div>
     </div>
   </footer>

@@ -144,7 +144,7 @@
           </ul>
         </li>
       </ol>
-      <p>Tidytalk 平时只在菜单栏显示图标，只有打开引导或设置窗口时才会出现在 Dock 里。设置、最近记录和输出语言都在菜单栏图标里。</p>
+      <p>Tidytalk 平时只在菜单栏显示图标，只有打开引导或主窗口时才会出现在 Dock 里。设置、最近记录和输出语言都在菜单栏图标里；设置也在主窗口左下角，或按 <kbd>⌘,</kbd>。</p>
 
       <h2 id="hold-to-talk">按住说话</h2>
       <ol>
@@ -211,7 +211,7 @@
       <p>一步步的设置方法见<a href="/zh/guides/live-translated-captions/">在 Mac 上给视频和会议加实时翻译字幕</a>。</p>
 
       <h2 id="meetings">会议记录</h2>
-      <p>按 <kbd>⌃⌥M</kbd>（Control + Option + M），或在菜单栏菜单、Tidytalk 主窗口的工具栏里开始。会同时录下你的麦克风和电脑里播放的声音（会议另一端的人），再按一次结束。</p>
+      <p>按 <kbd>⌃⌥M</kbd>（Control + Option + M），或在菜单栏菜单、Tidytalk 主窗口的"会议"页里开始。会同时录下你的麦克风和电脑里播放的声音（会议另一端的人），再按一次结束。</p>
       <ul>
         <li><strong>会议中</strong>：说完一句就出现一句粗稿，"我"和"对方"用两种颜色。说话输入照常可以用。会议记录和实时字幕不能同时开。</li>
         <li><strong>会议结束后</strong>：在这台 Mac 上分说话人、重新识别一遍（一小时的会议大约 5 分钟）。对方分成"说话人 1、2、3"，点名字可以改名；几个人同时说话的段落标"同时在说"，这段文字是混在一起识别的。分得不对时可以指定对方有几个人，重新分。</li>
@@ -288,7 +288,7 @@
       <ol>
         <li>安装 <a href="https://ollama.com">Ollama</a> 并下载一个模型，例如 <code>ollama pull qwen2.5:7b</code>；或者在 LM Studio 里下载并加载模型，打开本地服务。</li>
         <li>在"设置 › 配置 AI"顶部选 <strong>Ollama</strong> 或 <strong>LM Studio</strong>，确认模型名后保存。要换回 DeepSeek、OpenAI 等云端接口，选<strong>云端</strong>。本机模型不需要 API Key，超时默认放宽到 60 秒。</li>
-        <li>点"测试连接"确认可用。</li>
+        <li>点紫色的网络图标测试连接，确认可用。</li>
       </ol>
       <p>Qwen3、DeepSeek-R1 这类会"思考"的推理模型也能用：Tidytalk 会请求它跳过思考，万一还是带了思考过程，也会自动去掉。效果取决于模型大小。小模型对"只整理、不回答"和自定义规则的遵守不如云端模型稳定，建议用 7B 左右或更大的模型。详见<a href="/zh/use-cases/offline/">完全离线的 Mac 语音输入</a>。</p>
       <h3>Apple 智能</h3>
@@ -332,7 +332,7 @@
         <table>
           <thead><tr><th>情况</th><th>原因和处理</th></tr></thead>
           <tbody>
-            <tr><td>提示"整理失败，已粘贴原文"</td><td>AI 服务连不上、超时或返回异常。检查网络，在"设置 › 配置 AI"里点"测试连接"。</td></tr>
+            <tr><td>提示"整理失败，已粘贴原文"</td><td>AI 服务连不上、超时或返回异常。检查网络，在"设置 › 配置 AI"里点紫色的网络图标测试连接。</td></tr>
             <tr><td>提示"没有听到内容"</td><td>没有识别到内容。在"设置 › 说话输入"里检查麦克风。</td></tr>
             <tr><td>按快捷键没反应</td><td>缺少辅助功能权限，在"设置 › 通用 › 权限"里授权。</td></tr>
             <tr><td>打开时提示无法验证开发者</td><td>安装包还没有公证，在"系统设置 › 隐私与安全性"里点"仍要打开"。</td></tr>
@@ -374,7 +374,7 @@ tccutil reset All app.tidytalk.Tidytalk</code></pre>
       <div><h2>对比</h2><ul><li><a href="/zh/compare/">语音输入工具对比</a></li><li><a href="/zh/guides/mac-voice-input-apps/">Mac 语音输入法推荐</a></li><li><a href="/zh/alternatives/wispr-flow/">Wispr Flow 替代</a></li><li><a href="/zh/alternatives/superwhisper/">Superwhisper 替代</a></li><li><a href="/zh/alternatives/typeless/">Typeless 替代</a></li></ul></div>
       <div><h2>使用场景</h2><ul><li><a href="/zh/use-cases/developers/">程序员</a></li><li><a href="/zh/use-cases/translation/">说中文出英文</a></li><li><a href="/zh/use-cases/offline/">完全离线</a></li><li><a href="/zh/use-cases/transcribe/">转写录音和视频</a></li></ul></div>
       <div><h2>教程</h2><ul><li><a href="/zh/guides/mixed-chinese-english-dictation/">中英文混说</a></li><li><a href="/zh/guides/live-translated-captions/">实时翻译字幕</a></li><li><a href="/zh/guides/custom-vocabulary/">认对人名和术语</a></li></ul></div>
-      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
+      <div><h2>项目</h2><ul><li><a href="https://github.com/byteyu2436/tidytalk">GitHub</a></li><li><a href="https://github.com/byteyu2436/tidytalk/issues">反馈问题</a></li><li><a href="/zh/privacy/">隐私说明</a></li><li><a href="https://github.com/byteyu2436/tidytalk/blob/main/LICENSE">MIT 许可证</a></li>
         <li><a href="/docs/" hreflang="en" lang="en">English</a></li></ul></div>
     </div>
   </footer>
