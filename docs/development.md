@@ -59,10 +59,10 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 | `BUILD_NUMBER` | 构建号，默认当前时间 |
 | `UPDATE_URL` | 检查更新地址，默认读取本仓库 GitHub Releases 的最新版本；设为空字符串则隐藏检查更新 |
 | `DEV_TOOLS` | 设为 `1` 时编入下文的开发命令；发给用户的版本不要设置 |
-| `SIGN_IDENTITY` | 签名身份。不设置时，钥匙串里有 `Tidytalk Self-Signed` 证书就用它，否则用本地临时签名；也可以是 `Developer ID Application: 名字 (TEAMID)` |
-| `NOTARY_PROFILE` | 仅 `make-dmg.sh`：`xcrun notarytool store-credentials` 保存的钥匙串配置名 |
+| `SIGN_IDENTITY` | 签名身份。不设置时依次用钥匙串里的 `Developer ID Application` 证书、`Tidytalk Self-Signed` 证书，都没有就用本地临时签名 |
+| `NOTARY_PROFILE` | 仅 `make-dmg.sh`：`xcrun notarytool store-credentials` 保存的钥匙串配置名。用 Developer ID 签名时默认是 `tidytalk-notary`；设为空字符串则跳过公证 |
 
-正式安装包用作者的自签名证书 `Tidytalk Self-Signed` 签名，系统按这张证书识别 Tidytalk：其他程序冒充同一个 bundle id 拿不到它的权限，各个版本之间升级也不用重新授权。证书和私钥的备份不在仓库里；丢失后再发版，所有用户都要重新授权一次。自签名证书去不掉"无法验证开发者"的提示，那需要 Developer ID 加公证。
+从 0.4.2 起，正式安装包用作者的 Developer ID（`Developer ID Application: Yu Chen (9FA396RYL6)`）签名，开启 Hardened Runtime，并经过苹果公证，下载后打开时系统只会确认一次。系统按这张证书识别 Tidytalk：其他程序冒充同一个 bundle id 拿不到它的权限，各个版本之间升级也不用重新授权。0.3.0 到 0.4.1 用的是自签名证书 `Tidytalk Self-Signed`，从这些版本升级到 0.4.2 时要重新授权一次。证书和私钥的备份不在仓库里；丢失后只能作废重建，之后再发版，所有用户都要重新授权一次。
 
 没有这张证书时（例如其他人自己编译），使用本地临时签名，签名身份固定为 bundle id（`app.tidytalk.Tidytalk`），重新编译后辅助功能权限仍然有效。临时签名只适合本机开发：任何同 bundle id 的临时签名程序都能继承这些权限，所以 `make-dmg.sh` 找不到证书时会拒绝打包（确实需要时设 `ALLOW_ADHOC=1`）。
 
@@ -71,13 +71,14 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 ## 发布
 
 ```bash
-# 自签名、未公证的安装包（需要钥匙串里有 Tidytalk Self-Signed 证书）
-VERSION=0.2.0 scripts/make-dmg.sh
+# 保存公证用的 Apple ID 和 App 专用密码，只需执行一次
+xcrun notarytool store-credentials tidytalk-notary --apple-id <Apple ID> --team-id <TEAMID>
 
-# Developer ID 签名并公证
-xcrun notarytool store-credentials tidytalk-notary   # 只需执行一次
-SIGN_IDENTITY="Developer ID Application: 你的名字 (TEAMID)" \
-NOTARY_PROFILE=tidytalk-notary VERSION=0.2.0 scripts/make-dmg.sh
+# Developer ID 签名、公证并装订票据（需要钥匙串里有 Developer ID Application 证书）
+VERSION=0.4.2 scripts/make-dmg.sh
+
+# 只在本机试包，不公证
+NOTARY_PROFILE= VERSION=0.4.2 scripts/make-dmg.sh
 ```
 
 生成的安装包在 `build/Tidytalk-<版本号>.dmg`。打开后的窗口里只有 Tidytalk 和"应用程序"文件夹，背景上的箭头提示拖过去；背景图由 `scripts/make-dmg-background.swift` 生成。打包时会让访达排好窗口，第一次运行时系统可能会询问是否允许控制访达；如果已经挂着一个叫 Tidytalk 的磁盘，要先推出。在 GitHub 上新建 Release，标签写 `v0.2.0`，上传 DMG，发布说明会显示在应用的更新提示里。

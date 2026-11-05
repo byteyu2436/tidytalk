@@ -33,11 +33,7 @@ Hold a shortcut and say a paragraph. When you let go, Tidytalk recognizes your s
 Requires macOS 26 or later on a Mac with Apple silicon.
 
 1. Download the latest `Tidytalk-x.y.z.dmg` from [Releases](https://github.com/byteyu2436/tidytalk/releases) and drag Tidytalk into Applications.
-2. The app isn't notarized by Apple yet, so macOS blocks it the first time. Open System Settings › Privacy & Security and click "Open Anyway" at the bottom, or run:
-
-   ```bash
-   xattr -dr com.apple.quarantine /Applications/Tidytalk.app
-   ```
+2. Open Tidytalk. It's signed with an Apple Developer ID and notarized by Apple, so macOS only asks once whether to open an app downloaded from the internet. Click Open.
 
 3. Follow the setup guide: allow microphone and accessibility access, set up an AI service (optional), and download the speech model (about 240 MB, one time).
 

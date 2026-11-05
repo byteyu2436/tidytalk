@@ -33,11 +33,7 @@
 需要 macOS 26 或更高版本、Apple 芯片的 Mac。
 
 1. 在 [Releases](https://github.com/byteyu2436/tidytalk/releases) 下载最新的 `Tidytalk-x.y.z.dmg`，把 Tidytalk 拖进"应用程序"文件夹。
-2. 安装包目前没有经过苹果公证，第一次打开会被系统拦下。打开"系统设置 › 隐私与安全性"，在页面底部点"仍要打开"；或者在终端执行：
-
-   ```bash
-   xattr -dr com.apple.quarantine /Applications/Tidytalk.app
-   ```
+2. 打开 Tidytalk。安装包用苹果的 Developer ID 签名并经过苹果公证，第一次打开时系统只会问一次"是否打开从互联网下载的 App"，点"打开"即可。
 
 3. 按引导授权麦克风和辅助功能、填写 AI 接口（可以跳过）、下载语音识别模型（约 240 MB，只需一次）。
 

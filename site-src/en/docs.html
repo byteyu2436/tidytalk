@@ -44,9 +44,7 @@ description: How to install and use Tidytalk: hold-to-talk dictation, speech mod
       <p>Tidytalk needs macOS 26 or later on a Mac with Apple silicon.</p>
       <ol>
         <li>Download the latest <code>Tidytalk-x.y.z.dmg</code> from <a href="https://github.com/byteyu2436/tidytalk/releases/latest">GitHub Releases</a>, open it, and drag Tidytalk into the Applications folder.</li>
-        <li>The app isn't notarized by Apple yet, so macOS blocks it the first time. Open System Settings › Privacy &amp; Security and click "Open Anyway" at the bottom, or run this in Terminal:
-          <pre><code>xattr -dr com.apple.quarantine /Applications/Tidytalk.app</code></pre>
-        </li>
+        <li>Open Tidytalk. It's signed with an Apple Developer ID and notarized by Apple, so macOS only asks once whether to open an app downloaded from the internet. Click Open.</li>
         <li>Follow the setup guide that opens:
           <ul>
             <li><strong>Allow Microphone</strong> so Tidytalk can record.</li>
@@ -247,7 +245,7 @@ description: How to install and use Tidytalk: hold-to-talk dictation, speech mod
             <tr><td>"Cleanup failed, pasted original"</td><td>The AI service was unreachable, timed out, or returned something unusual. Check your network and click the purple network icon in Settings › AI Service to test the connection.</td></tr>
             <tr><td>"Didn't hear anything"</td><td>Nothing was recognized. Check the microphone in Settings › Dictation.</td></tr>
             <tr><td>The shortcut does nothing</td><td>Accessibility access is missing. Allow it in Settings › General › Permissions.</td></tr>
-            <tr><td>macOS says it can't verify the developer</td><td>The app isn't notarized yet. Click "Open Anyway" in System Settings › Privacy &amp; Security.</td></tr>
+            <tr><td>macOS says it can't verify the developer</td><td>Versions before 0.4.2 weren't notarized. Download the latest version, which is notarized and opens after one confirmation.</td></tr>
           </tbody>
         </table>
       </div>

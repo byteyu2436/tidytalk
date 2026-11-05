@@ -7,8 +7,8 @@
 #   UPDATE_URL        检查更新地址，默认读取 GitHub 仓库的最新 Release；设为空字符串则隐藏检查更新
 #   DEV_TOOLS         设为 1 时编入开发用命令（--snapshot、--check-permissions 等），
 #                     发给用户的版本不要设置
-#   SIGN_IDENTITY     签名身份：不设置时，钥匙串里有"Tidytalk Self-Signed"证书就用它，否则用临时签名（-）；
-#                     也可以是 "Developer ID Application: Name (TEAMID)"。见 scripts/signing.sh
+#   SIGN_IDENTITY     签名身份：不设置时依次用钥匙串里的 Developer ID Application 证书、
+#                     "Tidytalk Self-Signed"证书，都没有就用临时签名（-）。见 scripts/signing.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

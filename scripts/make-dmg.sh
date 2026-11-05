@@ -2,10 +2,10 @@
 # 打包 DMG，并可选地签名、公证。
 #
 # 环境变量：
-#   SIGN_IDENTITY     签名身份，默认用钥匙串里的"Tidytalk Self-Signed"（见 scripts/signing.sh）；
-#                     公证需要 Developer ID Application 身份。确实要发临时签名的包时设为 -
-#   NOTARY_PROFILE    `xcrun notarytool store-credentials` 保存的钥匙串配置名；
-#                     设置后会提交公证并装订票据
+#   SIGN_IDENTITY     签名身份，默认用钥匙串里的 Developer ID Application 证书，没有时用
+#                     "Tidytalk Self-Signed"（见 scripts/signing.sh）。确实要发临时签名的包时设为 -
+#   NOTARY_PROFILE    `xcrun notarytool store-credentials` 保存的钥匙串配置名；用 Developer ID
+#                     签名时默认是 tidytalk-notary，会提交公证并装订票据。设为空字符串则跳过公证
 #   VERSION           版本号，默认 0.1.0
 set -euo pipefail
 
@@ -20,6 +20,10 @@ if [[ "$SIGN_IDENTITY" == "-" && -z "${ALLOW_ADHOC:-}" ]]; then
   # 而且和之前版本的签名身份不同，用户升级后要重新授权
   echo "钥匙串里没有签名证书\"$SELF_SIGNED_IDENTITY\"，不能打正式安装包（确实要临时签名请设 ALLOW_ADHOC=1）" >&2
   exit 1
+fi
+# 用 Developer ID 签名的安装包默认都要公证，免得忘了；只想在本机试包时设 NOTARY_PROFILE=
+if [[ "$SIGN_IDENTITY" == "Developer ID Application:"* ]]; then
+  NOTARY_PROFILE="${NOTARY_PROFILE-tidytalk-notary}"
 fi
 DMG="$ROOT/build/Tidytalk-$VERSION.dmg"
 
