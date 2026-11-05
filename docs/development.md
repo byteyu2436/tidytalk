@@ -62,7 +62,7 @@ scripts/install.sh      # 编译、安装到 /Applications 并启动
 | `SIGN_IDENTITY` | 签名身份。不设置时依次用钥匙串里的 `Developer ID Application` 证书、`Tidytalk Self-Signed` 证书，都没有就用本地临时签名 |
 | `NOTARY_PROFILE` | 仅 `make-dmg.sh`：`xcrun notarytool store-credentials` 保存的钥匙串配置名。用 Developer ID 签名时默认是 `tidytalk-notary`；设为空字符串则跳过公证 |
 
-从 0.4.2 起，正式安装包用作者的 Developer ID（`Developer ID Application: Yu Chen (9FA396RYL6)`）签名，开启 Hardened Runtime，并经过苹果公证，下载后打开时系统只会确认一次。系统按这张证书识别 Tidytalk：其他程序冒充同一个 bundle id 拿不到它的权限，各个版本之间升级也不用重新授权。0.3.0 到 0.4.1 用的是自签名证书 `Tidytalk Self-Signed`，从这些版本升级到 0.4.2 时要重新授权一次。证书和私钥的备份不在仓库里；丢失后只能作废重建，之后再发版，所有用户都要重新授权一次。
+从 0.4.2 起，正式安装包用作者的 Developer ID（`Developer ID Application: Yu Chen (9FA396RYL6)`）签名，开启 Hardened Runtime，并经过苹果公证，下载后打开时系统只会确认一次。系统按这张证书识别 Tidytalk：其他程序冒充同一个 bundle id 拿不到它的权限，各个版本之间升级也不用重新授权。0.3.0 到 0.4.1 用的是自签名证书 `Tidytalk Self-Signed`，从这些版本升级到 0.4.2 时要重新授权一次。Developer ID 签名的识别条件是团队 ID（`9FA396RYL6`），不是某一张证书：证书到期或私钥丢失后，在开发者网站上重新申请一张即可，用户不用重新授权。证书和私钥的备份不在仓库里。
 
 没有这张证书时（例如其他人自己编译），使用本地临时签名，签名身份固定为 bundle id（`app.tidytalk.Tidytalk`），重新编译后辅助功能权限仍然有效。临时签名只适合本机开发：任何同 bundle id 的临时签名程序都能继承这些权限，所以 `make-dmg.sh` 找不到证书时会拒绝打包（确实需要时设 `ALLOW_ADHOC=1`）。
 
